@@ -1,0 +1,129 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.stream {
+  width: 100%;
+  height: 100%;
+}
+.stream #video-streams {
+  width: 100%;
+  height: 90%;
+  border: 1px solid red;
+  background-color: #0e0e0e;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+.stream #video-streams .video-player {
+  width: 100%;
+  height: 100%;
+}
+.stream #controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1.8rem;
+  gap: 30px;
+}
+.stream #controls > * {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 50%;
+  background-color: red;
+  color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+  font-size: 1.2rem;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease-in-out;
+}
+.stream #controls > * > *:nth-child(1) {
+  display: none;
+}
+.stream #controls > * > *:nth-child(2) {
+  display: block;
+}
+.stream #controls > *::before {
+  content: "Hello Guys";
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  background-color: black;
+  padding: 5px 10px;
+  display: none;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.stream #controls > *:hover::before {
+  display: block;
+}
+.stream #controls #microphone {
+  background-color: red;
+  color: white;
+}
+.stream #controls #microphone::before {
+  content: "Turn Mic Off";
+}
+.stream #controls #microphone.microphone {
+  background-color: white;
+  color: black;
+}
+.stream #controls #microphone.microphone::before {
+  content: "Turn Mic On";
+}
+.stream #controls #microphone.microphone i:nth-child(1) {
+  display: block;
+}
+.stream #controls #microphone.microphone i:nth-child(2) {
+  display: none;
+}
+.stream #controls #camera {
+  background-color: red;
+  color: white;
+}
+.stream #controls #camera::before {
+  content: "Turn Camera Off";
+}
+.stream #controls #camera.camera {
+  background-color: white;
+  color: black;
+}
+.stream #controls #camera.camera::before {
+  content: "Turn Camera On";
+}
+.stream #controls #camera.camera i:nth-child(1) {
+  display: block;
+}
+.stream #controls #camera.camera i:nth-child(2) {
+  display: none;
+}
+.stream #controls #join {
+  background-color: white;
+  color: black;
+}
+.stream #controls #join::before {
+  content: "Join Call";
+}
+.stream #controls #join i:nth-child(1) {
+  display: block;
+}
+.stream #controls #join i:nth-child(2) {
+  display: none;
+}
+.stream #controls #join.joined {
+  background-color: red;
+  color: white;
+}
+.stream #controls #join.joined::before {
+  content: "Leave Call";
+}
+.stream #controls #join.joined i:nth-child(1) {
+  display: none;
+}
+.stream #controls #join.joined i:nth-child(2) {
+  display: block;
+}/*# sourceMappingURL=video-chat.css.map */
