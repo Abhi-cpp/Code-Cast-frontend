@@ -32,52 +32,61 @@ const Room = () => {
         }
 
         socket.on('greet', ({ msg, room }) => {
-            console.log('room data', room)
-            setCurrRoom(room);
+            toast(msg, {
+                position: toast.POSITION.TOP_RIGHT
+            });
+            currRoom.code = room.code;
+            currRoom.language = room.language;
+            setCurrRoom({ ...room });
         })
 
         socket.on('userJoin', ({ msg, room }) => {
-            console.log('user joined', msg)
             toast.success(msg, {
                 position: toast.POSITION.TOP_RIGHT
             });
-            // setCurrRoom(room);
+            setCurrRoom({ ...room });
         })
 
         socket.on('userLeft', ({ msg, room }) => {
-            console.log('user left', msg)
             toast.error(msg, {
                 position: toast.POSITION.TOP_RIGHT
             });
-            // setCurrRoom(room);
+            setCurrRoom({ ...room });
         })
 
-        return () => {
-            leaveRoom();
-        }
+        socket.on('update', ({ room }) => {
+            setCurrRoom({ ...room });
+        })
+
+
+        socket.on('error', ({ error }) => {
+            console.log('error from socket call', error)
+        })
+
 
     }, [])
 
-    async function leaveRoom() {
-        console.log("leave room");
-        socket.emit('leaveRoom', { roomid: currRoom.roomid });
-        socket.disconnect();
-        console.log("leave completed")
-        // navigate('/');
+    function updateRoom(room) {
+        socket.emit('updateRoom', {
+            roomid: room.roomid,
+            code: room.code,
+            language: room.language
+        })
     }
 
-    // window.addEventListener('beforeunload', handleBeforeUnload);
-    // function handleBeforeUnload() {
-    //     console.log('leaving room')
-    //     socket.emit('leaveRoom', { roomid: currRoom.roomid });
-    //     socket.off();
-    // }
+
+    async function leaveRoom() {
+        socket.emit('leaveRoom', { roomid: currRoom.roomid });
+        socket.off();
+        navigate('/');
+    }
 
 
     return (
         <div className="room">
             {(currRoom && user) ? (
                 <>
+                    <CodeEditor updateRoom={updateRoom} />
                     <button onClick={leaveRoom}>Leave Room</button>
                     {/* <WhiteBoard /> */}
                     {/* <CodeEditor />

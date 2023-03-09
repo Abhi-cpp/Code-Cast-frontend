@@ -27,7 +27,8 @@ function Login() {
     }
 
     useEffect(() => {
-        const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2ZiYzU2MmYxYjdkYTcxOTExOTExN2EiLCJpYXQiOjE2NzgyMDI5OTUsImV4cCI6MTY3ODgwNzc5NX0.da8BrjYdB0ANEEmoMoPwGsgiz741kopSQwf5nhkvbds";
+
+        const token =localStorage.getItem('user'); 
         if (token) {
             loadingStart();
             axios({

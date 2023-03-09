@@ -7,6 +7,7 @@ const DataContextProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [currRoom, setCurrRoom] = useState(null);
     const socket = useMemo(() => io(process.env.REACT_APP_BACKEND_URL), []);
+
     return (
         <DataContext.Provider value={{ user, currRoom, setUser, setCurrRoom, socket }}>
             {children}
