@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useRef } from 'react';
 import { DataContext } from '../Components/DataContext';
 import WhiteBoard from './WhiteBoard';
 import CodeEditor from './CodeEditor';
@@ -35,8 +35,6 @@ const Room = () => {
             toast(msg, {
                 position: toast.POSITION.TOP_RIGHT
             });
-            currRoom.code = room.code;
-            currRoom.language = room.language;
             setCurrRoom({ ...room });
         })
 
@@ -55,6 +53,7 @@ const Room = () => {
         })
 
         socket.on('update', ({ room }) => {
+            console.log('update recieved', room)
             setCurrRoom({ ...room });
         })
 
@@ -67,6 +66,7 @@ const Room = () => {
     }, [])
 
     function updateRoom(room) {
+        console.log('update sent', room)
         socket.emit('updateRoom', {
             roomid: room.roomid,
             code: room.code,
@@ -86,9 +86,9 @@ const Room = () => {
         <div className="room">
             {(currRoom && user) ? (
                 <>
-                    <CodeEditor updateRoom={updateRoom} />
+                    <CodeEditor updateRoom={updateRoom} /> 
                     <button onClick={leaveRoom}>Leave Room</button>
-                    {/* <WhiteBoard /> */}
+                    {/* <WhiteBoard />
                     {/* <CodeEditor />
                     <VideoChat /> */}
                 </>
