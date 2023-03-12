@@ -28,7 +28,7 @@ function Login() {
 
     useEffect(() => {
 
-        const token =localStorage.getItem('user'); 
+        const token = localStorage.getItem('user');
         if (token) {
             loadingStart();
             axios({
@@ -38,7 +38,6 @@ function Login() {
                     'Authorization': `Bearer ${token}`
                 }
             }).then((response) => {
-                console.log(response.data.user)
                 loadingStop();
                 localStorage.setItem('user', response.data.token);
                 setUser(response.data.user);

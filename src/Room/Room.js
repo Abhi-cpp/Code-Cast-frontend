@@ -1,18 +1,20 @@
-import { useContext, useEffect, useRef } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { DataContext } from '../Components/DataContext';
-import WhiteBoard from './WhiteBoard';
 import CodeEditor from './CodeEditor';
-import VideoChat from './VideoChat';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import SquareLoader from "react-spinners/SquareLoader";
 
 const Room = () => {
-    const { user, currRoom, socket, setCurrRoom } = useContext(DataContext);
+    const { user, currRoom, socket } = useContext(DataContext);
     const navigate = useNavigate();
+    const [language, setLanguage] = useState(currRoom ? currRoom.language : "javascript");
+    const [code, setCode] = useState(currRoom ? currRoom.code : "");
+    let roomid = currRoom ? currRoom.roomid : "";
+    let name = user ? user.name : "";
+    let roomName = currRoom ? currRoom.name : "";
+
     useEffect(() => {
-        // console.log('room data in room', currRoom);
         if (user === null || currRoom === null) {
             navigate('/');
         }
@@ -22,11 +24,11 @@ const Room = () => {
 
         if (currRoom) {
             socket.emit('join', {
-                name: user.name,
-                roomName: currRoom.name,
-                roomid: currRoom.roomid,
-                code: currRoom.code,
-                language: currRoom.language,
+                name,
+                roomName,
+                roomid,
+                code,
+                language,
                 token: localStorage.getItem('user')
             })
         }
@@ -35,26 +37,26 @@ const Room = () => {
             toast(msg, {
                 position: toast.POSITION.TOP_RIGHT
             });
-            setCurrRoom({ ...room });
+            setCode(room.code);
+            setLanguage(room.language);
         })
 
-        socket.on('userJoin', ({ msg, room }) => {
+        socket.on('userJoin', ({ msg }) => {
             toast.success(msg, {
                 position: toast.POSITION.TOP_RIGHT
             });
-            setCurrRoom({ ...room });
+
         })
 
-        socket.on('userLeft', ({ msg, room }) => {
+        socket.on('userLeft', ({ msg }) => {
             toast.error(msg, {
                 position: toast.POSITION.TOP_RIGHT
             });
-            setCurrRoom({ ...room });
         })
 
         socket.on('update', ({ room }) => {
-            // console.log('update recieved', room)
-            setCurrRoom({ ...room });
+            setCode(room.code);
+            setLanguage(room.language);
         })
 
 
@@ -65,18 +67,18 @@ const Room = () => {
 
     }, [])
 
-    function updateRoom(room) {
-        // console.log('update sent', room)
+    function updateRoom(val) {
         socket.emit('updateRoom', {
-            roomid: room.roomid,
-            code: room.code,
-            language: room.language
+            roomid,
+            code: (val ? val : code)
+            ,
+            language
         })
     }
 
 
     async function leaveRoom() {
-        socket.emit('leaveRoom', { roomid: currRoom.roomid });
+        socket.emit('leaveRoom', { roomid });
         socket.off();
         navigate('/');
     }
@@ -86,11 +88,15 @@ const Room = () => {
         <div className="room">
             {(currRoom && user) ? (
                 <>
-                    <CodeEditor updateRoom={updateRoom} /> 
+                    <CodeEditor
+                        updateRoom={updateRoom}
+                        code={code}
+                        setCode={setCode}
+                        language={language}
+                        setLanguage={setLanguage}
+                        roomName={roomName}
+                    />
                     <button onClick={leaveRoom}>Leave Room</button>
-                    {/* <WhiteBoard />
-                    {/* <CodeEditor />
-                    <VideoChat /> */}
                 </>
             ) :
                 null

@@ -6,34 +6,20 @@ import { debounce } from 'lodash';
 import Settings from './EditorSettings.js';
 import './io.css'
 const CodeEditor = (props) => {
-    const editorRef = useRef(null)
-    const { user, setUser, currRoom, setCurrRoom } = useContext(DataContext)
-    const [language, setLanguage] = useState(currRoom ? currRoom.language : "javascript");
+
+    const { code, language, setLanguage, roomName } = props;
+    const { user, currRoom } = useContext(DataContext);
+    const [theme, setTheme] = useState(user.editor.theme);
+    const editorRef = useRef(null);
 
 
     useEffect(() => {
-        const buttons = document.querySelectorAll(" #editor button");
-
-        buttons.forEach((button) => {
-            button.addEventListener("click", () => {
-                buttons.forEach((button) => {
-                    button.parentElement.classList.toggle("active");
-                });
-            })
-        });
-    }, [])
-
-    useEffect(() => {
-
         if (editorRef.current) {
             const pos = editorRef.current.getPosition();
-            editorRef.current.setValue(currRoom.code);
-            setLanguage(currRoom.language);
-            editorRef.current.updateOptions(user.editor);
+            editorRef.current.setValue(code);
             editorRef.current.setPosition(pos);
         }
-    }, [currRoom])
-
+    }, [code])
 
     function handleEditorDispose() {
         senddata();
@@ -41,22 +27,10 @@ const CodeEditor = (props) => {
 
     //default yaha se ayega
     function handleEditorDidMount(editor) {
-        editorRef.current = editor
-        editorRef.current.setValue(currRoom.code);
-        editorRef.current.updateOptions(user.editor)
-        setLanguage(currRoom.language);
+        editorRef.current = editor;
+        editorRef.current.updateOptions(user.editor);
     }
 
-    function handleChange(val, event) {
-        if (event.isFlush === false) {
-            currRoom.code = val
-            setCurrRoom({ ...currRoom });
-            if (currRoom) {
-                props.updateRoom(currRoom);
-            }
-            debounceSendData();
-        }
-    }
 
 
     // debounce function for sending data
@@ -71,7 +45,11 @@ const CodeEditor = (props) => {
                 'Authorization': `Bearer ${localStorage.getItem('user')}`
             },
             data: {
-                'room': currRoom,
+                'room': {
+                    'roomid': currRoom.roomid,
+                    'code': code,
+                    'language': language
+                },
             }
         })
             .then((res) => {
@@ -82,19 +60,21 @@ const CodeEditor = (props) => {
     }
 
     function handleLanguageSelect(event) {
-        currRoom.language = event.target.value;
-        setCurrRoom({ ...currRoom });
-        props.updateRoom(currRoom);
-        debounceSendData();
+        setLanguage(event.target.value)
+        props.updateRoom();
     }
 
     function handleThemeSelect(event) {
-        user.editor.theme = event.target.value;
-        setUser({ ...user });
-        if (editorRef.current) {
-            editorRef.current.updateOptions(user.editor);
+        setTheme(event.target.value);
+    }
+
+    function handleChange(val, event) {
+        if (event.isFlush === false) {
+            props.updateRoom(val);
+            debounceSendData();
         }
     }
+
 
     return (
         <div id="editor">
@@ -102,24 +82,18 @@ const CodeEditor = (props) => {
                 handleLanguageSelect={handleLanguageSelect}
                 handleThemeSelect={handleThemeSelect}
                 language={language}
+                theme={theme}
+                roomName={roomName}
             />
             <Editor
-                onMount={handleEditorDidMount}
                 loading={<div>Loading...</div>}
+                onMount={handleEditorDidMount}
                 onChange={handleChange}
                 onDispose={handleEditorDispose}
                 language={language}
+                theme={theme}
+                value="console.log('Hello World!');"
             ></Editor>
-
-            <div id="input">
-                <button>Input</button>
-                <Editor defaultValue=""   ></Editor>
-            </div>
-            <div id="output">
-                <button>Output</button>
-                <div id="output-box">
-                </div>
-            </div>
         </div>
     )
 }

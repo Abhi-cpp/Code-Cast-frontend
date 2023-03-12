@@ -1,10 +1,8 @@
-import React, { useState, useContext, useEffect } from "react";
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import {
     AppBar, Toolbar, IconButton, Typography,
     FormControl, InputLabel, Select, MenuItem
 } from "@mui/material";
-import { DataContext } from "../Components/DataContext";
 
 const languageOptions = [
     { value: 'javascript', label: 'JavaScript' },
@@ -26,15 +24,10 @@ const themeOptions = [
 
 const Settings = (props) => {
 
-    const { currRoom, user } = useContext(DataContext)
-    const [selectedTheme, setSelectedTheme] = useState(user.editor.theme);
 
-    const { handleLanguageSelect, handleThemeSelect, language } = props;
+    const { handleLanguageSelect, handleThemeSelect, language, theme, roomName } = props;
 
-    const theme = (event) => {
-        setSelectedTheme(event.target.value);
-        handleThemeSelect(event);
-    };
+
 
     const onRunClick = () => {
         console.log("Run Clicked");
@@ -45,7 +38,7 @@ const Settings = (props) => {
             <AppBar position="static">
                 <Toolbar>
                     <Typography variant="h6" style={{ flexGrow: 1 }}>
-                        {currRoom.roomName}
+                        {roomName}
                     </Typography>
                     <FormControl style={{ minWidth: 120, marginRight: "16px" }}>
                         <InputLabel id="language-selector-label">Language</InputLabel>
@@ -67,8 +60,8 @@ const Settings = (props) => {
                         <Select
                             labelId="theme-selector-label"
                             id="theme-selector"
-                            value={selectedTheme}
-                            onChange={theme}
+                            value={theme}
+                            onChange={handleThemeSelect}
                         >
                             {themeOptions.map((option) => (
                                 <MenuItem key={option.value} value={option.value}>
