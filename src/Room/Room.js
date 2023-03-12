@@ -12,7 +12,7 @@ const Room = () => {
     const { user, currRoom, socket, setCurrRoom } = useContext(DataContext);
     const navigate = useNavigate();
     useEffect(() => {
-        console.log('room data in room', currRoom);
+        // console.log('room data in room', currRoom);
         if (user === null || currRoom === null) {
             navigate('/');
         }
@@ -53,7 +53,7 @@ const Room = () => {
         })
 
         socket.on('update', ({ room }) => {
-            console.log('update recieved', room)
+            // console.log('update recieved', room)
             setCurrRoom({ ...room });
         })
 
@@ -66,7 +66,7 @@ const Room = () => {
     }, [])
 
     function updateRoom(room) {
-        console.log('update sent', room)
+        // console.log('update sent', room)
         socket.emit('updateRoom', {
             roomid: room.roomid,
             code: room.code,
