@@ -7,8 +7,8 @@ import Settings from './EditorSettings.js';
 import './io.css'
 const CodeEditor = (props) => {
 
-    const { code, language, setLanguage, roomName } = props;
-    const { user, currRoom } = useContext(DataContext);
+    const { code, language, setLanguage, roomName,roomid } = props;
+    const { user} = useContext(DataContext);
     const [theme, setTheme] = useState(user.editor.theme);
     const editorRef = useRef(null);
 
@@ -46,7 +46,7 @@ const CodeEditor = (props) => {
             },
             data: {
                 'room': {
-                    'roomid': currRoom.roomid,
+                    'roomid': roomid,
                     'code': code,
                     'language': language
                 },

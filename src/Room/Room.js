@@ -4,6 +4,7 @@ import CodeEditor from './CodeEditor';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Ace from './Ace';
 
 const Room = () => {
     const { user, currRoom, socket } = useContext(DataContext);
@@ -67,12 +68,11 @@ const Room = () => {
 
     }, [])
 
-    function updateRoom(val) {
+    function updateRoom(a = code, b = language) {
         socket.emit('updateRoom', {
             roomid,
-            code: (val ? val : code)
-            ,
-            language
+            code: a,
+            language: b
         })
     }
 
@@ -88,13 +88,14 @@ const Room = () => {
         <div className="room">
             {(currRoom && user) ? (
                 <>
-                    <CodeEditor
+                    <Ace
                         updateRoom={updateRoom}
                         code={code}
                         setCode={setCode}
                         language={language}
                         setLanguage={setLanguage}
                         roomName={roomName}
+                        roomid={roomid}
                     />
                     <button onClick={leaveRoom}>Leave Room</button>
                 </>
