@@ -69,10 +69,15 @@ const Room = () => {
     }, [])
 
     function updateRoom(a = code, b = language) {
+        socket.off('update')
         socket.emit('updateRoom', {
             roomid,
             code: a,
             language: b
+        })
+        socket.on('update', ({ room }) => {
+            setCode(room.code);
+            setLanguage(room.language);
         })
     }
 

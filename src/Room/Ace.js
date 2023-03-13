@@ -27,7 +27,7 @@ import 'ace-builds/src-noconflict/ext-language_tools';
 const Ace = (props) => {
     const { language, setLanguage, code, setCode, roomName, updateRoom, roomid } = props;
     const [theme, setTheme] = useState('monokai');
-    const [fontSize, setFontSize] = useState(14);
+    const [fontSize, setFontSize] = useState(18);
     const [fontFamily, setFontFamily] = useState('monospace');
 
 
