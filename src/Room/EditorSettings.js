@@ -45,13 +45,9 @@ const fontSizeOptions = [14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40]
 const Settings = (props) => {
 
 
-    const { setLanguage, setTheme, setFontSize, setFontFamily, language, theme, fontSize, fontFamily, roomName, updateRoom } = props;
+    const { setLanguage, setTheme, setFontSize, setFontFamily, language, theme, fontSize, fontFamily, roomName, updateRoom, code, run } = props;
 
 
-
-    const onRunClick = () => {
-        console.log("Run Clicked");
-    }
 
     return (
         <div className="editor-settings">
@@ -68,7 +64,7 @@ const Settings = (props) => {
                             value={language}
                             onChange={(e) => {
                                 setLanguage(e.target.value)
-                                // updateRoom(code, e.target.value)
+                                updateRoom(code, e.target.value)
                             }}
                         >
                             {languageOptions.map((option) => (
@@ -124,7 +120,7 @@ const Settings = (props) => {
                         </Select>
                     </FormControl>
 
-                    <IconButton color="inherit" style={{ marginL: '10px', maxHeight: 40 }} onClick={onRunClick}>
+                    <IconButton color="inherit" style={{ marginL: '10px', maxHeight: 40 }} onClick={run}>
                         <PlayArrowIcon />
                     </IconButton>
                 </Toolbar>

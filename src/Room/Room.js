@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState, useRef } from 'react';
 import { DataContext } from '../Components/DataContext';
-import CodeEditor from './CodeEditor';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -19,7 +18,7 @@ const Room = () => {
     const updateRoom = useRef(debounce((a, b) => {
         socket.emit('updateRoom', { roomid, code: a, language: b })
      }, 100)).current;
-     
+
     useEffect(() => {
         if (user === null || currRoom === null) {
             navigate('/');

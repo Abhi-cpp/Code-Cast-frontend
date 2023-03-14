@@ -20,7 +20,6 @@ import 'ace-builds/src-noconflict/theme-solarized_dark';
 import 'ace-builds/src-noconflict/theme-tomorrow_night';
 import 'ace-builds/src-noconflict/theme-vibrant_ink';
 import 'ace-builds/src-noconflict/theme-one_dark'
-
 import 'ace-builds/src-noconflict/ext-language_tools';
 
 
@@ -29,7 +28,8 @@ const Ace = (props) => {
     const [theme, setTheme] = useState('monokai');
     const [fontSize, setFontSize] = useState(18);
     const [fontFamily, setFontFamily] = useState('monospace');
-
+    const [input, setInput] = useState('');
+    const [output, setOutput] = useState('');
 
     useEffect(() => {
         const sendData = setTimeout(() => {
@@ -60,7 +60,34 @@ const Ace = (props) => {
 
     function handleChange(newValue) {
         setCode((newValue));
-        updateRoom(newValue,language);
+        updateRoom(newValue, language);
+    }
+
+
+    const run = async () => {
+        axios({
+            url: process.env.REACT_APP_BACKEND_URL + 'code/execute',
+            method: 'post',
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('user')}`
+            },
+            data: {
+                code,
+                input,
+                language
+            }
+        })
+            .then((res) => {
+                if (res.data.output)
+                    setOutput(res.data.output)
+                else {
+                    const error = res.data.error;
+                    setOutput(error);
+                }
+            })
+            .catch((err) => {
+                console.log("error from axios", err)
+            })
     }
 
     return (
@@ -76,26 +103,59 @@ const Ace = (props) => {
                 fontFamily={fontFamily}
                 roomName={roomName}
                 updateRoom={updateRoom}
+                run={run}
+                code={code}
             />
-            <AceEditor
-                setOptions={{
-                    useWorker: false,
-                    enableBasicAutocompletion: true,
-                    enableLiveAutocompletion: true,
-                    enableSnippets: true,
-                    showLineNumbers: true,
-                    fontFamily,
-                    fontSize,
-                }}
-                onChange={handleChange}
-                mode={language}
-                theme={theme}
-                name="ACE_EDITOR"
-                value={code}
-                fontSize={14}
-                width="90vw"
-                height='70vh'
-            />
+            <div style={{ display: 'flex', flexDirection: 'row' }}>
+                <div style={{ flex: 1 }}>
+                    <AceEditor
+                        setOptions={{
+                            useWorker: false,
+                            enableBasicAutocompletion: true,
+                            enableLiveAutocompletion: true,
+                            enableSnippets: true,
+                            showLineNumbers: true,
+                            fontFamily,
+                            fontSize,
+                        }}
+                        onChange={handleChange}
+                        mode={language}
+                        theme={theme}
+                        name="ACE_EDITOR"
+                        value={code}
+                        fontSize={14}
+                        height='100vh'
+                        width='50vw'
+                    />
+                </div>
+                <div style={{ flex: 1 }}>
+                    <div className="text-center">
+                        <h5>Input</h5>
+                        <AceEditor
+                            theme={theme}
+                            language={''}
+                            value={input}
+                            onChange={setInput}
+                            height={'48vh'}
+                            width={'35vw'}
+                            fontSize={fontSize}
+                        />
+                    </div>
+                    <div className="text-center">
+                        <h5>Output</h5>
+                        <AceEditor
+                            theme={theme}
+                            language={''}
+                            value={output}
+                            readOnly={true}
+                            height={'48vh'}
+                            width={'35vw'}
+                            fontSize={fontSize}
+                        />
+                    </div>
+                </div>
+            </div>
+
         </div>
     )
 };
