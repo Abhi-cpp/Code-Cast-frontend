@@ -60,7 +60,7 @@ const Ace = (props) => {
 
     function handleChange(newValue) {
         setCode((newValue));
-        updateRoom(newValue);
+        updateRoom(newValue,language);
     }
 
     return (

@@ -1,12 +1,14 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState, useRef } from 'react';
 import { DataContext } from '../Components/DataContext';
 import CodeEditor from './CodeEditor';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Ace from './Ace';
+import { debounce } from 'lodash';
 
 const Room = () => {
+
     const { user, currRoom, socket } = useContext(DataContext);
     const navigate = useNavigate();
     const [language, setLanguage] = useState(currRoom ? currRoom.language : "javascript");
@@ -14,7 +16,10 @@ const Room = () => {
     let roomid = currRoom ? currRoom.roomid : "";
     let name = user ? user.name : "";
     let roomName = currRoom ? currRoom.name : "";
-
+    const updateRoom = useRef(debounce((a, b) => {
+        socket.emit('updateRoom', { roomid, code: a, language: b })
+     }, 100)).current;
+     
     useEffect(() => {
         if (user === null || currRoom === null) {
             navigate('/');
@@ -65,21 +70,11 @@ const Room = () => {
             console.log('error from socket call', error)
         })
 
+        return ()=>{
+            socket.off();
+        }
 
     }, [])
-
-    function updateRoom(a = code, b = language) {
-        socket.off('update')
-        socket.emit('updateRoom', {
-            roomid,
-            code: a,
-            language: b
-        })
-        socket.on('update', ({ room }) => {
-            setCode(room.code);
-            setLanguage(room.language);
-        })
-    }
 
 
     async function leaveRoom() {

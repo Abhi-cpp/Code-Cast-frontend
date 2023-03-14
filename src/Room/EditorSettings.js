@@ -68,7 +68,7 @@ const Settings = (props) => {
                             value={language}
                             onChange={(e) => {
                                 setLanguage(e.target.value)
-                                updateRoom(null, e.target.value)
+                                // updateRoom(code, e.target.value)
                             }}
                         >
                             {languageOptions.map((option) => (
