@@ -4,30 +4,27 @@ import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Ace from './Ace';
-import { debounce } from 'lodash';
 import { diff_match_patch } from 'diff-match-patch';
 const dmp = new diff_match_patch();
 
 const Room = () => {
-
     const { user, currRoom, socket } = useContext(DataContext);
     const navigate = useNavigate();
     const [language, setLanguage] = useState(currRoom ? currRoom.language : "javascript");
-    const [code, setCode] = useState("");
+    let [code, setCode] = useState("");
     let roomid = currRoom ? currRoom.roomid : "";
     let name = user ? user.name : "";
     let roomName = currRoom ? currRoom.name : "";
-    // const updateRoom = useRef(debounce((newValue) => {
+    const [input, setInput] = useState('');
+    const [output, setOutput] = useState('');
 
-    // }, 1000)).current;
+
+    const EditorRef = useRef(null);
+
 
     function updateRoom(patch) {
         socket.emit('update', { roomid, patch })
     }
-
-    useEffect(()=>{
-        console.log('code change hua',code)
-    },[code])
 
     useEffect(() => {
         if (user === null || currRoom === null) {
@@ -44,7 +41,9 @@ const Room = () => {
                 roomid,
                 code,
                 language,
-                token: localStorage.getItem('user')
+                token: localStorage.getItem('user'),
+                input,
+                output
             })
         }
 
@@ -55,7 +54,8 @@ const Room = () => {
             console.log('room', room)
             setCode(room.code);
             setLanguage(room.language);
-            // add IO
+            setInput(room.input);
+            setOutput(room.output);
             socket.off('join')
         })
 
@@ -63,7 +63,6 @@ const Room = () => {
             toast.success(msg, {
                 position: toast.POSITION.TOP_RIGHT
             });
-
         })
 
         socket.on('userLeft', ({ msg }) => {
@@ -73,16 +72,26 @@ const Room = () => {
         })
 
         socket.on('update', ({ patch }) => {
-            console.log('patch', patch)
-            console.log('code', code)
+
+            // i have no idea why code is empty at this point so i have to do this ugly hack
+            console.log('Editor Ref', EditorRef.current.editor.getValue())
+            code = EditorRef.current.editor.getValue();
             let [newCode, results] = dmp.patch_apply(patch, code);
-            console.log(newCode, results);
-            setCode(newCode);
+            if (results[0] === true) {
+                code = newCode;
+                setCode(newCode);
+            }
+            else {
+                console.log('patch failed');
+            }
         })
 
-        socket.on('updateIO', ({ inputPath, outputPatch, language }) => {
+        socket.on('updateIO', ({ input, output, language }) => {
             // update IO
+            console.log('updateIO', input, output, language)
             setLanguage(language);
+            setInput(input);
+            setOutput(output);
         })
 
         socket.on('error', ({ error }) => {
@@ -94,6 +103,16 @@ const Room = () => {
         }
 
     }, [])
+
+    const IOEMIT = (a, b, c) => {
+        console.log('ioemit', a, b, c)
+        socket.emit('updateIO', {
+            roomid,
+            input: a,
+            output: b,
+            language: c
+        })
+    }
 
 
     async function leaveRoom() {
@@ -115,6 +134,12 @@ const Room = () => {
                         setLanguage={setLanguage}
                         roomName={roomName}
                         roomid={roomid}
+                        EditorRef={EditorRef}
+                        input={input}
+                        setInput={setInput}
+                        output={output}
+                        setOutput={setOutput}
+                        IOEMIT={IOEMIT}
                     />
                     <button onClick={leaveRoom}>Leave Room</button>
                 </>

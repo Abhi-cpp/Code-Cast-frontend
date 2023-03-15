@@ -26,37 +26,36 @@ import 'ace-builds/src-noconflict/ext-language_tools';
 
 const Ace = (props) => {
     const dmp = new diff_match_patch();
-    const { language, setLanguage, roomName, updateRoom, code, setCode, roomid } = props;
+    const { language, setLanguage, roomName, updateRoom, code, setCode, roomid, EditorRef, input, output, setInput, setOutput, IOEMIT } = props;
     const [theme, setTheme] = useState('monokai');
     const [fontSize, setFontSize] = useState(18);
     const [fontFamily, setFontFamily] = useState('monospace');
-    const [input, setInput] = useState('');
-    const [output, setOutput] = useState('');
+
 
     useEffect(() => {
-        // const sendData = setTimeout(() => {
-        //     axios({
-        //         method: 'patch',
-        //         url: process.env.REACT_APP_BACKEND_URL + 'rooms/update',
-        //         headers: {
-        //             'Authorization': `Bearer ${localStorage.getItem('user')}`
-        //         },
-        //         data: {
-        //             'room': {
-        //                 roomid,
-        //                 code,
-        //                 language
-        //             },
-        //         }
-        //     })
-        //         .then((res) => {
-        //         })
-        //         .catch((err) => {
-        //             console.log("error from axios", err)
-        //         })
-        // }, 2000)
+        const sendData = setTimeout(() => {
+            axios({
+                method: 'patch',
+                url: process.env.REACT_APP_BACKEND_URL + 'rooms/update',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('user')}`
+                },
+                data: {
+                    'room': {
+                        roomid,
+                        code,
+                        language
+                    },
+                }
+            })
+                .then((res) => {
+                })
+                .catch((err) => {
+                    console.log("error from axios", err)
+                })
+        }, 2000)
 
-        // return () => clearTimeout(sendData)
+        return () => clearTimeout(sendData)
     }, [code])
 
 
@@ -67,9 +66,8 @@ const Ace = (props) => {
         console.log(code);
     }
 
-
     const run = async () => {
-        axios({
+        await axios({
             url: process.env.REACT_APP_BACKEND_URL + 'code/execute',
             method: 'post',
             headers: {
@@ -82,16 +80,24 @@ const Ace = (props) => {
             }
         })
             .then((res) => {
-                if (res.data.output)
-                    setOutput(res.data.output)
-                else {
-                    const error = res.data.error;
-                    setOutput(error);
-                }
+                let result = res.data.output ? res.data.output : res.data.error;
+                setOutput(result)
+                IOEMIT(input, result, language)
             })
             .catch((err) => {
                 console.log("error from axios", err)
             })
+    }
+
+    const handleIOChange = (newValue) => {
+        console.log(newValue)
+        setInput(newValue)
+        IOEMIT(newValue, output, language)
+    }
+
+    function handleLangChange(e) {
+        setLanguage(e)
+        IOEMIT(input, output, e)
     }
 
     return (
@@ -108,6 +114,7 @@ const Ace = (props) => {
                 roomName={roomName}
                 updateRoom={updateRoom}
                 run={run}
+                handleLangChange={handleLangChange}
             />
             <div style={{ display: 'flex', flexDirection: 'row' }}>
                 <div style={{ flex: 1 }}>
@@ -130,6 +137,8 @@ const Ace = (props) => {
                         height='100vh'
                         width='50vw'
                         defaultValue=''
+                        ref={EditorRef}
+                        editorProps={{ $blockScrolling: true }}
                     />
                 </div>
                 <div style={{ flex: 1 }}>
@@ -139,7 +148,7 @@ const Ace = (props) => {
                             theme={theme}
                             language={''}
                             value={input}
-                            onChange={setInput}
+                            onChange={handleIOChange}
                             height={'48vh'}
                             width={'35vw'}
                             fontSize={fontSize}
