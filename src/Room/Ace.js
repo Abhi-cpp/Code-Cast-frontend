@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import AceEditor from 'react-ace';
 import axios from 'axios';
 import Settings from './EditorSettings.js';
-
+import { diff_match_patch } from 'diff-match-patch';
 import 'ace-builds/src-noconflict/mode-javascript'
 import 'ace-builds/src-noconflict/mode-java';
 import 'ace-builds/src-noconflict/mode-python';
@@ -23,8 +23,10 @@ import 'ace-builds/src-noconflict/theme-one_dark'
 import 'ace-builds/src-noconflict/ext-language_tools';
 
 
+
 const Ace = (props) => {
-    const { language, setLanguage, code, setCode, roomName, updateRoom, roomid } = props;
+    const dmp = new diff_match_patch();
+    const { language, setLanguage, roomName, updateRoom, code, setCode, roomid } = props;
     const [theme, setTheme] = useState('monokai');
     const [fontSize, setFontSize] = useState(18);
     const [fontFamily, setFontFamily] = useState('monospace');
@@ -32,35 +34,37 @@ const Ace = (props) => {
     const [output, setOutput] = useState('');
 
     useEffect(() => {
-        const sendData = setTimeout(() => {
-            axios({
-                method: 'patch',
-                url: process.env.REACT_APP_BACKEND_URL + 'rooms/update',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('user')}`
-                },
-                data: {
-                    'room': {
-                        roomid,
-                        code,
-                        language
-                    },
-                }
-            })
-                .then((res) => {
-                })
-                .catch((err) => {
-                    console.log("error from axios", err)
-                })
-        }, 2000)
+        // const sendData = setTimeout(() => {
+        //     axios({
+        //         method: 'patch',
+        //         url: process.env.REACT_APP_BACKEND_URL + 'rooms/update',
+        //         headers: {
+        //             'Authorization': `Bearer ${localStorage.getItem('user')}`
+        //         },
+        //         data: {
+        //             'room': {
+        //                 roomid,
+        //                 code,
+        //                 language
+        //             },
+        //         }
+        //     })
+        //         .then((res) => {
+        //         })
+        //         .catch((err) => {
+        //             console.log("error from axios", err)
+        //         })
+        // }, 2000)
 
-        return () => clearTimeout(sendData)
+        // return () => clearTimeout(sendData)
     }, [code])
 
 
     function handleChange(newValue) {
-        setCode((newValue));
-        updateRoom(newValue, language);
+        const patch = dmp.patch_make(code, newValue);
+        updateRoom(patch);
+        setCode(newValue)
+        console.log(code);
     }
 
 
@@ -104,7 +108,6 @@ const Ace = (props) => {
                 roomName={roomName}
                 updateRoom={updateRoom}
                 run={run}
-                code={code}
             />
             <div style={{ display: 'flex', flexDirection: 'row' }}>
                 <div style={{ flex: 1 }}>
@@ -123,9 +126,10 @@ const Ace = (props) => {
                         theme={theme}
                         name="ACE_EDITOR"
                         value={code}
-                        fontSize={14}
+                        fontSize={18}
                         height='100vh'
                         width='50vw'
+                        defaultValue=''
                     />
                 </div>
                 <div style={{ flex: 1 }}>
