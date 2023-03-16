@@ -5,13 +5,16 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Ace from './Ace';
 import { diff_match_patch } from 'diff-match-patch';
+import defaultCode from './../static/default_code.json';
+
 const dmp = new diff_match_patch();
+// import json file in react
 
 const Room = () => {
     const { user, currRoom, socket } = useContext(DataContext);
     const navigate = useNavigate();
     const [language, setLanguage] = useState(currRoom ? currRoom.language : "javascript");
-    let [code, setCode] = useState("");
+    let [code, setCode] = useState(currRoom ? currRoom.code : defaultCode[language ? language : "javascript"]);
     let roomid = currRoom ? currRoom.roomid : "";
     let name = user ? user.name : "";
     let roomName = currRoom ? currRoom.name : "";
@@ -25,6 +28,17 @@ const Room = () => {
     function updateRoom(patch) {
         socket.emit('update', { roomid, patch })
     }
+
+    useEffect(() => {
+        // const tmp = defaultCode[language];
+        // setCode(tmp);
+        let code = localStorage.getItem(roomid + language);
+        if (code === null || code === undefined || code == "") {
+            code = (defaultCode[language].snippet)
+        }
+        setCode(code);
+    }, [language])
+
 
     useEffect(() => {
         if (user === null || currRoom === null) {
@@ -51,7 +65,6 @@ const Room = () => {
             toast(msg, {
                 position: toast.POSITION.TOP_RIGHT
             });
-            console.log('room', room)
             setCode(room.code);
             setLanguage(room.language);
             setInput(room.input);
@@ -72,23 +85,37 @@ const Room = () => {
         })
 
         socket.on('update', ({ patch }) => {
-
             // i have no idea why code is empty at this point so i have to do this ugly hack
-            console.log('Editor Ref', EditorRef.current.editor.getValue())
+            // console.log('Editor Ref', EditorRef.current.editor.getValue())
             code = EditorRef.current.editor.getValue();
             let [newCode, results] = dmp.patch_apply(patch, code);
             if (results[0] === true) {
+                const pos = EditorRef.current.editor.getCursorPosition();
+                let oldn = code.split('\n').length;
+                let newn = newCode.split('\n').length;
                 code = newCode;
                 setCode(newCode);
+                const newrow = pos.row + newn - oldn;
+                if (oldn != newn) {
+                    EditorRef.current.editor.gotoLine(newrow, pos.column);
+                }
+
             }
             else {
-                console.log('patch failed');
+                console.log('error applying patch')
+                socket.emit('getRoom', { roomid })
             }
+        })
+
+        socket.on('getRoom', ({ room }) => {
+            setCode(room.code);
+            setLanguage(room.language);
+            setInput(room.input);
+            setOutput(room.output);
         })
 
         socket.on('updateIO', ({ input, output, language }) => {
             // update IO
-            console.log('updateIO', input, output, language)
             setLanguage(language);
             setInput(input);
             setOutput(output);
@@ -105,7 +132,6 @@ const Room = () => {
     }, [])
 
     const IOEMIT = (a, b, c) => {
-        console.log('ioemit', a, b, c)
         socket.emit('updateIO', {
             roomid,
             input: a,

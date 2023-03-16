@@ -24,9 +24,22 @@ import 'ace-builds/src-noconflict/ext-language_tools';
 
 
 
-const Ace = (props) => {
+const Ace = ({
+    updateRoom,
+    code,
+    setCode,
+    language,
+    setLanguage,
+    roomName,
+    roomid,
+    EditorRef,
+    input,
+    setInput,
+    output,
+    setOutput,
+    IOEMIT
+}) => {
     const dmp = new diff_match_patch();
-    const { language, setLanguage, roomName, updateRoom, code, setCode, roomid, EditorRef, input, output, setInput, setOutput, IOEMIT } = props;
     const [theme, setTheme] = useState('monokai');
     const [fontSize, setFontSize] = useState(18);
     const [fontFamily, setFontFamily] = useState('monospace');
@@ -59,11 +72,12 @@ const Ace = (props) => {
     }, [code])
 
 
-    function handleChange(newValue) {
+    function handleChange(newValue, event) {
         const patch = dmp.patch_make(code, newValue);
+        code = newValue;
         updateRoom(patch);
         setCode(newValue)
-        console.log(code);
+        // console.log(code, newValue);
     }
 
     const run = async () => {
@@ -90,13 +104,15 @@ const Ace = (props) => {
     }
 
     const handleIOChange = (newValue) => {
-        console.log(newValue)
         setInput(newValue)
         IOEMIT(newValue, output, language)
     }
 
     function handleLangChange(e) {
+        // save this code in localsotrage in roomid
+        localStorage.setItem(roomid + language, code)
         setLanguage(e)
+
         IOEMIT(input, output, e)
     }
 
