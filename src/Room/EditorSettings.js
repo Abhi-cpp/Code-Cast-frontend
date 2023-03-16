@@ -45,7 +45,7 @@ const fontSizeOptions = [14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40]
 const Settings = (props) => {
 
 
-    const { setLanguage, setTheme, setFontSize, setFontFamily, language, theme, fontSize, fontFamily, roomName, updateRoom, code, run } = props;
+    const { setTheme, setFontSize, setFontFamily, language, theme, fontSize, fontFamily, roomName, run, handleLangChange } = props;
 
 
 
@@ -62,10 +62,7 @@ const Settings = (props) => {
                             labelId="language-selector-label"
                             id="language-selector"
                             value={language}
-                            onChange={(e) => {
-                                setLanguage(e.target.value)
-                                updateRoom(code, e.target.value)
-                            }}
+                            onChange={(e) => handleLangChange(e.target.value)}
                         >
                             {languageOptions.map((option) => (
                                 <MenuItem key={option.value} value={option.value}>
@@ -126,7 +123,7 @@ const Settings = (props) => {
                 </Toolbar>
             </AppBar>
 
-        </div>
+        </div >
     )
 
 }

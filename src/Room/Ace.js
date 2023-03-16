@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import AceEditor from 'react-ace';
 import axios from 'axios';
 import Settings from './EditorSettings.js';
-
+import { diff_match_patch } from 'diff-match-patch';
 import 'ace-builds/src-noconflict/mode-javascript'
 import 'ace-builds/src-noconflict/mode-java';
 import 'ace-builds/src-noconflict/mode-python';
@@ -23,13 +23,27 @@ import 'ace-builds/src-noconflict/theme-one_dark'
 import 'ace-builds/src-noconflict/ext-language_tools';
 
 
-const Ace = (props) => {
-    const { language, setLanguage, code, setCode, roomName, updateRoom, roomid } = props;
+
+const Ace = ({
+    updateRoom,
+    code,
+    setCode,
+    language,
+    setLanguage,
+    roomName,
+    roomid,
+    EditorRef,
+    input,
+    setInput,
+    output,
+    setOutput,
+    IOEMIT
+}) => {
+    const dmp = new diff_match_patch();
     const [theme, setTheme] = useState('monokai');
     const [fontSize, setFontSize] = useState(18);
     const [fontFamily, setFontFamily] = useState('monospace');
-    const [input, setInput] = useState('');
-    const [output, setOutput] = useState('');
+
 
     useEffect(() => {
         const sendData = setTimeout(() => {
@@ -58,14 +72,16 @@ const Ace = (props) => {
     }, [code])
 
 
-    function handleChange(newValue) {
-        setCode((newValue));
-        updateRoom(newValue, language);
+    function handleChange(newValue, event) {
+        const patch = dmp.patch_make(code, newValue);
+        code = newValue;
+        updateRoom(patch);
+        setCode(newValue)
+        // console.log(code, newValue);
     }
 
-
     const run = async () => {
-        axios({
+        await axios({
             url: process.env.REACT_APP_BACKEND_URL + 'code/execute',
             method: 'post',
             headers: {
@@ -78,16 +94,26 @@ const Ace = (props) => {
             }
         })
             .then((res) => {
-                if (res.data.output)
-                    setOutput(res.data.output)
-                else {
-                    const error = res.data.error;
-                    setOutput(error);
-                }
+                let result = res.data.output ? res.data.output : res.data.error;
+                setOutput(result)
+                IOEMIT(input, result, language)
             })
             .catch((err) => {
                 console.log("error from axios", err)
             })
+    }
+
+    const handleIOChange = (newValue) => {
+        setInput(newValue)
+        IOEMIT(newValue, output, language)
+    }
+
+    function handleLangChange(e) {
+        // save this code in localsotrage in roomid
+        localStorage.setItem(roomid + language, code)
+        setLanguage(e)
+
+        IOEMIT(input, output, e)
     }
 
     return (
@@ -104,7 +130,7 @@ const Ace = (props) => {
                 roomName={roomName}
                 updateRoom={updateRoom}
                 run={run}
-                code={code}
+                handleLangChange={handleLangChange}
             />
             <div style={{ display: 'flex', flexDirection: 'row' }}>
                 <div style={{ flex: 1 }}>
@@ -123,9 +149,12 @@ const Ace = (props) => {
                         theme={theme}
                         name="ACE_EDITOR"
                         value={code}
-                        fontSize={14}
+                        fontSize={18}
                         height='100vh'
                         width='50vw'
+                        defaultValue=''
+                        ref={EditorRef}
+                        editorProps={{ $blockScrolling: true }}
                     />
                 </div>
                 <div style={{ flex: 1 }}>
@@ -135,7 +164,7 @@ const Ace = (props) => {
                             theme={theme}
                             language={''}
                             value={input}
-                            onChange={setInput}
+                            onChange={handleIOChange}
                             height={'48vh'}
                             width={'35vw'}
                             fontSize={fontSize}
