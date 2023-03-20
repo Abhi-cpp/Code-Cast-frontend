@@ -3,6 +3,7 @@ import {
     AppBar, Toolbar, IconButton, Typography,
     FormControl, InputLabel, Select, MenuItem
 } from "@mui/material";
+import defaultCode from './../static/default_code.json'
 
 const languageOptions = [
     { value: 'javascript', label: 'JavaScript' },
@@ -42,12 +43,20 @@ const fontFamilyOptions = [
 const fontSizeOptions = [14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40];
 
 
-const Settings = (props) => {
+const Settings = ({
+    setLanguage,
+    setTheme,
+    setFontSize,
+    setFontFamily,
+    language,
+    theme,
+    fontSize,
+    fontFamily,
+    roomName,
+    run,
+    handleLangChange
 
-
-    const { setTheme, setFontSize, setFontFamily, language, theme, fontSize, fontFamily, roomName, run, handleLangChange } = props;
-
-
+}) => {
 
     return (
         <div className="editor-settings">

@@ -37,7 +37,7 @@ const Ace = ({
     setInput,
     output,
     setOutput,
-    IOEMIT
+    IOEMIT,
 }) => {
     const dmp = new diff_match_patch();
     const [theme, setTheme] = useState('monokai');
@@ -62,6 +62,7 @@ const Ace = ({
                 }
             })
                 .then((res) => {
+                    console.log("patched successfully",res)
                 })
                 .catch((err) => {
                     console.log("error from axios", err)
@@ -110,9 +111,7 @@ const Ace = ({
 
     function handleLangChange(e) {
         // save this code in localsotrage in roomid
-        localStorage.setItem(roomid + language, code)
         setLanguage(e)
-
         IOEMIT(input, output, e)
     }
 

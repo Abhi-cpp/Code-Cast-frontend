@@ -5,6 +5,15 @@ import PacmanLoader from "react-spinners/PacmanLoader";
 import { DataContext } from "./DataContext";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
 
 const override = {
     display: 'block',
@@ -158,37 +167,38 @@ const RoomData = () => {
                     <input id="roomID" placeholder="Enter Room ID to join" />
                     <button onClick={joinRoom} >Join Room</button>
                 </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Room ID</th>
-                            <th>Language</th>
-                            <th>Last Used</th>
-                            <th>Action</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {user.rooms.map((item, index) => (
-                            <tr key={index}>
-                                <td>{item.name}</td>
-                                <td>{item.roomid}</td>
-                                <td>{item.language}</td>
-                                <td>{item.updatedAt}</td>
-                                <td>
-                                    <button onClick={() => getData(item)}>
-                                        Get data
-                                    </button>
-                                </td>
-                                <td>
-                                    <button onClick={deleteData(item)}>Delete</button>
-
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                <TableContainer component={Paper}>
+                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Name</TableCell>
+                                <TableCell align="right">Room ID</TableCell>
+                                <TableCell align="right">Language</TableCell>
+                                <TableCell align="right">Last Used</TableCell>
+                                <TableCell align="right">Join Room</TableCell>
+                                <TableCell align="right">Delete Room</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {user.rooms.map((item, index) => (
+                                <TableRow
+                                    key={index}
+                                >
+                                    <TableCell component="th" scope="row">{item.name}</TableCell>
+                                    <TableCell align="right">{item.roomid}</TableCell>
+                                    <TableCell align="right">{item.language}</TableCell>
+                                    <TableCell align="right">{item.updatedAt}</TableCell>
+                                    <TableCell align="right">
+                                        <Button size="20px" variant="outlined" onClick={() => getData(item)}>Join Room</Button>
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        <Button variant="outlined" onClick={deleteData(item)}>Delete Room</Button>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
                 <ToastContainer />
             </div>
             )}
