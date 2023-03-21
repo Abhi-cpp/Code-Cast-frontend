@@ -6,6 +6,7 @@
 
 body {
   height: 100vh;
+  width: 100vw;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -17,7 +18,7 @@ body {
   padding: 2rem;
   text-align: center;
 
-  .logOut {
+  >.logOut {
     position: absolute;
     top: 1rem;
     right: 1rem;
@@ -26,6 +27,10 @@ body {
     padding: 1rem;
     border-radius: 10px;
     transition: 0.3s ease-in-out;
+
+    &.active {
+      width: 100%;
+    }
 
     &:hover {
       background-color: #000;
@@ -76,27 +81,105 @@ body {
   }
 
   table {
-    width: 100%;
-    border-collapse: collapse;
-    border: 1px solid #000;
-    margin-bottom: 2rem;
-    font-family: sans-serif;
+    width: 95vw;
 
-    th,
-    td {
-      border: 1px solid #000;
-      padding: 1rem;
+    tr {
+      height: 100px;
+      width: 100%;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+
+      th {
+        color: black;
+        font-weight: bold;
+        font-family: sans-serif;
+        font-size: 1.5rem;
+        border-radius: 5px;
+        min-width: 200px;
+        text-align: center;
+      }
+
+      td {
+        color: rgba($color: #333, $alpha: 1);
+        border-radius: 5px;
+        font-size: 1.2rem;
+        text-align: center;
+      }
     }
+
+
+
+    button {
+      font-size: 1.2rem;
+      padding: 0.5rem 0.7rem;
+      background-color: #fff;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+      border-radius: 5px;
+      border: 1px solid transparent;
+      box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.5);
+
+      &:hover {
+        background-color: #000;
+        color: #fff;
+      }
+
+      &.delete-btn {
+        background-color: #ffd7d7;
+        color: #000000;
+
+        &:hover {
+          background-color: rgb(255, 55, 0);
+          color: #fff;
+        }
+
+      }
+
+      &.join-btn {
+        background-color: #dbf7db;
+        color: #000000;
+
+        &:hover {
+          background-color: #31b931;
+          color: #fff;
+        }
+      }
+    }
+
   }
+
 }
 
 .room {
-  display: flex;
+
   justify-content: center;
   align-items: center;
   position: relative;
   height: 100vh;
-  padding-top: 50px;
+  padding-top: 0px;
+
+  .inRoom {
+    display: flex;
+    padding: 1rem;
+    justify-content: space-between;
+    padding-top: 10px;
+
+    #LeaveRoom {
+      align-items: end;
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 0.7rem;
+      border: 0px solid transparent;
+      border-radius: 5px;
+      transition: all 0.3s ease-in-out;
+      background-color: #fdb7b7;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      &:hover {
+        background-color: #e23e3e;
+        color: #fff;
+      }
+
+    }
+  }
 
   #editor {
     height: 100%;
@@ -162,11 +245,4 @@ body {
     }
   }
 
-  #video-chat {
-    height: 100%;
-    width: 30vw;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
 }

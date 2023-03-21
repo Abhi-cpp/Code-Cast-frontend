@@ -5,15 +5,6 @@ import PacmanLoader from "react-spinners/PacmanLoader";
 import { DataContext } from "./DataContext";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
 
 const override = {
     display: 'block',
@@ -150,6 +141,23 @@ const RoomData = () => {
             });
     }
 
+    useEffect(() => {
+
+        if (user && !user.rooms.every(room => !room.updatedAt.includes("T"))) {
+            user.rooms.forEach((item) => {
+                let temp = item.updatedAt.replace('T', ' ').split(":");
+                temp.pop();
+                item.updatedAt = temp.join(":")
+            })
+            user.rooms.sort((a, b) => {
+                return new Date(b.updatedAt) - new Date(a.updatedAt);
+            })
+
+            setUser({ ...user })
+        }
+
+    }, [user])
+
     return (
         <div> {isLoading === true ? (<PacmanLoader color="#36D7B7"
             size={150}
@@ -167,38 +175,31 @@ const RoomData = () => {
                     <input id="roomID" placeholder="Enter Room ID to join" />
                     <button onClick={joinRoom} >Join Room</button>
                 </div>
-                <TableContainer component={Paper}>
-                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Name</TableCell>
-                                <TableCell align="right">Room ID</TableCell>
-                                <TableCell align="right">Language</TableCell>
-                                <TableCell align="right">Last Used</TableCell>
-                                <TableCell align="right">Join Room</TableCell>
-                                <TableCell align="right">Delete Room</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {user.rooms.map((item, index) => (
-                                <TableRow
-                                    key={index}
-                                >
-                                    <TableCell component="th" scope="row">{item.name}</TableCell>
-                                    <TableCell align="right">{item.roomid}</TableCell>
-                                    <TableCell align="right">{item.language}</TableCell>
-                                    <TableCell align="right">{item.updatedAt}</TableCell>
-                                    <TableCell align="right">
-                                        <Button size="20px" variant="outlined" onClick={() => getData(item)}>Join Room</Button>
-                                    </TableCell>
-                                    <TableCell align="right">
-                                        <Button variant="outlined" onClick={deleteData(item)}>Delete Room</Button>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                <table sx={{ minWidth: 650 }} aria-label="simple table">
+                    <tr>
+                        <th>Name</th>
+                        <th align="right">Room ID</th>
+                        <th align="right">Language</th>
+                        <th align="right">Last Used</th>
+                        <th align="right">Join Room</th>
+                        <th align="right">Delete Room</th>
+
+                    </tr>
+                    {user.rooms.map((item, index) => (
+                        <tr key={index}>
+                            <td component="th" scope="row">{item.name}</td>
+                            <td align="right">{item.roomid}</td>
+                            <td align="right">{item.language}</td>
+                            <td align="right">{item.updatedAt}</td>
+                            <td align="right">
+                                <button className="join-btn" onClick={() => getData(item)}>Join Room</button>
+                            </td>
+                            <td align="right">
+                                <button className="delete-btn" onClick={deleteData(item)}>Delete Room</button>
+                            </td>
+                        </tr>
+                    ))}
+                </table>
                 <ToastContainer />
             </div>
             )}

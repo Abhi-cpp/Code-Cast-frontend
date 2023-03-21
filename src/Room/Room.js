@@ -8,6 +8,8 @@ import { diff_match_patch } from 'diff-match-patch';
 import defaultCode from './../static/default_code.json';
 import Avatar from '@mui/material/Avatar';
 import Stack from '@mui/material/Stack';
+import axios from 'axios';
+import { Typography } from '@mui/material';
 
 
 const dmp = new diff_match_patch();
@@ -23,7 +25,7 @@ const Room = () => {
     const [input, setInput] = useState('');
     const [output, setOutput] = useState('');
     const [inRoomUsers, setInRoomUsers] = useState([]);
-
+    const [running, setRunning] = useState(false);
 
     const EditorRef = useRef(null);
 
@@ -31,6 +33,8 @@ const Room = () => {
     function updateRoom(patch) {
         socket.emit('update', { roomid, patch })
     }
+
+
 
 
     useEffect(() => {
@@ -120,7 +124,6 @@ const Room = () => {
                     if (oldn != newn) {
                         EditorRef.current.editor.gotoLine(newrow, pos.column);
                     }
-
                 }
                 else {
                     console.log('error applying patch')
@@ -164,6 +167,35 @@ const Room = () => {
         })
     }
 
+    const run = async () => {
+        setRunning(true);
+        const id = toast.loading("Compiling...")
+        await axios({
+            url: process.env.REACT_APP_BACKEND_URL + 'code/execute',
+            method: 'post',
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('user')}`
+            },
+            data: {
+                code,
+                input,
+                language
+            }
+        })
+            .then((res) => {
+                toast.update(id, { render: "Compiled successfully", type: "success", isLoading: false, autoClose: 1000 });
+                setRunning(false);
+                let result = res.data.output ? res.data.output : res.data.error;
+                setOutput(result)
+                IOEMIT(input, result, language)
+            })
+            .catch((err) => {
+                toast.update(id, { render: "Compilation failed", type: "error", isLoading: false, autoClose: 1500 });
+                setRunning(false);
+                console.log("error from axios", err)
+            })
+    }
+
 
     async function leaveRoom() {
         socket.emit('leave', { roomid });
@@ -171,13 +203,22 @@ const Room = () => {
         navigate('/');
     }
 
+    if (currRoom && user) {
+        return (
+            <div className='room'>
+                <div className='inRoom' >
 
-
-    return (
-        <div className="room">
-            {(currRoom && user) ? (
-                <div>
-                    <br />
+                    <Stack alignContent="right" direction="row" spacing={2}>
+                        <Typography variant="h5" component="h2" align="right">
+                            Users in room:
+                        </Typography>
+                        {inRoomUsers.map((user) => (
+                            <Avatar key={user.id} alt={user.name} src={user.avatar} />
+                        ))}
+                    </Stack>
+                    <button id='LeaveRoom' onClick={leaveRoom}>Leave Room</button>
+                </div>
+                <div className='room__editor'>
                     <Ace
                         updateRoom={updateRoom}
                         code={code}
@@ -192,22 +233,17 @@ const Room = () => {
                         output={output}
                         setOutput={setOutput}
                         IOEMIT={IOEMIT}
+                        run={run}
+                        running={running}
                     />
-                    <br />
-                    <button onClick={leaveRoom}>Leave Room</button>
-                    <Stack direction="row" spacing={2}>
-                        {inRoomUsers.map((user) => (
-                            <Avatar key={user.id} alt={user.name} src={user.avatar} />
-                        ))}
-                    </Stack>
                 </div>
-            ) :
-                null
-            }
-            <ToastContainer />
-        </div>
+                <ToastContainer />
+            </div>
+        )
+    }
 
-    )
+    else return (null);
+
 }
 
 

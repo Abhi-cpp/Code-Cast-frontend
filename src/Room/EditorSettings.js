@@ -3,7 +3,6 @@ import {
     AppBar, Toolbar, IconButton, Typography,
     FormControl, InputLabel, Select, MenuItem
 } from "@mui/material";
-import defaultCode from './../static/default_code.json'
 
 const languageOptions = [
     { value: 'javascript', label: 'JavaScript' },
@@ -44,7 +43,6 @@ const fontSizeOptions = [14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40]
 
 
 const Settings = ({
-    setLanguage,
     setTheme,
     setFontSize,
     setFontFamily,
@@ -54,7 +52,9 @@ const Settings = ({
     fontFamily,
     roomName,
     run,
-    handleLangChange
+    handleLangChange,
+    roomid,
+    running
 
 }) => {
 
@@ -63,7 +63,7 @@ const Settings = ({
             <AppBar position='Static' style={{ minHeight: 70 }} >
                 <Toolbar>
                     <Typography variant="h5" style={{ flexGrow: 5 }}>
-                        {roomName}
+                        {roomName}{'\n' + roomid}
                     </Typography>
                     <FormControl style={{ minWidth: 100, maxHeight: 40, marginRight: "16px" }}>
                         <InputLabel id="language-selector-label">Language</InputLabel>
@@ -126,7 +126,9 @@ const Settings = ({
                         </Select>
                     </FormControl>
 
-                    <IconButton color="inherit" style={{ marginL: '10px', maxHeight: 40 }} onClick={run}>
+                    <IconButton
+                        {...{ disabled: running }}
+                        color="inherit" style={{ marginL: '10px', maxHeight: 40 }} onClick={run}>
                         <PlayArrowIcon />
                     </IconButton>
                 </Toolbar>

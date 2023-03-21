@@ -36,8 +36,9 @@ const Ace = ({
     input,
     setInput,
     output,
-    setOutput,
     IOEMIT,
+    running,
+    run
 }) => {
     const dmp = new diff_match_patch();
     const [theme, setTheme] = useState('monokai');
@@ -62,7 +63,7 @@ const Ace = ({
                 }
             })
                 .then((res) => {
-                    console.log("patched successfully",res)
+                    console.log("patched successfully", res)
                 })
                 .catch((err) => {
                     console.log("error from axios", err)
@@ -81,28 +82,7 @@ const Ace = ({
         // console.log(code, newValue);
     }
 
-    const run = async () => {
-        await axios({
-            url: process.env.REACT_APP_BACKEND_URL + 'code/execute',
-            method: 'post',
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem('user')}`
-            },
-            data: {
-                code,
-                input,
-                language
-            }
-        })
-            .then((res) => {
-                let result = res.data.output ? res.data.output : res.data.error;
-                setOutput(result)
-                IOEMIT(input, result, language)
-            })
-            .catch((err) => {
-                console.log("error from axios", err)
-            })
-    }
+
 
     const handleIOChange = (newValue) => {
         setInput(newValue)
@@ -130,6 +110,8 @@ const Ace = ({
                 updateRoom={updateRoom}
                 run={run}
                 handleLangChange={handleLangChange}
+                roomid={roomid}
+                running={running}
             />
             <div style={{ display: 'flex', flexDirection: 'row' }}>
                 <div style={{ flex: 1 }}>
@@ -149,7 +131,7 @@ const Ace = ({
                         name="ACE_EDITOR"
                         value={code}
                         fontSize={18}
-                        height='100vh'
+                        height='85vh'
                         width='50vw'
                         defaultValue=''
                         ref={EditorRef}
@@ -164,7 +146,7 @@ const Ace = ({
                             language={''}
                             value={input}
                             onChange={handleIOChange}
-                            height={'48vh'}
+                            height={'42vh'}
                             width={'35vw'}
                             fontSize={fontSize}
                         />
@@ -176,7 +158,7 @@ const Ace = ({
                             language={''}
                             value={output}
                             readOnly={true}
-                            height={'48vh'}
+                            height={'42vh'}
                             width={'35vw'}
                             fontSize={fontSize}
                         />
