@@ -11,6 +11,7 @@ const languageOptions = [
     { value: 'c_cpp', label: 'C/C++' },
     { value: 'golang', label: 'Go' },
     { value: 'csharp', label: 'C#' },
+    { value: 'rust', label: 'Rust' }
 ];
 
 const themeOptions = [

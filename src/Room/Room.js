@@ -10,6 +10,7 @@ import Avatar from '@mui/material/Avatar';
 import Stack from '@mui/material/Stack';
 import axios from 'axios';
 import { Typography } from '@mui/material';
+import VideoChat from './VideoChat';
 
 
 const dmp = new diff_match_patch();
@@ -26,16 +27,11 @@ const Room = () => {
     const [output, setOutput] = useState('');
     const [inRoomUsers, setInRoomUsers] = useState([]);
     const [running, setRunning] = useState(false);
-
     const EditorRef = useRef(null);
-
 
     function updateRoom(patch) {
         socket.emit('update', { roomid, patch })
     }
-
-
-
 
     useEffect(() => {
         if (user === null || currRoom === null) {
@@ -71,11 +67,14 @@ const Room = () => {
             setInRoomUsers(room.users);
             socket.off('join')
         })
+
         return () => {
             socket.off();
         }
 
     }, [])
+
+
 
     // if socket is connected then emit updateIO
     if (socket.connected) {
@@ -218,7 +217,15 @@ const Room = () => {
                     </Stack>
                     <button id='LeaveRoom' onClick={leaveRoom}>Leave Room</button>
                 </div>
-                <div className='room__editor'>
+
+
+                <VideoChat
+                    socket={socket}
+                    roomid={roomid}
+                />
+
+
+                {/* <div className='room__editor'>
                     <Ace
                         updateRoom={updateRoom}
                         code={code}
@@ -236,7 +243,7 @@ const Room = () => {
                         run={run}
                         running={running}
                     />
-                </div>
+                </div> */}
                 <ToastContainer />
             </div>
         )
