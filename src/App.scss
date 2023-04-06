@@ -163,7 +163,7 @@ body {
     // justify-content: space-between;
     justify-content: left;
     align-items: left;
-    
+
 
     #LeaveRoom {
       margin-left: 10px;
@@ -191,10 +191,11 @@ body {
     justify-content: space-between;
     align-items: center;
     flex-direction: row;
-    width: 98%;
+    width: 96%;
     height: 60vh;
     // padding: 1rem;
-    padding-top: 75px;
+    padding-top: 100px;
+    position: static;
 
     #Video_chat {
       display: flex;
