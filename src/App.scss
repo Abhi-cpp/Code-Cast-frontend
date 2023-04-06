@@ -150,20 +150,24 @@ body {
 }
 
 .room {
-
   justify-content: center;
   align-items: center;
   position: relative;
-  height: 100vh;
-  padding-top: 0px;
+  height: 95vh;
+  padding: 0;
 
   .inRoom {
+    width: 90%;
     display: flex;
-    padding: 1rem;
-    justify-content: space-between;
-    padding-top: 10px;
+    padding-bottom: 4rem;
+    // justify-content: space-between;
+    justify-content: left;
+    align-items: left;
+    
 
     #LeaveRoom {
+      margin-left: 10px;
+      display: inline;
       align-items: end;
       cursor: pointer;
       font-size: 1rem;
@@ -173,6 +177,7 @@ body {
       transition: all 0.3s ease-in-out;
       background-color: #fdb7b7;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
       &:hover {
         background-color: #e23e3e;
         color: #fff;
@@ -181,68 +186,88 @@ body {
     }
   }
 
-  #editor {
-    height: 100%;
-    width: 70vw;
-    position: relative;
+  #content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
+    width: 98%;
+    height: 60vh;
+    // padding: 1rem;
+    padding-top: 75px;
 
-    #input,
-    #output {
-      position: absolute;
-      height: 35px;
-      width: 50%;
-      left: 0;
-      bottom: 0;
-      border: 1px solid black;
-      transition: all 0.3s ease-in-out;
-      overflow: hidden;
+    #Video_chat {
       display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
+      width: 25%;
 
-      section {
-        height: 0 !important;
-        transition: all 0.3s ease-in-out;
+      video {
+        display: flex;
+        justify-content: left;
+        align-items: top;
+        width: 100%;
+        // height: 100%;
+        padding: 5px;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
       }
 
-      &.active {
-        height: 235px;
+      .active {
+        background-color: greenyellow;
 
-        section {
-          height: 200px !important;
+        &:hover {
+          background-color: greenyellow;
+          color: black;
         }
       }
+
 
       button {
-        width: 100%;
-        padding: 0.5rem;
+        margin: auto;
+        display: inline;
+        align-items: end;
         cursor: pointer;
-        background-color: #1e1e1e;
-        color: white;
-        border-bottom: 1px solid white;
-      }
-    }
-
-    #output {
-      left: 50%;
-
-      #output-box {
+        font-size: 0.7rem;
+        padding: 0.3rem;
+        border: 0px solid transparent;
+        border-radius: 3px;
         transition: all 0.3s ease-in-out;
-        height: 0;
-      }
+        background-color: #fdb7b7;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 
-      &.active {
-        #output-box {
-          height: 100%;
-          width: 100%;
-          color: white;
-          font-family: monospace;
-          padding: 10px;
-          word-wrap: normal;
+        &:hover {
+          background-color: #e23e3e;
+          color: #fff;
         }
       }
     }
+
+    #_edtor {
+      width: 65%;
+      border-radius: 0px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      display: block;
+
+      #editor {
+        display: block;
+        width: auto;
+        // width: 100%;
+        // height: 100%;
+        border-radius: 10px;
+        border: 0px solid transparent;
+        padding: 1rem;
+        font-size: 1.2rem;
+        font-family: sans-serif;
+        outline: none;
+      }
+
+      #_ace {
+        display: flex;
+        flex-direction: row;
+      }
+
+    }
   }
+
+
 
 }

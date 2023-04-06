@@ -38,6 +38,17 @@ const VideoChat = ({ socket, roomid }) => {
         peerInstance.current = peer;
     }, [])
 
+    useEffect(() => {
+        if (currentUserVideoRef.current) {
+            currentUserVideoRef.current.srcObject.getVideoTracks()[0].enabled = video;
+        }
+    }, [video])
+
+    useEffect(() => {
+        if (currentUserVideoRef.current) {
+            currentUserVideoRef.current.srcObject.getAudioTracks()[0].enabled = audio;
+        }
+    }, [audio])
 
     // mute video audio or stop video
     const muteVideo = () => {
@@ -81,24 +92,23 @@ const VideoChat = ({ socket, roomid }) => {
 
     return (
         <div className="App">
-            <h1>Current user id is {peerId}</h1>
-            <button onClick={muteVideo}>Mute Video</button>
-            <button onClick={muteAudio}>Mute Audio</button>
-            <button onClick={stopVideo}>Stop Video</button>
-            {screen ? <> <div>
-                <video ref={currentUserVideoRef} muted />
+            {screen ? (<> <div>
+                <video ref={remoteVideoRef} />
             </div>
                 <div>
-                    <video ref={remoteVideoRef} />
-                </div></> : <button onClick={() => {
-                    socket.emit('Id', { roomid, peerId })
-                    setScreen(true);
-                }}>Call</button>
+                    <video ref={currentUserVideoRef} muted />
+                </div></>) :
+
+                peerId ?
+                    (<button onClick={() => {
+                        socket.emit('Id', { roomid, peerId })
+                        setScreen(true);
+                    }}>Call</button>) : <h1>Loading</h1>
             }
-
-
-
-        </div>
+            <button className={video ? "" : "active"} style={{ margin: "10px" }} onClick={muteVideo}>Mute Video</button>
+            <button className={audio ? "" : "active"} style={{ margin: "10px" }} onClick={muteAudio}>Mute Audio</button>
+            {/* <button style={{ margin: "10px" }} onClick={stopVideo}>Stop Video</button> */}
+        </div >
     );
 };
 

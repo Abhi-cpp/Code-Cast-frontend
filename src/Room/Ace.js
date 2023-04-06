@@ -98,7 +98,7 @@ const Ace = ({
     }
 
     return (
-        <div className="editor">
+        <div id="editor">
             <Settings
                 setLanguage={setLanguage}
                 setTheme={setTheme}
@@ -115,8 +115,8 @@ const Ace = ({
                 roomid={roomid}
                 running={running}
             />
-            <div style={{ display: 'flex', flexDirection: 'row' }}>
-                <div style={{ flex: 1 }}>
+            <div id='_ace' style={{ display: 'flex', flexDirection: 'row' }}>
+                <div>
                     <AceEditor
                         setOptions={{
                             useWorker: false,
@@ -133,8 +133,8 @@ const Ace = ({
                         name="ACE_EDITOR"
                         value={code}
                         fontSize={18}
-                        height='85vh'
-                        width='50vw'
+                        height='80vh'
+                        width='40vw'
                         defaultValue=''
                         ref={EditorRef}
                         editorProps={{ $blockScrolling: true }}
@@ -148,8 +148,8 @@ const Ace = ({
                             language={''}
                             value={input}
                             onChange={handleIOChange}
-                            height={'42vh'}
-                            width={'35vw'}
+                            height={'38vh'}
+                            width={'30vw'}
                             fontSize={fontSize}
                         />
                     </div>
@@ -160,8 +160,8 @@ const Ace = ({
                             language={''}
                             value={output}
                             readOnly={true}
-                            height={'42vh'}
-                            width={'35vw'}
+                            height={'38vh'}
+                            width={'30vw'}
                             fontSize={fontSize}
                         />
                     </div>

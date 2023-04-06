@@ -129,16 +129,19 @@ body {
   justify-content: center;
   align-items: center;
   position: relative;
-  height: 100vh;
-  padding-top: 0px;
+  height: 95vh;
+  padding: 0;
 }
 .room .inRoom {
+  width: 90%;
   display: flex;
-  padding: 1rem;
-  justify-content: space-between;
-  padding-top: 10px;
+  padding-bottom: 4rem;
+  justify-content: left;
+  align-items: left;
 }
 .room .inRoom #LeaveRoom {
+  margin-left: 10px;
+  display: inline;
   align-items: end;
   cursor: pointer;
   font-size: 1rem;
@@ -153,60 +156,69 @@ body {
   background-color: #e23e3e;
   color: #fff;
 }
-.room #editor {
-  height: 100%;
-  width: 70vw;
-  position: relative;
-}
-.room #editor #input,
-.room #editor #output {
-  position: absolute;
-  height: 35px;
-  width: 50%;
-  left: 0;
-  bottom: 0;
-  border: 1px solid black;
-  transition: all 0.3s ease-in-out;
-  overflow: hidden;
+.room #content {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  flex-direction: column;
+  flex-direction: row;
+  width: 98%;
+  height: 60vh;
+  padding-top: 75px;
 }
-.room #editor #input section,
-.room #editor #output section {
-  height: 0 !important;
-  transition: all 0.3s ease-in-out;
+.room #content #Video_chat {
+  display: flex;
+  width: 25%;
 }
-.room #editor #input.active,
-.room #editor #output.active {
-  height: 235px;
-}
-.room #editor #input.active section,
-.room #editor #output.active section {
-  height: 200px !important;
-}
-.room #editor #input button,
-.room #editor #output button {
+.room #content #Video_chat video {
+  display: flex;
+  justify-content: left;
+  align-items: top;
   width: 100%;
-  padding: 0.5rem;
+  padding: 5px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+.room #content #Video_chat .active {
+  background-color: greenyellow;
+}
+.room #content #Video_chat .active:hover {
+  background-color: greenyellow;
+  color: black;
+}
+.room #content #Video_chat button {
+  margin: auto;
+  display: inline;
+  align-items: end;
   cursor: pointer;
-  background-color: #1e1e1e;
-  color: white;
-  border-bottom: 1px solid white;
-}
-.room #editor #output {
-  left: 50%;
-}
-.room #editor #output #output-box {
+  font-size: 0.7rem;
+  padding: 0.3rem;
+  border: 0px solid transparent;
+  border-radius: 3px;
   transition: all 0.3s ease-in-out;
-  height: 0;
+  background-color: #fdb7b7;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
-.room #editor #output.active #output-box {
-  height: 100%;
-  width: 100%;
-  color: white;
-  font-family: monospace;
-  padding: 10px;
-  word-wrap: normal;
+.room #content #Video_chat button:hover {
+  background-color: #e23e3e;
+  color: #fff;
+}
+.room #content #_edtor {
+  width: 65%;
+  border-radius: 0px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  display: block;
+}
+.room #content #_edtor #editor {
+  display: block;
+  width: auto;
+  border-radius: 10px;
+  border: 0px solid transparent;
+  padding: 1rem;
+  font-size: 1.2rem;
+  font-family: sans-serif;
+  outline: none;
+}
+.room #content #_edtor #_ace {
+  display: flex;
+  flex-direction: row;
 }/*# sourceMappingURL=App.css.map */

@@ -11,7 +11,7 @@ import Stack from '@mui/material/Stack';
 import axios from 'axios';
 import { Typography } from '@mui/material';
 import VideoChat from './VideoChat';
-
+import Whiteboard from './WhiteBoard';
 
 const dmp = new diff_match_patch();
 
@@ -218,32 +218,34 @@ const Room = () => {
                     <button id='LeaveRoom' onClick={leaveRoom}>Leave Room</button>
                 </div>
 
+                <div id='content'>
+                    <span id='Video_chat'>
+                        <VideoChat
+                            socket={socket}
+                            roomid={roomid}
+                        />
+                    </span>
 
-                <VideoChat
-                    socket={socket}
-                    roomid={roomid}
-                />
-
-
-                {/* <div className='room__editor'>
-                    <Ace
-                        updateRoom={updateRoom}
-                        code={code}
-                        setCode={setCode}
-                        language={language}
-                        setLanguage={setLanguage}
-                        roomName={roomName}
-                        roomid={roomid}
-                        EditorRef={EditorRef}
-                        input={input}
-                        setInput={setInput}
-                        output={output}
-                        setOutput={setOutput}
-                        IOEMIT={IOEMIT}
-                        run={run}
-                        running={running}
-                    />
-                </div> */}
+                    <span id='_editor'>
+                        <Ace
+                            updateRoom={updateRoom}
+                            code={code}
+                            setCode={setCode}
+                            language={language}
+                            setLanguage={setLanguage}
+                            roomName={roomName}
+                            roomid={roomid}
+                            EditorRef={EditorRef}
+                            input={input}
+                            setInput={setInput}
+                            output={output}
+                            setOutput={setOutput}
+                            IOEMIT={IOEMIT}
+                            run={run}
+                            running={running}
+                        />
+                    </span>
+                </div>
                 <ToastContainer />
             </div>
         )
