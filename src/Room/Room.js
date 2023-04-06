@@ -12,7 +12,7 @@ import axios from 'axios';
 import { Typography } from '@mui/material';
 import VideoChat from './VideoChat';
 import Whiteboard from './WhiteBoard';
-
+import Board from './board';
 const dmp = new diff_match_patch();
 
 const Room = () => {
@@ -28,7 +28,7 @@ const Room = () => {
     const [inRoomUsers, setInRoomUsers] = useState([]);
     const [running, setRunning] = useState(false);
     const EditorRef = useRef(null);
-
+    const [isWhiteBoard, setIsWhiteBoard] = useState(false);
     function updateRoom(patch) {
         socket.emit('update', { roomid, patch })
     }
@@ -205,8 +205,7 @@ const Room = () => {
     if (currRoom && user) {
         return (
             <div className='room'>
-                <div className='inRoom' >
-
+                <div className='inRoom' id={isWhiteBoard ? "forBoard" : ""} >
                     <Stack alignContent="right" direction="row" spacing={2}>
                         <Typography variant="h5" component="h2" align="right">
                             Users in room:
@@ -216,9 +215,15 @@ const Room = () => {
                         ))}
                     </Stack>
                     <button id='LeaveRoom' onClick={leaveRoom}>Leave Room</button>
+                    <button id='WhiteBoard' onClick={() => setIsWhiteBoard(!isWhiteBoard)}> {isWhiteBoard ? "Editor" : "WhiteBoard"}</button>
                 </div>
 
-                <div id='content'>
+                <div id={isWhiteBoard ? "" : "hide"} class="board">
+                    <Board
+                        socket={socket}
+                        roomid={roomid} />
+                </div>
+                <div id={isWhiteBoard ? 'hide' : 'content'} >
                     <span id='Video_chat'>
                         <VideoChat
                             socket={socket}
@@ -246,8 +251,12 @@ const Room = () => {
                         />
                     </span>
                 </div>
+
+
+
+
                 <ToastContainer />
-            </div>
+            </div >
         )
     }
 

@@ -166,7 +166,7 @@ const RoomData = () => {
             (<div className="room-data">
                 <button onClick={logout} className="logOut">Logout</button>
                 <div className="userData">
-                    <img src={user.avatar} alt='user profile' />
+                    <img src={user.avatar} alt='user profile'/>
                     <h1>Welcome {user.name}</h1>
                 </div>
                 <div className="join-room">
