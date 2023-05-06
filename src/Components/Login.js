@@ -46,9 +46,46 @@ function Login() {
                 setUser(null);
                 console.log("error in axios jwt call", error);
             });
+        } else {
+            const boxes = document.querySelectorAll("#login-form form label");
+            boxes.forEach((box) => {
+                console.log(box.textContent);
+                box.innerHTML = box.textContent
+                    .split("")
+                    .map((letter, index) => `<span style="transition-delay : ${index * 0.1}s">${letter}</span>`)
+                    .join("");
+                console.log(box.textContent, box.innerHTML);
+            });
+
+            const inputs = document.querySelectorAll("#login-form form input:not([type='submit])");
+            inputs.forEach(input => {
+                input.addEventListener("focus", () => {
+                    input.previousElementSibling.classList.add("active");
+                });
+
+                input.addEventListener("blur", () => {
+                    if (input.value === "") {
+                        input.previousElementSibling.classList.remove("active");
+                    }
+                });
+            })
+
+            // const text = box.textContent;
+            // box.innerHTML = text
+            //   .split("")
+            //   .map((letter) => `<span>letter</span>`)
+            //   .join("");
+
+            // const letters = document.querySelectorAll(".welcome span");
+            // const spaces = [...letters].filter((letter) => letter.innerHTML === " ");
+            // spaces.forEach((space) => {
+            //   space.innerHTML = "&nbsp";
+            // });
         }
 
     }, []);
+
+
 
     const onSuccess = (credentialResponse) => {
         console.log(credentialResponse)
@@ -73,21 +110,30 @@ function Login() {
             cssOverride={override}
         />) : (
             user == null ? (
-                <GoogleOAuthProvider clientId={clientId}>
-                    <GoogleLogin
-                        onSuccess={credentialResponse => {
-                            onSuccess(credentialResponse);
-                        }}
-                        onError={() => {
-                            console.log('Login Failed');
-                        }}
-                        useOneTap
-                    />
-                </GoogleOAuthProvider>
+                <div id="login-form">
+                    <h1>Code Cast</h1>
+                    <form>
+                        <label htmlFor="email">Email</label>
+                        <input type="email" id="email" name="email" />
+                        <label htmlFor="password">Password</label>
+                        <input type="password" id="password" name="password" />
+                        <input type="submit" value="Submit" />
+                    </form>
+                    <GoogleOAuthProvider clientId={clientId}>
+                        <GoogleLogin id="googlelogin"
+                            onSuccess={credentialResponse => {
+                                onSuccess(credentialResponse);
+                            }}
+                            onError={() => {
+                                console.log('Login Failed');
+                            }}
+                            useOneTap
+                        />
+                    </GoogleOAuthProvider>
+                </div>
+
             ) : (
                 <RoomData />
-
-
             ))
     );
 
