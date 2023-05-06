@@ -11,8 +11,7 @@ import Stack from '@mui/material/Stack';
 import axios from 'axios';
 import { Typography } from '@mui/material';
 import VideoChat from './VideoChat';
-import Whiteboard from './WhiteBoard';
-import Board from './board';
+import WhiteBoard from './WhiteBoard';
 const dmp = new diff_match_patch();
 
 const Room = () => {
@@ -73,6 +72,47 @@ const Room = () => {
         }
 
     }, [])
+
+    useEffect(() => {
+        const resizeBtn = document.querySelector("#resize-editor");
+        resizeBtn?.addEventListener("mousedown", (e) => {
+            const startX = e.clientX;
+            const initialWidth = document.querySelector("#editor").offsetWidth;
+            console.log(initialWidth);
+            document.body.addEventListener("mousemove", changeWidth);
+
+            document.body.addEventListener("mouseup", () => {
+                document.body.removeEventListener("mousemove", changeWidth);
+            })
+
+            document.body.addEventListener("mouseleave", () => {
+                document.body.removeEventListener("mousemove", changeWidth);
+            })
+
+            function changeWidth(e) {
+                const videoChat = document.querySelector(".video-chat");
+                const editor = document.querySelector("#editor");
+                const finalX = e.clientX;
+                let editorWidth = initialWidth + finalX - startX;
+                if (editorWidth < window.innerWidth * 0.5) {
+                    editorWidth = window.innerWidth * 0.5;
+                }
+                editor.style.width = editorWidth + "px";
+                let videoWidth = window.innerWidth - editorWidth - 50;
+                if (videoWidth < window.innerWidth * 0.20)
+                    videoWidth = window.innerWidth * 0.20;
+
+                if (videoWidth > window.innerWidth * 0.35)
+                    videoChat.classList.add("wide");
+                else
+                    videoChat.classList.remove("wide");
+                videoChat.style.width = videoWidth + "px";
+
+            }
+
+        });
+
+    }, [currRoom]);
 
 
 
@@ -205,56 +245,38 @@ const Room = () => {
     if (currRoom && user) {
         return (
             <div className='room'>
-                <div className='inRoom' id={isWhiteBoard ? "forBoard" : ""} >
-                    <Stack alignContent="right" direction="row" spacing={2}>
-                        <Typography variant="h5" component="h2" align="right">
-                            Users in room:
-                        </Typography>
-                        {inRoomUsers.map((user) => (
-                            <Avatar key={user.id} alt={user.name} src={user.avatar} />
-                        ))}
-                    </Stack>
-                    <button id='LeaveRoom' onClick={leaveRoom}>Leave Room</button>
-                    <button id='WhiteBoard' onClick={() => setIsWhiteBoard(!isWhiteBoard)}> {isWhiteBoard ? "Editor" : "WhiteBoard"}</button>
+                <div className="users-joined">
+                    {inRoomUsers.map((user) => (
+                        <div className="user-joined" key={user.id}>
+                            <img src={user.avatar} alt="" />
+                            <div className="name">{user.name}</div>
+                        </div>
+                    ))}
                 </div>
-
-                <div id={isWhiteBoard ? "" : "hide"} class="board">
-                    <Board
-                        socket={socket}
-                        roomid={roomid} />
+                <Ace
+                    updateRoom={updateRoom}
+                    code={code}
+                    setCode={setCode}
+                    language={language}
+                    setLanguage={setLanguage}
+                    roomName={roomName}
+                    roomid={roomid}
+                    EditorRef={EditorRef}
+                    input={input}
+                    setInput={setInput}
+                    output={output}
+                    setOutput={setOutput}
+                    IOEMIT={IOEMIT}
+                    run={run}
+                    running={running}
+                />
+                <div id="resize-editor">
                 </div>
-                <div id={isWhiteBoard ? 'hide' : 'content'} >
-                    <span id='Video_chat'>
-                        <VideoChat
-                            socket={socket}
-                            roomid={roomid}
-                        />
-                    </span>
-
-                    <span id='_editor'>
-                        <Ace
-                            updateRoom={updateRoom}
-                            code={code}
-                            setCode={setCode}
-                            language={language}
-                            setLanguage={setLanguage}
-                            roomName={roomName}
-                            roomid={roomid}
-                            EditorRef={EditorRef}
-                            input={input}
-                            setInput={setInput}
-                            output={output}
-                            setOutput={setOutput}
-                            IOEMIT={IOEMIT}
-                            run={run}
-                            running={running}
-                        />
-                    </span>
-                </div>
-
-
-
-
+                <VideoChat
+                    socket={socket}
+                    roomid={roomid}
+                />
+                <WhiteBoard />
                 <ToastContainer />
             </div >
         )

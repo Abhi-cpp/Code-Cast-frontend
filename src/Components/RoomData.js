@@ -159,14 +159,14 @@ const RoomData = () => {
     }, [user])
 
     return (
-        <div> {isLoading === true ? (<PacmanLoader color="#36D7B7"
+        isLoading === true ? (<PacmanLoader color="#36D7B7"
             size={150}
             cssOverride={override}
         />) :
             (<div className="room-data">
                 <button onClick={logout} className="logOut">Logout</button>
                 <div className="userData">
-                    <img src={user.avatar} alt='user profile'/>
+                    <img src={user.avatar} alt='user profile' />
                     <h1>Welcome {user.name}</h1>
                 </div>
                 <div className="join-room">
@@ -176,34 +176,38 @@ const RoomData = () => {
                     <button onClick={joinRoom} >Join Room</button>
                 </div>
                 <table sx={{ minWidth: 650 }} aria-label="simple table">
-                    <tr>
-                        <th>Name</th>
-                        <th align="right">Room ID</th>
-                        <th align="right">Language</th>
-                        <th align="right">Last Used</th>
-                        <th align="right">Join Room</th>
-                        <th align="right">Delete Room</th>
-
-                    </tr>
-                    {user.rooms.map((item, index) => (
-                        <tr key={index}>
-                            <td component="th" scope="row">{item.name}</td>
-                            <td align="right">{item.roomid}</td>
-                            <td align="right">{item.language}</td>
-                            <td align="right">{item.updatedAt}</td>
-                            <td align="right">
-                                <button className="join-btn" onClick={() => getData(item)}>Join Room</button>
-                            </td>
-                            <td align="right">
-                                <button className="delete-btn" onClick={deleteData(item)}>Delete Room</button>
-                            </td>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th align="right">Room ID</th>
+                            <th align="right">Language</th>
+                            <th align="right">Last Used</th>
+                            <th align="right">Join Room</th>
+                            <th align="right">Delete Room</th>
                         </tr>
-                    ))}
+                    </thead>
+                    <tbody>
+
+                        {user.rooms.map((item, index) => (
+                            <tr key={index}>
+                                <td component="th" scope="row">{item.name}</td>
+                                <td align="right">{item.roomid}</td>
+                                <td align="right">{item.language}</td>
+                                <td align="right">{item.updatedAt}</td>
+                                <td align="right">
+                                    <button className="join-btn" onClick={() => getData(item)}>Join Room</button>
+                                </td>
+                                <td align="right">
+                                    <button className="delete-btn" onClick={deleteData(item)}>Delete Room</button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
                 </table>
                 <ToastContainer />
             </div>
-            )}
-        </div>
+            )
+
     )
 }
 

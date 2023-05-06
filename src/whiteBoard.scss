@@ -11,9 +11,10 @@
   width: 100vw;
   z-index: 1000;
   height: 100vh;
-  background-color: white;
+  background-color: #fff;
   overflow: hidden;
   transition: all 0.5s ease-in-out;
+  cursor: none;
 
   &.active {
     top: 0;
@@ -28,7 +29,6 @@
       }
     }
   }
-
   .toolbar {
     width: 100vw;
     height: 80px;
@@ -36,18 +36,19 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 2vw;
 
     .sizes {
-      width: 100%;
+      max-width: 33%;
       display: flex;
       justify-content: center;
       align-items: center;
 
       .size {
         width: 120px;
-        height: 50px;
+        aspect-ratio: 12/5;
         margin: 0 10px;
-        padding: 20px;
+        padding: 0 2%;
         cursor: pointer;
         transition: all 0.2s ease-in-out;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
@@ -70,14 +71,14 @@
     }
 
     .colors {
-      width: 100%;
+      max-width: 33%;
       display: flex;
       justify-content: center;
       align-items: center;
 
       .color {
         width: 50px;
-        height: 50px;
+        aspect-ratio: 1/1;
         margin: 0 10px;
         cursor: pointer;
         background: var(--color);
@@ -95,29 +96,24 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      max-width: 33%;
 
-      #clearScreen {
+      #clearScreen,
+      #eraser {
         width: 60px;
-        height: 60px;
+        aspect-ratio: 1/1;
         margin: 0 10px;
         cursor: pointer;
         border: 2px solid black;
         display: flex;
         justify-content: center;
         align-items: center;
-        font-size: 1.2rem;
+        font-size: clamp(0.6rem, 1.2vw, 1.2rem);
+        transition: 0.3s ease-in-out;
       }
 
       #eraser {
-        width: 60px;
-        height: 60px;
-        margin: 0 10px;
-        cursor: pointer;
-        border: 2px solid black;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 1.2rem;
+        min-width: 20px;
         background: url("../public/eraser.png") no-repeat center;
         background-size: contain;
 
@@ -131,17 +127,18 @@
         display: flex;
         justify-content: center;
         align-items: center;
+
         .shape,
         #pen {
-          width: 60px;
-          height: 60px;
+          width: clamp(20px, 4vw, 60px);
+          aspect-ratio: 1 /1;
           margin: 0 10px;
           cursor: pointer;
           border: 2px solid black;
           display: flex;
           justify-content: center;
           align-items: center;
-          font-size: 2rem;
+          font-size: clamp(1rem, 2vw, 2rem);
           transition: 0.3s ease-in-out;
 
           &.active {
@@ -180,13 +177,24 @@
   }
 }
 
-// #cursor {
-//   position: absolute;
-//   background: url("./pencil.png") no-repeat center / contain;
-//   width: 20px;
-//   height: 20px;
-//   z-index: 1000;
-//   pointer-events: none;
-//   left: 100px;
-//   top: 100px;
-// }
+#cursor {
+  position: absolute;
+  background-image: url("../public/pencil.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 25px;
+  height: 25px;
+  z-index: 1000;
+  pointer-events: none;
+  left: 100px;
+  top: 100px;
+}
+
+#shape-demo {
+  position: absolute;
+  border: 1px solid black;
+  z-index: 1000;
+  left: 100px;
+  top: 100px;
+}

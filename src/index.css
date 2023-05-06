@@ -1,7 +1,0 @@
-/* select id with name room */
-#room {
-    height: 100vh;
-    width: auto;
-    display: flex;
-    justify-content: center;
-}

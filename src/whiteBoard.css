@@ -11,9 +11,10 @@
   width: 100vw;
   z-index: 1000;
   height: 100vh;
-  background-color: white;
+  background-color: #fff;
   overflow: hidden;
   transition: all 0.5s ease-in-out;
+  cursor: none;
 }
 #white-board.active {
   top: 0;
@@ -31,18 +32,19 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 2vw;
 }
 #white-board .toolbar .sizes {
-  width: 100%;
+  max-width: 33%;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 #white-board .toolbar .sizes .size {
   width: 120px;
-  height: 50px;
+  aspect-ratio: 12/5;
   margin: 0 10px;
-  padding: 20px;
+  padding: 0 2%;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
@@ -61,14 +63,14 @@
   box-shadow: 0 0 10px rgb(0, 0, 0);
 }
 #white-board .toolbar .colors {
-  width: 100%;
+  max-width: 33%;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 #white-board .toolbar .colors .color {
   width: 50px;
-  height: 50px;
+  aspect-ratio: 1/1;
   margin: 0 10px;
   cursor: pointer;
   background: var(--color);
@@ -83,28 +85,23 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  max-width: 33%;
 }
-#white-board .toolbar .extras #clearScreen {
-  width: 60px;
-  height: 60px;
-  margin: 0 10px;
-  cursor: pointer;
-  border: 2px solid black;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 1.2rem;
-}
+#white-board .toolbar .extras #clearScreen,
 #white-board .toolbar .extras #eraser {
   width: 60px;
-  height: 60px;
+  aspect-ratio: 1/1;
   margin: 0 10px;
   cursor: pointer;
   border: 2px solid black;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 1.2rem;
+  font-size: clamp(0.6rem, 1.2vw, 1.2rem);
+  transition: 0.3s ease-in-out;
+}
+#white-board .toolbar .extras #eraser {
+  min-width: 20px;
   background: url("../public/eraser.png") no-repeat center;
   background-size: contain;
 }
@@ -119,15 +116,15 @@
 }
 #white-board .toolbar .extras .shapes .shape,
 #white-board .toolbar .extras .shapes #pen {
-  width: 60px;
-  height: 60px;
+  width: clamp(20px, 4vw, 60px);
+  aspect-ratio: 1/1;
   margin: 0 10px;
   cursor: pointer;
   border: 2px solid black;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 2rem;
+  font-size: clamp(1rem, 2vw, 2rem);
   transition: 0.3s ease-in-out;
 }
 #white-board .toolbar .extras .shapes .shape.active,
@@ -157,4 +154,26 @@
   content: "";
   position: absolute;
   box-shadow: 0 -5px 10px 0px rgba(0, 0, 0, 0.3);
+}
+
+#cursor {
+  position: absolute;
+  background-image: url("../public/pencil.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 25px;
+  height: 25px;
+  z-index: 1000;
+  pointer-events: none;
+  left: 100px;
+  top: 100px;
+}
+
+#shape-demo {
+  position: absolute;
+  border: 1px solid black;
+  z-index: 1000;
+  left: 100px;
+  top: 100px;
 }/*# sourceMappingURL=whiteBoard.css.map */

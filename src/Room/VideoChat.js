@@ -10,11 +10,13 @@ const VideoChat = ({ socket, roomid }) => {
     const [audio, setAudio] = useState(true);
     const [video, setVideo] = useState(true);
     const [screen, setScreen] = useState(false);
+    const time = useRef(performance.now());
     useEffect(() => {
         const peer = new Peer();
 
         peer.on('open', (id) => {
             setPeerId(id)
+            console.log(performance.now() - time.current);
         });
 
         peer.on('call', (call) => {
@@ -39,13 +41,13 @@ const VideoChat = ({ socket, roomid }) => {
     }, [])
 
     useEffect(() => {
-        if (currentUserVideoRef.current) {
+        if (currentUserVideoRef.current && screen) {
             currentUserVideoRef.current.srcObject.getVideoTracks()[0].enabled = video;
         }
     }, [video])
 
     useEffect(() => {
-        if (currentUserVideoRef.current) {
+        if (currentUserVideoRef.current && screen) {
             currentUserVideoRef.current.srcObject.getAudioTracks()[0].enabled = audio;
         }
     }, [audio])
@@ -66,8 +68,8 @@ const VideoChat = ({ socket, roomid }) => {
 
     useEffect(() => {
         if (remotePeerIdValue) {
-            console.log('remotePeerIdValue', remotePeerIdValue)
-            console.log('peerId', peerId)
+            // console.log('remotePeerIdValue', remotePeerIdValue)
+            // console.log('peerId', peerId)
             call(remotePeerIdValue);
         }
     }, [remotePeerIdValue])
@@ -91,23 +93,38 @@ const VideoChat = ({ socket, roomid }) => {
     }
 
     return (
-        <div className="App">
-            {screen ? (<> <div>
-                <video ref={remoteVideoRef} />
-            </div>
-                <div>
+        <div className="video-chat">
+            <div className="users">
+                <div className="user-video">
+                    <video ref={remoteVideoRef} />
+                </div>
+                <div className="user-video">
                     <video ref={currentUserVideoRef} muted />
-                </div></>) :
-
-                peerId ?
-                    (<button onClick={() => {
-                        socket.emit('Id', { roomid, peerId })
-                        setScreen(true);
-                    }}>Call</button>) : <h1>Loading</h1>
-            }
-            <button className={video ? "" : "active"} style={{ margin: "10px" }} onClick={muteVideo}>Mute Video</button>
-            <button className={audio ? "" : "active"} style={{ margin: "10px" }} onClick={muteAudio}>Mute Audio</button>
-            {/* <button style={{ margin: "10px" }} onClick={stopVideo}>Stop Video</button> */}
+                </div>
+            </div>
+            {peerId ?
+                (<div className="video-buttons">
+                    {screen ?
+                        <>
+                            <button onClick={muteVideo}>Mute Video</button>
+                            <button onClick={muteAudio}>Mute Audio</button>
+                            <button> End Call</button>
+                            <button onClick={() => {
+                                socket.emit('Id', { roomid, peerId })
+                                setScreen(true);
+                                document.querySelectorAll(".user-video").forEach(video => {
+                                    video.classList.add("active");
+                                })
+                            }}>Start Call</button>
+                        </> :
+                        <button onClick={() => {
+                            socket.emit('Id', { roomid, peerId })
+                            setScreen(true);
+                            document.querySelectorAll(".user-video").forEach(video => {
+                                video.classList.add("active");
+                            })
+                        }}>Start Call</button>}
+                </div>) : <h1>Loading</h1>}
         </div >
     );
 };

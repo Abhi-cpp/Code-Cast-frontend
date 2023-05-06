@@ -115,60 +115,58 @@ const Ace = ({
                 roomid={roomid}
                 running={running}
             />
-            <div id='_ace' style={{ display: 'flex', flexDirection: 'row' }}>
-                <div>
-                    <AceEditor
-                        setOptions={{
-                            useWorker: false,
-                            enableBasicAutocompletion: true,
-                            enableLiveAutocompletion: true,
-                            enableSnippets: true,
-                            showLineNumbers: true,
-                            fontFamily,
-                            fontSize,
-                        }}
-                        onChange={handleChange}
-                        mode={language}
-                        theme={theme}
-                        name="ACE_EDITOR"
-                        value={code}
-                        fontSize={18}
-                        height='80vh'
-                        width='40vw'
-                        defaultValue=''
-                        ref={EditorRef}
-                        editorProps={{ $blockScrolling: true }}
-                    />
-                </div>
-                <div style={{ flex: 1 }}>
-                    <div className="text-center">
+            <div id='workspace' >
+                <AceEditor
+                    setOptions={{
+                        useWorker: false,
+                        enableBasicAutocompletion: true,
+                        enableLiveAutocompletion: true,
+                        enableSnippets: true,
+                        showLineNumbers: true,
+                        fontFamily,
+                        fontSize,
+                    }}
+                    onChange={handleChange}
+                    mode={language}
+                    theme={theme}
+                    name="ACE_EDITOR"
+                    value={code}
+                    fontSize={18}
+                    height=''
+                    width=''
+                    setAutoScrollEditorIntoView
+                    defaultValue=''
+                    ref={EditorRef}
+                    editorProps={{ $blockScrolling: true }}
+                />
+                <div id='io'>
+                    <div className="input">
                         <h5>Input</h5>
                         <AceEditor
                             theme={theme}
                             language={''}
                             value={input}
+                            width=""
+                            height=""
                             onChange={handleIOChange}
-                            height={'38vh'}
-                            width={'30vw'}
                             fontSize={fontSize}
                         />
                     </div>
-                    <div className="text-center">
+                    <div className="output">
                         <h5>Output</h5>
                         <AceEditor
                             theme={theme}
                             language={''}
                             value={output}
+                            width=""
+                            height=""
                             readOnly={true}
-                            height={'38vh'}
-                            width={'30vw'}
                             fontSize={fontSize}
                         />
                     </div>
                 </div>
             </div>
-
-        </div>
+        </div >
     )
 };
 
