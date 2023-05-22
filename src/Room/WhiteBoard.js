@@ -152,7 +152,7 @@ const WhiteBoard = () => {
 
         // event listeners
 
-        window.addEventListener('mousemove', (e) => {
+        function dragged(e){
             if (!whiteBoard.classList.contains("active")) return;
             if (e.target != canvas) {
                 cursor.style.display = "none";
@@ -178,9 +178,9 @@ const WhiteBoard = () => {
             x = e.offsetX;
             y = e.offsetY;
             time = performance.now();
-        })
+        }
 
-        canvas.addEventListener('mousedown', (e) => {
+        function pressed(e){
             const shape = Array.from(shapes).find(shape => shape.classList.contains("active"));
             if (shape) {
                 triangle[0].x = e.offsetX;
@@ -211,14 +211,23 @@ const WhiteBoard = () => {
                 return;
             };
             interval = setInterval(() => drawLine(), 10);
-        })
+        }
 
-        canvas.addEventListener('mouseup', () => {
+        function lifted(){
             if (Array.from(shapes).some(shape => shape.classList.contains("active"))) return;
             clearInterval(interval);
-        })
+        }
+        window.addEventListener('touchstart', pressed);
+        canvas.addEventListener('mousedown', pressed);
+        window.addEventListener('mousemove', dragged);
+        canvas.addEventListener('touchmove', dragged);
+        canvas.addEventListener('mouseup', lifted);
+        canvas.addEventListener('touchend', lifted);
 
         canvas.addEventListener("mouseleave", () => {
+            clearInterval(interval);
+        })
+        canvas.addEventListener("touchcancel", () =>{
             clearInterval(interval);
         })
 
