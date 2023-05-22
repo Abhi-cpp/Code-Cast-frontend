@@ -153,6 +153,7 @@ const WhiteBoard = () => {
         // event listeners
 
         function dragged(e){
+            console.log("dragged working");
             if (!whiteBoard.classList.contains("active")) return;
             if (e.target != canvas) {
                 cursor.style.display = "none";
@@ -182,6 +183,7 @@ const WhiteBoard = () => {
 
         function pressed(e){
             const shape = Array.from(shapes).find(shape => shape.classList.contains("active"));
+            
             if (shape) {
                 triangle[0].x = e.offsetX;
                 triangle[1].y = e.offsetY;
@@ -220,7 +222,7 @@ const WhiteBoard = () => {
         window.addEventListener('touchstart', pressed);
         canvas.addEventListener('mousedown', pressed);
         window.addEventListener('mousemove', dragged);
-        canvas.addEventListener('touchmove', dragged);
+        window.addEventListener('touchmove', dragged);
         canvas.addEventListener('mouseup', lifted);
         canvas.addEventListener('touchend', lifted);
 
