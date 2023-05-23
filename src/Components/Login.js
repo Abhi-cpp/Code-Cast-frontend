@@ -4,7 +4,7 @@ import axios from 'axios';
 import RoomData from './RoomData';
 import { DataContext } from "./DataContext";
 import ClockLoader from "react-spinners/ClockLoader";
-
+import { generateFromString } from 'generate-avatar'
 
 const clientId = process.env.REACT_APP_CLIENT_ID;
 axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
@@ -33,7 +33,7 @@ function Login() {
             loadingStart();
             axios({
                 method: 'get',
-                url: process.env.REACT_APP_BACKEND_URL +"users/fetch",
+                url: process.env.REACT_APP_BACKEND_URL + "users/fetch",
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -92,7 +92,7 @@ function Login() {
         loadingStart();
         axios({
             method: 'post',
-            url: process.env.REACT_APP_BACKEND_URL+"users/login",
+            url: process.env.REACT_APP_BACKEND_URL + "users/login",
             data: credentialResponse
 
         }).then((response) => {
