@@ -33,7 +33,7 @@ function Login() {
             loadingStart();
             axios({
                 method: 'get',
-                url: process.env.REACT_APP_USERS_JWT,
+                url: process.env.REACT_APP_BACKEND_URL +"users/fetch",
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -92,7 +92,7 @@ function Login() {
         loadingStart();
         axios({
             method: 'post',
-            url: process.env.REACT_APP_USERS_LOGIN,
+            url: process.env.REACT_APP_BACKEND_URL+"users/login",
             data: credentialResponse
 
         }).then((response) => {
@@ -124,12 +124,13 @@ function Login() {
                 email: document.getElementById("register-form").querySelector("#email").value,
                 password: document.getElementById("register-form").querySelector("#password").value,
             }
-
             const url = process.env.REACT_APP_BACKEND_URL + "users/register"
             axios.post(url, data).then((response) => {
                 console.log(response);
+                setUser(response.data.user);
+                localStorage.setItem('user', response.data.token);
             }).catch((error) => {
-                console.log(error);
+                alert("Error in registration");
             });
         } else {
             alert("Passwords do not match");
@@ -145,9 +146,11 @@ function Login() {
             password: document.getElementById("login-form").querySelector("#password").value,
         }
         axios.post(process.env.REACT_APP_USERS_LOGIN, data).then((response) => {
-            console.log(response);
+            setUser(response.data.user);
+            localStorage.setItem('user', response.data.token);
         }).catch((error) => {
-            console.log(error);
+            if (error.response.status === 401)
+                alert("Invalid Credentials");
         });
     }
     return (
