@@ -17,9 +17,9 @@
   justify-content: center;
   align-items: center;
 }
-.App #login-form {
+.App .login-register {
   width: 25%;
-  height: 50%;
+  min-height: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -27,32 +27,53 @@
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
   gap: 20px;
   border-radius: 10px;
+  padding: 1rem 2rem;
 }
-.App #login-form form {
+.App #login-form,
+.App #register-form {
+  width: 100%;
+  height: 100%;
+  display: none;
+  flex-direction: column;
+  gap: 20px;
+}
+.App #login-form h1,
+.App #register-form h1 {
+  text-align: center;
+}
+.App #login-form.active,
+.App #register-form.active {
+  display: flex;
+}
+.App #login-form form,
+.App #register-form form {
   display: flex;
   justify-content: center;
   flex-direction: column;
   gap: 10px;
 }
-.App #login-form form label {
+.App #login-form form label,
+.App #register-form form label {
   font-size: 1.2rem;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana, sans-serif span;
+  font-family-display: inline-block;
+  font-family-transform: translate(10px, 35px);
+  font-family-transition: 0.1s linear;
 }
-.App #login-form form label span {
-  display: inline-block;
-  transform: translate(10px, 35px);
-  transition: 0.1s linear;
-}
-.App #login-form form label.active span {
+.App #login-form form label.active span,
+.App #register-form form label.active span {
   transform: translate(10px, 0px);
 }
-.App #login-form form input:not([type=submit]) {
+.App #login-form form input:not([type=submit]),
+.App #register-form form input:not([type=submit]) {
   width: 100%;
   border: 1px solid #000000;
   border-radius: 5px;
   padding: 5px 10px;
   font-size: 1rem;
 }
-.App #login-form form input[type=submit] {
+.App #login-form form input[type=submit],
+.App #register-form form input[type=submit] {
   display: inline-block;
   margin: 0 auto;
   border-radius: 5px;
@@ -63,9 +84,19 @@
   transition: all 0.3s ease-in-out;
   cursor: pointer;
 }
-.App #login-form form input[type=submit]:hover {
+.App #login-form form input[type=submit]:hover,
+.App #register-form form input[type=submit]:hover {
   background-color: #000000;
   color: #fff;
+}
+.App #login-form p a,
+.App #register-form p a {
+  color: blue;
+  cursor: pointer;
+}
+.App #login-form p a:hover,
+.App #register-form p a:hover {
+  text-decoration: underline;
 }
 .App .room-data {
   display: flex;
