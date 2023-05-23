@@ -338,6 +338,7 @@ const WhiteBoard = () => {
         const whiteBoardBtn = document.querySelector("#white-board  button");
         whiteBoardBtn.addEventListener("click", () => {
             whiteBoardBtn.parentElement.classList.toggle("active");
+            document.querySelector("#leave-room").classList.toggle("active");
         })
     }, []);
     return (

@@ -115,7 +115,6 @@ const Room = () => {
     }, [currRoom]);
 
 
-
     // if socket is connected then emit updateIO
     if (socket.connected) {
         {
@@ -245,6 +244,7 @@ const Room = () => {
     if (currRoom && user) {
         return (
             <div className='room'>
+                <button id="leave-room" className="active" onClick={leaveRoom}>Leave Room</button>
                 <div className="users-joined">
                     {inRoomUsers.map((user) => (
                         <div className="user-joined" key={user.id}>
@@ -277,7 +277,7 @@ const Room = () => {
                     roomid={roomid}
                 />
                 <WhiteBoard />
-                <ToastContainer />
+                <ToastContainer autoClose={2000} />
             </div >
         )
     }

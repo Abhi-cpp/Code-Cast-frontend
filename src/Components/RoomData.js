@@ -156,6 +156,15 @@ const RoomData = () => {
             setUser({ ...user })
         }
 
+        if (user) {
+            document.querySelectorAll(".join-room input").forEach(input => {
+                input.addEventListener("keydown", (e) => {
+                    if (e.key === "Enter")
+                        e.target.nextElementSibling.click();
+                })
+            })
+        }
+
     }, [user])
 
     return (
@@ -204,7 +213,7 @@ const RoomData = () => {
                         ))}
                     </tbody>
                 </table>
-                <ToastContainer />
+                <ToastContainer autoClose={2000} />
             </div>
             )
 
