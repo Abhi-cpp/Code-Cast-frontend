@@ -152,7 +152,7 @@ const WhiteBoard = () => {
 
         // event listeners
 
-        function dragged(e){
+        function dragged(e) {
             console.log("dragged working");
             if (!whiteBoard.classList.contains("active")) return;
             if (e.target != canvas) {
@@ -181,9 +181,9 @@ const WhiteBoard = () => {
             time = performance.now();
         }
 
-        function pressed(e){
+        function pressed(e) {
             const shape = Array.from(shapes).find(shape => shape.classList.contains("active"));
-            
+
             if (shape) {
                 triangle[0].x = e.offsetX;
                 triangle[1].y = e.offsetY;
@@ -215,7 +215,7 @@ const WhiteBoard = () => {
             interval = setInterval(() => drawLine(), 10);
         }
 
-        function lifted(){
+        function lifted() {
             if (Array.from(shapes).some(shape => shape.classList.contains("active"))) return;
             clearInterval(interval);
         }
@@ -229,7 +229,7 @@ const WhiteBoard = () => {
         canvas.addEventListener("mouseleave", () => {
             clearInterval(interval);
         })
-        canvas.addEventListener("touchcancel", () =>{
+        canvas.addEventListener("touchcancel", () => {
             clearInterval(interval);
         })
 
