@@ -5,6 +5,7 @@ import PacmanLoader from "react-spinners/PacmanLoader";
 import { DataContext } from "./DataContext";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { generateFromString } from 'generate-avatar'
 
 const override = {
     display: 'block',

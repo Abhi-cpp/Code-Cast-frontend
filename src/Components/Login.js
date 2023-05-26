@@ -4,7 +4,7 @@ import axios from 'axios';
 import RoomData from './RoomData';
 import { DataContext } from "./DataContext";
 import ClockLoader from "react-spinners/ClockLoader";
-
+import { generateFromString } from 'generate-avatar'
 
 const clientId = process.env.REACT_APP_CLIENT_ID;
 axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
