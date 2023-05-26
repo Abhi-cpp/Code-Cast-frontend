@@ -11,8 +11,49 @@ const VideoChat = ({ socket, roomid }) => {
     const [video, setVideo] = useState(true);
     const [screen, setScreen] = useState(false);
     const time = useRef(performance.now());
+    const peer = new Peer();
+
+    // mute video audio or stop video
+    const muteVideo = () => {
+        setVideo(!video);
+    }
+
+    const muteAudio = () => {
+        setAudio(!audio);
+    }
+
+    function quitVideoCall() {
+        setScreen(false);
+        peerInstance.current.destroy();
+    }
+
+    function startCall() {
+        socket.emit('Id', { roomid, peerId })
+        setScreen(true);
+        document.querySelectorAll(".user-video").forEach(video => {
+            video.classList.add("active");
+        })
+    }
+
+
+    const call = (remotePeerId) => {
+        let getUserMedia = navigator.getUserMedia;
+
+        getUserMedia({ video: true, audio: true }, (mediaStream) => {
+
+            currentUserVideoRef.current.srcObject = mediaStream;
+            currentUserVideoRef.current.play();
+
+            const call = peerInstance.current.call(remotePeerId, mediaStream)
+
+            call.on('stream', (remoteStream) => {
+                remoteVideoRef.current.srcObject = remoteStream
+                remoteVideoRef.current.play();
+            });
+        });
+    }
+
     useEffect(() => {
-        const peer = new Peer();
 
         peer.on('open', (id) => {
             setPeerId(id)
@@ -20,7 +61,7 @@ const VideoChat = ({ socket, roomid }) => {
         });
 
         peer.on('call', (call) => {
-            var getUserMedia = navigator.getUserMedia;
+            let getUserMedia = navigator.getUserMedia;
 
             getUserMedia({ video: true, audio: true }, (mediaStream) => {
                 currentUserVideoRef.current.srcObject = mediaStream;
@@ -37,60 +78,40 @@ const VideoChat = ({ socket, roomid }) => {
             setRemotePeerIdValue(id.peerId);
         })
 
+        peer.on("close", () => {
+            console.log("peer closed")
+            // setRemotePeerIdValue('');
+            // currentUserVideoRef.current.srcObject = null;
+            // currentUserVideoRef.current.pause();
+            // currentUserVideoRef.current.load();
+            // peerInstance.current.destroy();
+            // remoteVideoRef.current.srcObject = null;
+            // remoteVideoRef.current.pause();
+            // remoteVideoRef.current.load();
+
+        });
+
+
+
+
+
         peerInstance.current = peer;
     }, [])
-
-    useEffect(() => {
-        if (currentUserVideoRef.current && screen) {
-            currentUserVideoRef.current.srcObject.getVideoTracks()[0].enabled = video;
-        }
-    }, [video])
-
     useEffect(() => {
         if (currentUserVideoRef.current && screen) {
             currentUserVideoRef.current.srcObject.getAudioTracks()[0].enabled = audio;
         }
-    }, [audio])
 
-    // mute video audio or stop video
-    const muteVideo = () => {
-        setVideo(!video);
-    }
-
-    const muteAudio = () => {
-        setAudio(!audio);
-    }
-
-    const stopVideo = () => {
-        setScreen(!screen);
-    }
-
+        if (currentUserVideoRef.current && screen) {
+            currentUserVideoRef.current.srcObject.getVideoTracks()[0].enabled = video;
+        }
+    }, [audio, video])
 
     useEffect(() => {
-        if (remotePeerIdValue) {
-            // console.log('remotePeerIdValue', remotePeerIdValue)
-            // console.log('peerId', peerId)
+        if (remotePeerIdValue && screen) {
             call(remotePeerIdValue);
         }
-    }, [remotePeerIdValue])
-
-    const call = (remotePeerId) => {
-        var getUserMedia = navigator.getUserMedia;
-
-        getUserMedia({ video: true, audio: true }, (mediaStream) => {
-
-            currentUserVideoRef.current.srcObject = mediaStream;
-            currentUserVideoRef.current.play();
-
-            const call = peerInstance.current.call(remotePeerId, mediaStream)
-
-            call.on('stream', (remoteStream) => {
-                remoteVideoRef.current.srcObject = remoteStream
-                remoteVideoRef.current.play();
-            });
-        });
-        setScreen(true);
-    }
+    }, [remotePeerIdValue, screen])
 
     return (
         <div className="video-chat">
@@ -106,24 +127,18 @@ const VideoChat = ({ socket, roomid }) => {
                 (<div className="video-buttons">
                     {screen ?
                         <>
-                            <button onClick={muteVideo}>Mute Video</button>
-                            <button onClick={muteAudio}>Mute Audio</button>
-                            <button> End Call</button>
-                            <button onClick={() => {
-                                socket.emit('Id', { roomid, peerId })
-                                setScreen(true);
-                                document.querySelectorAll(".user-video").forEach(video => {
-                                    video.classList.add("active");
-                                })
-                            }}>Start Call</button>
+                            <button onClick={muteVideo} className={video ? "" : "muted"}>
+                                {video ? <i className="fas fa-video"></i> : <i className="fas fa-video-slash"></i>}
+                            </button>
+                            <button onClick={muteAudio} className={audio ? " " : "muted"}>
+                                {audio ? <i className="fas fa-microphone"></i> : <i className="fas fa-microphone-slash"></i>}
+                            </button>
+                            <button onClick={quitVideoCall}>
+                                <i className="fas fa-phone"></i>
+                            </button>
+
                         </> :
-                        <button onClick={() => {
-                            socket.emit('Id', { roomid, peerId })
-                            setScreen(true);
-                            document.querySelectorAll(".user-video").forEach(video => {
-                                video.classList.add("active");
-                            })
-                        }}>Start Call</button>}
+                        <button onClick={startCall}>Start Call</button>}
                 </div>) : <h1>Loading</h1>}
         </div >
     );

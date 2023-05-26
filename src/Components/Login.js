@@ -3,17 +3,13 @@ import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 import RoomData from './RoomData';
 import { DataContext } from "./DataContext";
-import ClockLoader from "react-spinners/ClockLoader";
-import { generateFromString } from 'generate-avatar'
+import Loader from "./Loader";
+import { ToastContainer, toast } from "react-toastify";
+
 
 const clientId = process.env.REACT_APP_CLIENT_ID;
 axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
 
-const override = {
-    display: 'block',
-    margin: '0 auto',
-    borderColor: 'red',
-};
 
 function Login() {
     const [isLoading, setIsLoading] = useState(false);
@@ -47,28 +43,28 @@ function Login() {
                 console.log("error in axios jwt call", error);
             });
         } else {
-            const boxes = document.querySelectorAll("#login-form form label");
-            boxes.forEach((box) => {
-                console.log(box.textContent);
-                box.innerHTML = box.textContent
-                    .split("")
-                    .map((letter, index) => `<span style="transition-delay : ${index * 0.1}s">${letter}</span>`)
-                    .join("");
-                console.log(box.textContent, box.innerHTML);
-            });
+            // const boxes = document.querySelectorAll("#login-form form label");
+            // boxes.forEach((box) => {
+            //     console.log(box.textContent);
+            //     box.innerHTML = box.textContent
+            //         .split("")
+            //         .map((letter, index) => `<span style="transition-delay : ${index * 0.1}s">${letter}</span>`)
+            //         .join("");
+            //     console.log(box.textContent, box.innerHTML);
+            // });
 
-            const inputs = document.querySelectorAll("#login-form form input:not([type='submit])");
-            inputs.forEach(input => {
-                input.addEventListener("focus", () => {
-                    input.previousElementSibling.classList.add("active");
-                });
+            // const inputs = document.querySelectorAll("#login-form form input:not([type='submit])");
+            // inputs.forEach(input => {
+            //     input.addEventListener("focus", () => {
+            //         input.previousElementSibling.classList.add("active");
+            //     });
 
-                input.addEventListener("blur", () => {
-                    if (input.value === "") {
-                        input.previousElementSibling.classList.remove("active");
-                    }
-                });
-            })
+            //     input.addEventListener("blur", () => {
+            //         if (input.value === "") {
+            //             input.previousElementSibling.classList.remove("active");
+            //         }
+            //     });
+            // })
 
             // const text = box.textContent;
             // box.innerHTML = text
@@ -108,11 +104,15 @@ function Login() {
     function goToLogin() {
         document.getElementById("login-form").classList.add("active");
         document.getElementById("register-form").classList.remove('active');
+        document.getElementById("error-message p").innerHTML = "";
+        document.getElementById("error-message").classList.remove("active");
     }
 
     function goToRegister() {
         document.getElementById("login-form").classList.remove("active");
         document.getElementById("register-form").classList.add('active');
+        document.getElementById("error-message p").innerHTML = "";
+        document.getElementById("error-message").classList.remove("active");
     }
 
     function registerUser(e) {
@@ -124,16 +124,21 @@ function Login() {
                 email: document.getElementById("register-form").querySelector("#email").value,
                 password: document.getElementById("register-form").querySelector("#password").value,
             }
+
+            if (data.name === "" || data.email === "" || data.password === "") {
+                showError("Please fill all the fields");
+                return;
+            }
             const url = process.env.REACT_APP_BACKEND_URL + "users/register"
             axios.post(url, data).then((response) => {
                 console.log(response);
                 setUser(response.data.user);
                 localStorage.setItem('user', response.data.token);
             }).catch((error) => {
-                alert("Error in registration");
+                showError(error.response.data.error);
             });
         } else {
-            alert("Passwords do not match");
+            showError("Passwords do not match");
         }
 
     }
@@ -145,65 +150,103 @@ function Login() {
             email: document.getElementById("login-form").querySelector("#email").value,
             password: document.getElementById("login-form").querySelector("#password").value,
         }
+
+        if (data.email === "" || data.password === "") {
+            showError("Please fill all the fields");
+            return;
+        }
+
+
         axios.post(process.env.REACT_APP_USERS_LOGIN, data).then((response) => {
             setUser(response.data.user);
             localStorage.setItem('user', response.data.token);
         }).catch((error) => {
-            if (error.response.status === 401)
-                alert("Invalid Credentials");
+            if (error.response.status === 400) {
+                showError("Invalid  Credentials");
+            }
         });
     }
+
+    function showError(message) {
+        toast.error(message);
+        const box = document.querySelector(".login-register");
+        box.classList.add("error");
+        setTimeout(() => {
+            box.classList.remove("error");
+        }, 500);
+
+        const errorMessage = document.querySelector(".login-register #error-message");
+        errorMessage.children[0].innerHTML = message;
+        errorMessage.classList.add("active");
+
+        setTimeout(() => {
+            errorMessage.classList.remove("active");
+        }, 2500);
+
+
+    }
+
     return (
-        isLoading === true ? (<ClockLoader color="#36D7B7"
-            size={150}
-            cssOverride={override}
-        />) : (
+        isLoading === true ? (<Loader />) : (
             user == null ? (
-                <div className="login-register">
-                    <div id="login-form" className="active">
-                        <h1>Login</h1>
-                        <form onSubmit={loginUser}>
-                            <label htmlFor="email">Email</label>
-                            <input type="email" id="email" name="email" required />
-                            <label htmlFor="password">Password</label>
-                            <input type="password" id="password" name="password" required />
-                            <input type="submit" value="Submit" />
-                        </form>
-                        <p>New User? <a onClick={goToRegister}>Register</a></p>
+                <>
+                    <div className="login-register">
+                        <div id="logo-login">
+                            <img src="./app-logo.png" alt="logo" />
+                            <img src="./app-logo-light.png" alt="logo-light" />
+                        </div>
+                        <div id="login-form" className="active">
+                            <h1>Login</h1>
+                            <form onSubmit={loginUser}>
+                                <label htmlFor="email">Email</label>
+                                <input type="email" id="email" name="email" />
+                                <label htmlFor="password">Password</label>
+                                <input type="password" id="password" name="password" />
+                                <input type="submit" value="Submit" />
+                            </form>
+                            <p>New User? <a onClick={goToRegister}>Register</a></p>
 
+                        </div>
+                        <div id="register-form">
+                            <h1>Register</h1>
+                            <form onSubmit={registerUser}>
+                                <label htmlFor="name">Name</label>
+                                <input type="text" id="name" name="name" />
+                                <label htmlFor="email">Email</label>
+                                <input type="email" id="email" name="email" />
+                                <label htmlFor="password">Password</label>
+                                <input type="password" id="password" name="password" />
+                                <label htmlFor="password">Confirm Password</label>
+                                <input type="password" id="passwordConfirm" name="password" />
+                                <input type="submit" value="Submit" />
+                            </form>
+                            <p>Already have an account? <a onClick={goToLogin}>Login</a></p>
+
+                        </div>
+                        <div id="error-message" className="error">
+                            <p></p>
+                        </div>
+                        <GoogleOAuthProvider clientId={clientId}>
+                            <GoogleLogin id="googlelogin"
+                                onSuccess={credentialResponse => {
+                                    onSuccess(credentialResponse);
+                                }}
+                                onError={() => {
+                                    console.log('Login Failed');
+                                }}
+                                useOneTap
+                            />
+                        </GoogleOAuthProvider>
                     </div>
-                    <div id="register-form">
-                        <h1>Register</h1>
-                        <form onSubmit={registerUser}>
-                            <label htmlFor="name">Name</label>
-                            <input type="text" id="name" name="name" required />
-                            <label htmlFor="email">Email</label>
-                            <input type="email" id="email" name="email" required />
-                            <label htmlFor="password">Password</label>
-                            <input type="password" id="password" name="password" required />
-                            <label htmlFor="password">Confirm Password</label>
-                            <input type="password" id="passwordConfirm" name="password" required />
-                            <input type="submit" value="Submit" />
-                        </form>
-                        <p>Already have an account? <a onClick={goToLogin}>Login</a></p>
-
-                    </div>
-                    <GoogleOAuthProvider clientId={clientId}>
-                        <GoogleLogin id="googlelogin"
-                            onSuccess={credentialResponse => {
-                                onSuccess(credentialResponse);
-                            }}
-                            onError={() => {
-                                console.log('Login Failed');
-                            }}
-                            useOneTap
-                        />
-                    </GoogleOAuthProvider>
-                </div>
-
+                    <ToastContainer autoClose={2000} />
+                </>
             ) : (
-                <RoomData />
+                <>
+                    <RoomData />
+                    <ToastContainer autoClose={2000} />
+                </>
             ))
+
     );
 
 }

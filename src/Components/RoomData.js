@@ -1,11 +1,10 @@
 import React, { useContext, useState, useEffect } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import PacmanLoader from "react-spinners/PacmanLoader";
 import { DataContext } from "./DataContext";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { generateFromString } from 'generate-avatar'
+import Loader from "./Loader";
 
 const override = {
     display: 'block',
@@ -31,6 +30,19 @@ const RoomData = () => {
         toast.success(`Welcome to CodeCast ${user.name}`, {
             position: toast.POSITION.TOP_RIGHT
         });
+
+        // const table = document.querySelector(".room-data table");
+        // table.addEventListener("mousemove", (e) => {
+        //     const mouse = { x: e.clientX, y: e.clientY };
+        //     const targetRect = table.getBoundingClientRect();
+        //     const targetCoords = {
+        //         x: targetRect.left + targetRect.width / 2,
+        //         y: targetRect.top + targetRect.height / 2
+        //     };
+        //     console.log(targetCoords);
+        //     table.style.boxShadow = `${mouse.x - targetCoords.x > 0 ? -5 : 5}px ${mouse.y - targetCoords.y > 0 ? -5 : 5}px 20px -5px #fff`;
+
+        // });
 
     }, [])
 
@@ -169,10 +181,7 @@ const RoomData = () => {
     }, [user])
 
     return (
-        isLoading === true ? (<PacmanLoader color="#36D7B7"
-            size={150}
-            cssOverride={override}
-        />) :
+        isLoading ? (<Loader />) :
             (<div className="room-data">
                 <button onClick={logout} className="logOut">Logout</button>
                 <div className="userData">
@@ -217,7 +226,6 @@ const RoomData = () => {
                         ))}
                     </tbody>
                 </table>
-                <ToastContainer autoClose={2000} />
             </div>
             )
 
