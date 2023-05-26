@@ -5,6 +5,7 @@ import { DataContext } from "./DataContext";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Loader from "./Loader";
+import { generateFromString } from 'generate-avatar'
 
 const override = {
     display: 'block',
