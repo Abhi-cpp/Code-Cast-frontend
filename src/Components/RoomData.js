@@ -32,25 +32,12 @@ const RoomData = () => {
             position: toast.POSITION.TOP_RIGHT
         });
 
-        // const table = document.querySelector(".room-data table");
-        // table.addEventListener("mousemove", (e) => {
-        //     const mouse = { x: e.clientX, y: e.clientY };
-        //     const targetRect = table.getBoundingClientRect();
-        //     const targetCoords = {
-        //         x: targetRect.left + targetRect.width / 2,
-        //         y: targetRect.top + targetRect.height / 2
-        //     };
-        //     console.log(targetCoords);
-        //     table.style.boxShadow = `${mouse.x - targetCoords.x > 0 ? -5 : 5}px ${mouse.y - targetCoords.y > 0 ? -5 : 5}px 20px -5px #fff`;
-
-        // });
-
     }, [])
 
 
     const getData = async (item) => {
         loadingStart();
-        await axios.get(`${process.env.REACT_APP_ROOMS_FETCH}?id=${item.roomid}`
+        await axios.get(`${process.env.REACT_APP_BACKEND_URL + "rooms/fetch"}?id=${item.roomid}`
             , {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('user')}`
@@ -155,6 +142,14 @@ const RoomData = () => {
             });
     }
 
+    const copyRoomId = (e) => {
+        const id = e.target.innerText;
+        navigator.clipboard.writeText(id);
+        toast.success('Room ID Copied ', {
+            position: toast.POSITION.TOP_RIGHT
+        });
+    }
+
     useEffect(() => {
 
         if (user && !user.rooms.every(room => !room.updatedAt.includes("T"))) {
@@ -214,7 +209,7 @@ const RoomData = () => {
                         {user.rooms.map((item, index) => (
                             <tr key={index}>
                                 <td component="th" scope="row">{item.name}</td>
-                                <td align="right">{item.roomid}</td>
+                                <td align="right" onClick={copyRoomId}>{item.roomid}</td>
                                 <td align="right">{item.language}</td>
                                 <td align="right">{item.updatedAt}</td>
                                 <td align="right">

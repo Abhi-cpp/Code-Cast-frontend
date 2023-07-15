@@ -33,7 +33,7 @@
     flex-direction: column;
     box-shadow: 0 0 10px 2px #000, 0 0 6px rgba($color: #000000, $alpha: 0.6);
     border-radius: 10px;
-    padding: 1rem 2rem;
+    padding: 0rem 2rem;
 
     .dark & {
       box-shadow: 0 0 10px 2px #fff, 0 0 6px rgba($color: #fff, $alpha: 0.6);
@@ -209,6 +209,39 @@
           display: inline-block;
         }
       }
+
+      & + div {
+        margin-bottom: 10px;
+        border-radius: 2px;
+        border: 1px solid black;
+
+        * {
+          color: black;
+          transition: all 0.3s ease-in-out;
+          background-color: white;
+        }
+
+        &:hover {
+          * {
+            color: white;
+            background-color: #444;
+            border: 0;
+          }
+        }
+
+        .dark & {
+          * {
+            color: white;
+            background-color: black;
+          }
+          &:hover {
+            * {
+              background-color: white;
+              color: black;
+            }
+          }
+        }
+      }
     }
   }
 
@@ -340,6 +373,7 @@
           padding: 25px 15px;
           font-size: 1.2rem;
           text-align: left;
+          cursor: pointer;
 
           button {
             font-size: 1.2rem;
@@ -396,7 +430,7 @@
 
     #leave-room {
       position: absolute;
-      top: 20px;
+      top: 10px;
       right: 20px;
       font-size: 1rem;
       padding: 0.5rem 0.8rem;
@@ -404,6 +438,7 @@
       transition: all 0.3s ease-in-out;
       cursor: pointer;
       z-index: 100;
+      background-color: #fff;
 
       &.active {
         z-index: 101;
@@ -412,6 +447,17 @@
       &:hover {
         background-color: #000000;
         color: #fff;
+      }
+
+      .dark & {
+        background-color: #000;
+        color: #fff;
+        border: 1px solid white;
+
+        &:hover {
+          background-color: #fff;
+          color: #000;
+        }
       }
     }
 
@@ -424,9 +470,14 @@
       height: 100%;
       width: 50px;
       gap: 15px;
-      box-shadow: 5px 0px 10px rgba($color: #fff, $alpha: 0.2);
       z-index: 10;
-      background-color: #272822;
+      box-shadow: 5px 0px 10px rgba($color: #000, $alpha: 0.5);
+      background-color: #fff;
+
+      .dark & {
+        box-shadow: 5px 0px 10px rgba($color: #fff, $alpha: 0.2);
+        background-color: #272822;
+      }
 
       .user-joined {
         display: flex;
@@ -463,6 +514,7 @@
     #editor {
       width: 100%;
       height: 100%;
+      box-shadow: 5px 0 10px rgba(#000, 0.5);
 
       .editor_settings {
         width: 100%;
@@ -489,10 +541,17 @@
             height: 50%;
 
             h5 {
-              background-color: #272822;
-              color: #aaa;
+              background-color: whitesmoke;
+              color: black;
               padding: 5px;
               font-size: 1.2rem;
+              font-family: sans-serif;
+              transition: all 0.3s ease-in-out;
+
+              .dark & {
+                background-color: #272822;
+                color: #aaa;
+              }
             }
 
             .ace_editor {
@@ -502,18 +561,66 @@
           }
         }
       }
+
+      .dark & {
+        box-shadow: 5px 0 5px rgba(#fff, 0.5);
+      }
     }
 
     #resize-editor {
-      width: 10px;
+      width: 15px;
       height: 100%;
-      background-color: transparent;
+      background-color: rgb(146, 228, 255);
       float: right;
       cursor: col-resize;
       transition: all 0.1s linear;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 5px 0 10px rgba(#000, 0.5);
 
       &:hover {
-        background-color: blue;
+        background-color: #1976d2;
+
+        #lines-resize {
+          background-color: white;
+
+          &::before,
+          &::after {
+            background-color: white;
+          }
+        }
+      }
+
+      .dark & {
+        background-color: rgb(146, 228, 255);
+        box-shadow: 5px 0 10px rgba(#fff, 0.5);
+
+        &:hover {
+          background-color: #1976d2;
+        }
+      }
+
+      #lines-resize {
+        height: 25px;
+        background-color: black;
+        width: 1px;
+        position: relative;
+
+        &::before,
+        &::after {
+          content: "";
+          height: 100%;
+          width: 100%;
+          position: absolute;
+          left: 300%;
+          top: 0;
+          background-color: black;
+        }
+
+        &::after {
+          left: -300%;
+        }
       }
     }
 
@@ -762,8 +869,8 @@
   #change-theme-button {
     position: absolute;
     z-index: 1000;
-    top: 20px;
-    left: 20px;
+    top: 10px;
+    left: 10px;
     height: 50px;
     width: 50px;
     display: flex;

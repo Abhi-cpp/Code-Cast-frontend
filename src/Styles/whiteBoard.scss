@@ -156,9 +156,10 @@
     padding: 10px;
     background-color: white;
     cursor: pointer;
-    transition: all 0.2s ease-in-out;
+    transition: all 0.3s ease-in-out;
     border-radius: 4px;
     position: relative;
+    outline: 0;
 
     &:hover {
       background-color: black;
@@ -178,6 +179,7 @@
 
   .dark & {
     background-color: #222;
+    box-shadow: 0 5px 10px 0px rgba(#fff, 0.3);
 
     .toolbar {
       box-shadow: 0 0 10px rgba(#fff, 1);
@@ -228,6 +230,20 @@
             }
           }
         }
+      }
+    }
+
+    #white-board-btn {
+      background-color: black;
+      border: 1px solid white;
+      color: white;
+
+      &:hover {
+        background-color: white;
+        color: black;
+      }
+      &::before {
+        box-shadow: 0 -5px 10px 0px rgba(#fff, 0.3);
       }
     }
   }
