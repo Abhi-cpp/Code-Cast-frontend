@@ -1,10 +1,11 @@
 import React, { useContext, useState, useEffect } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import PacmanLoader from "react-spinners/PacmanLoader";
 import { DataContext } from "./DataContext";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Loader from "./Loader";
+import { generateFromString } from 'generate-avatar';
 
 const override = {
     display: 'block',
@@ -30,6 +31,19 @@ const RoomData = () => {
         toast.success(`Welcome to CodeCast ${user.name}`, {
             position: toast.POSITION.TOP_RIGHT
         });
+
+        // const table = document.querySelector(".room-data table");
+        // table.addEventListener("mousemove", (e) => {
+        //     const mouse = { x: e.clientX, y: e.clientY };
+        //     const targetRect = table.getBoundingClientRect();
+        //     const targetCoords = {
+        //         x: targetRect.left + targetRect.width / 2,
+        //         y: targetRect.top + targetRect.height / 2
+        //     };
+        //     console.log(targetCoords);
+        //     table.style.boxShadow = `${mouse.x - targetCoords.x > 0 ? -5 : 5}px ${mouse.y - targetCoords.y > 0 ? -5 : 5}px 20px -5px #fff`;
+
+        // });
 
     }, [])
 
@@ -156,17 +170,26 @@ const RoomData = () => {
             setUser({ ...user })
         }
 
+        if (user) {
+            document.querySelectorAll(".join-room input").forEach(input => {
+                input.addEventListener("keydown", (e) => {
+                    if (e.key === "Enter")
+                        e.target.nextElementSibling.click();
+                })
+            })
+        }
+
     }, [user])
 
     return (
-        <div> {isLoading === true ? (<PacmanLoader color="#36D7B7"
-            size={150}
-            cssOverride={override}
-        />) :
+        isLoading ? (<Loader />) :
             (<div className="room-data">
                 <button onClick={logout} className="logOut">Logout</button>
                 <div className="userData">
-                    <img src={user.avatar} alt='user profile'/>
+                    {user.avatar ?
+                        <img src={user.avatar} height={100} alt='user profile' />
+                        : <img height={100} src={`data:image/svg+xml;utf8,${generateFromString(user.email + user.name)}`} alt="user profile" />
+                    }
                     <h1>Welcome {user.name}</h1>
                 </div>
                 <div className="join-room">
@@ -176,34 +199,37 @@ const RoomData = () => {
                     <button onClick={joinRoom} >Join Room</button>
                 </div>
                 <table sx={{ minWidth: 650 }} aria-label="simple table">
-                    <tr>
-                        <th>Name</th>
-                        <th align="right">Room ID</th>
-                        <th align="right">Language</th>
-                        <th align="right">Last Used</th>
-                        <th align="right">Join Room</th>
-                        <th align="right">Delete Room</th>
-
-                    </tr>
-                    {user.rooms.map((item, index) => (
-                        <tr key={index}>
-                            <td component="th" scope="row">{item.name}</td>
-                            <td align="right">{item.roomid}</td>
-                            <td align="right">{item.language}</td>
-                            <td align="right">{item.updatedAt}</td>
-                            <td align="right">
-                                <button className="join-btn" onClick={() => getData(item)}>Join Room</button>
-                            </td>
-                            <td align="right">
-                                <button className="delete-btn" onClick={deleteData(item)}>Delete Room</button>
-                            </td>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th align="right">Room ID</th>
+                            <th align="right">Language</th>
+                            <th align="right">Last Used</th>
+                            <th align="right">Join Room</th>
+                            <th align="right">Delete Room</th>
                         </tr>
-                    ))}
+                    </thead>
+                    <tbody>
+
+                        {user.rooms.map((item, index) => (
+                            <tr key={index}>
+                                <td component="th" scope="row">{item.name}</td>
+                                <td align="right">{item.roomid}</td>
+                                <td align="right">{item.language}</td>
+                                <td align="right">{item.updatedAt}</td>
+                                <td align="right">
+                                    <button className="join-btn" onClick={() => getData(item)}>Join Room</button>
+                                </td>
+                                <td align="right">
+                                    <button className="delete-btn" onClick={deleteData(item)}>Delete Room</button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
                 </table>
-                <ToastContainer />
             </div>
-            )}
-        </div>
+            )
+
     )
 }
 

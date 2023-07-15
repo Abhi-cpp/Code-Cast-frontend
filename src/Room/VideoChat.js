@@ -1,54 +1,17 @@
 // using webrtc and  peerjs creat audio chat.
 import { Peer } from "peerjs";
 import React, { useEffect, useRef, useState } from "react";
-const VideoChat = ({ socket, roomid }) => {
+const VideoChat = ({ socket, roomid, user }) => {
     const [peerId, setPeerId] = useState('');
     const [remotePeerIdValue, setRemotePeerIdValue] = useState('');
     const remoteVideoRef = useRef(null);
-    const currentUserVideoRef = useRef(null);
+    const userVideoRef = useRef(null);
     const peerInstance = useRef(null);
     const [audio, setAudio] = useState(true);
     const [video, setVideo] = useState(true);
     const [screen, setScreen] = useState(false);
-    useEffect(() => {
-        const peer = new Peer();
-
-        peer.on('open', (id) => {
-            setPeerId(id)
-        });
-
-        peer.on('call', (call) => {
-            var getUserMedia = navigator.getUserMedia;
-
-            getUserMedia({ video: true, audio: true }, (mediaStream) => {
-                currentUserVideoRef.current.srcObject = mediaStream;
-                currentUserVideoRef.current.play();
-                call.answer(mediaStream)
-                call.on('stream', function (remoteStream) {
-                    remoteVideoRef.current.srcObject = remoteStream
-                    remoteVideoRef.current.play();
-                });
-            });
-        })
-
-        socket.on('Id', (id) => {
-            setRemotePeerIdValue(id.peerId);
-        })
-
-        peerInstance.current = peer;
-    }, [])
-
-    useEffect(() => {
-        if (currentUserVideoRef.current) {
-            currentUserVideoRef.current.srcObject.getVideoTracks()[0].enabled = video;
-        }
-    }, [video])
-
-    useEffect(() => {
-        if (currentUserVideoRef.current) {
-            currentUserVideoRef.current.srcObject.getAudioTracks()[0].enabled = audio;
-        }
-    }, [audio])
+    const guestName = useRef(null);
+    const peer = new Peer();
 
     // mute video audio or stop video
     const muteVideo = () => {
@@ -59,55 +22,155 @@ const VideoChat = ({ socket, roomid }) => {
         setAudio(!audio);
     }
 
-    const stopVideo = () => {
-        setScreen(!screen);
+    function quitVideoCall() {
+        setScreen(false);
+        socket.emit("quit-video", { roomId: roomid, peerId });
+        userVideoRef.current.srcObject.getAudioTracks()[0].stop();
+        userVideoRef.current.srcObject.getVideoTracks()[0].stop();
+        peerInstance.current.destroy();
+
+
+    }
+
+    function startCall() {
+        socket.emit('Id', { roomid, peerId, name: user.name })
+        setScreen(true);
+        peerInstance.current = peer;
+        document.querySelectorAll(".user-video").forEach(video => {
+            video.classList.add("active");
+        })
+        console.log(peerId);
     }
 
 
-    useEffect(() => {
-        if (remotePeerIdValue) {
-            console.log('remotePeerIdValue', remotePeerIdValue)
-            console.log('peerId', peerId)
-            call(remotePeerIdValue);
-        }
-    }, [remotePeerIdValue])
-
-    const call = (remotePeerId) => {
-        var getUserMedia = navigator.getUserMedia;
+    const call = () => {
+        let getUserMedia = navigator.getUserMedia;
 
         getUserMedia({ video: true, audio: true }, (mediaStream) => {
 
-            currentUserVideoRef.current.srcObject = mediaStream;
-            currentUserVideoRef.current.play();
+            userVideoRef.current.srcObject = mediaStream;
+            userVideoRef.current.play();
 
-            const call = peerInstance.current.call(remotePeerId, mediaStream)
+            if (remotePeerIdValue) {
+                const call = peerInstance.current.call(remotePeerIdValue, mediaStream)
 
-            call.on('stream', (remoteStream) => {
-                remoteVideoRef.current.srcObject = remoteStream
-                remoteVideoRef.current.play();
-            });
+                call.on('stream', (remoteStream) => {
+                    remoteVideoRef.current.srcObject = remoteStream
+                    remoteVideoRef.current.play();
+                });
+                call.on('close', () => {
+                    console.log("call closed")
+                    userVideoRef.current.srcObject = null;
+                    remoteVideoRef.current.srcObject = null;
+                    peerInstance.current.destroy();
+
+                });
+            }
+
         });
-        setScreen(true);
     }
 
-    return (
-        <div className="App">
-            {screen ? (<> <div>
-                <video ref={remoteVideoRef} />
-            </div>
-                <div>
-                    <video ref={currentUserVideoRef} muted />
-                </div></>) :
+    useEffect(() => {
 
-                peerId ?
-                    (<button onClick={() => {
-                        socket.emit('Id', { roomid, peerId })
-                        setScreen(true);
-                    }}>Call</button>) : <h1>Loading</h1>
+        peer.on('open', (id) => {
+            setPeerId(id)
+        });
+
+        peer.on('call', (call) => {
+            let getUserMedia = navigator.getUserMedia;
+
+            getUserMedia({ video: true, audio: true }, (mediaStream) => {
+                userVideoRef.current.srcObject = mediaStream;
+                userVideoRef.current.play();
+                call.answer(mediaStream)
+                call.on('stream', function (remoteStream) {
+                    remoteVideoRef.current.srcObject = remoteStream
+                    remoteVideoRef.current.play();
+                });
+            });
+        })
+
+        socket.on('Id', (id) => {
+            console.log(id.peerId);
+            setRemotePeerIdValue(id.peerId);
+            guestName.current = id.name;
+        })
+        socket.on('quit-video', (data) => {
+            setRemotePeerIdValue('');
+            guestName.current = '';
+            remoteVideoRef.current.srcObject = null;
+            remoteVideoRef.current.pause();
+            remoteVideoRef.current.load();
+        })
+
+        peer.on("close", () => {
+            console.log("peer closed")
+        });
+
+        peerInstance.current = peer;
+    }, [])
+    useEffect(() => {
+        if (userVideoRef.current && screen) {
+            userVideoRef.current.srcObject.getAudioTracks()[0].enabled = audio;
+        }
+
+        if (userVideoRef.current && screen) {
+            userVideoRef.current.srcObject.getVideoTracks()[0].enabled = video;
+        }
+    }, [audio, video])
+
+    useEffect(() => {
+        const user = document.querySelectorAll(".user-video")[1];
+        const guest = document.querySelectorAll(".user-video")[0];
+        if (screen) {
+            if (!remotePeerIdValue) {
+                guest.querySelector(" .waiting-video").classList.add("active");
+                guest.querySelector(".user-name").classList.remove("active");
+
+            } else {
+                guest.querySelector(" .waiting-video").classList.remove("active");
+                guest.querySelector(".user-name").classList.add("active");
             }
-            <button className={video ? "" : "active"} style={{ margin: "10px" }} onClick={muteVideo}>Mute Video</button>
-            <button className={audio ? "" : "active"} style={{ margin: "10px" }} onClick={muteAudio}>Mute Audio</button>
-            {/* <button style={{ margin: "10px" }} onClick={stopVideo}>Stop Video</button> */}
+            call();
+            user.querySelector(".user-name").classList.add("active");
+        } else {
+            user.classList.remove("active");
+            guest.classList.remove("active");
+            guest.querySelector(" .waiting-video").classList.remove("active");
+
+        }
+    }, [remotePeerIdValue, screen])
+
+    return (
+        <div className="video-chat">
+            <div className="users">
+                <div className="user-video">
+                    <h1 className="waiting-video">Waiting for user to Join</h1>
+                    <video ref={remoteVideoRef} />
+                    <h2 className="user-name">{guestName.current}</h2>
+                </div>
+                <div className="user-video">
+                    <video ref={userVideoRef} muted />
+                    <h2 className="user-name">{user.name}</h2>
+                </div>
+            </div>
+            {peerId ?
+                (<div className="video-buttons">
+                    {screen ?
+                        <>
+                            <button onClick={muteVideo} className={video ? "" : "muted"}>
+                                {video ? <i className="fas fa-video"></i> : <i className="fas fa-video-slash"></i>}
+                            </button>
+                            <button onClick={muteAudio} className={audio ? " " : "muted"}>
+                                {audio ? <i className="fas fa-microphone"></i> : <i className="fas fa-microphone-slash"></i>}
+                            </button>
+                            <button onClick={quitVideoCall}>
+                                <i className="fas fa-phone"></i>
+                            </button>
+
+                        </> :
+                        <button onClick={startCall}>Start Call</button>}
+                </div>) : <h1>Loading</h1>}
         </div >
     );
 };
