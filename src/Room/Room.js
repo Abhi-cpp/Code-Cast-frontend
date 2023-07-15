@@ -9,7 +9,6 @@ import defaultCode from './../static/default_code.json';
 import axios from 'axios';
 import VideoChat from './VideoChat';
 import WhiteBoard from './WhiteBoard';
-import VideoChat2 from './VideoChat2';
 const dmp = new diff_match_patch();
 
 const Room = () => {
