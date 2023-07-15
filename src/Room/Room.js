@@ -9,6 +9,7 @@ import defaultCode from './../static/default_code.json';
 import axios from 'axios';
 import VideoChat from './VideoChat';
 import WhiteBoard from './WhiteBoard';
+import VideoChat2 from './VideoChat2';
 const dmp = new diff_match_patch();
 
 const Room = () => {
@@ -244,6 +245,7 @@ const Room = () => {
                 <button id="leave-room" className="active" onClick={leaveRoom}>Leave Room</button>
                 <div className="users-joined">
                     {inRoomUsers.map((user) => (
+                        console.log(user),
                         <div className="user-joined" key={user.id}>
                             <img src={user.avatar} alt="" />
                             <div className="name">{user.name}</div>
@@ -272,8 +274,9 @@ const Room = () => {
                 <VideoChat
                     socket={socket}
                     roomid={roomid}
+                    user={user}
                 />
-                <WhiteBoard />
+                <WhiteBoard roomId={roomid} socket={socket} />
                 <ToastContainer autoClose={2000} />
             </div >
         )

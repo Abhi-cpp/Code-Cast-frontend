@@ -5,6 +5,7 @@ import { DataContext } from "./DataContext";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Loader from "./Loader";
+import { generateFromString } from 'generate-avatar';
 
 const override = {
     display: 'block',
@@ -185,7 +186,10 @@ const RoomData = () => {
             (<div className="room-data">
                 <button onClick={logout} className="logOut">Logout</button>
                 <div className="userData">
-                    <img src={user.avatar} alt='user profile' />
+                    {user.avatar ?
+                        <img src={user.avatar} height={100} alt='user profile' />
+                        : <img height={100} src={`data:image/svg+xml;utf8,${generateFromString(user.email + user.name)}`} alt="user profile" />
+                    }
                     <h1>Welcome {user.name}</h1>
                 </div>
                 <div className="join-room">

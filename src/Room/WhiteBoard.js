@@ -1,18 +1,16 @@
 import { useEffect } from "react";
-import AppendScript from "../AppendScript";
-import '../whiteBoard.css'
+import '../Styles/whiteBoard.css'
 import { io } from "socket.io-client";
 
-const WhiteBoard = () => {
+const WhiteBoard = ({ socket, roomId }) => {
 
     useEffect(() => {
         // eslint-disable-next-line no-undef
-        const socket = io("localhost:1234");
         socket.on("connect", () => {
             console.log("connected");
         });
 
-
+        const root = document.querySelector("#root");
         const canvas = document.querySelector(' #white-board canvas');
         const ctx = canvas.getContext('2d');
         const width = canvas.width = window.innerWidth;
@@ -34,7 +32,7 @@ const WhiteBoard = () => {
 
 
         const whiteBoard = document.querySelector("#white-board");
-        const data = { color: "black", thickness: 1 };
+        const data = { color: root.classList.contains("dark") ? "white" : "black", thickness: 1 };
         const colors = document.querySelectorAll(".colors .color");
         const sizes = document.querySelectorAll(".sizes .size");
         const eraser = document.querySelector("#eraser");
@@ -52,6 +50,7 @@ const WhiteBoard = () => {
                     changeContinuous();
                 } else {
                     data.color = getComputedStyle(color).getPropertyValue("--color");
+                    if (data.color == "black" && root.classList.contains("dark")) { data.color = "white"; }
                     ctx.strokeStyle = data.color;
                     ctx.lineWidth = data.thickness;
                 }
@@ -64,11 +63,15 @@ const WhiteBoard = () => {
                 sizes.forEach(size => size.classList.remove("active"));
                 size.classList.add("active");
                 eraser.classList.remove("active");
-                colors.forEach(color => {
-                    if (getComputedStyle(color).getPropertyValue("--color") == data.color) {
-                        color.classList.add("active");
-                    }
-                });
+                if (data.color == "white") {
+                    colors[0].classList.add("active");
+                } else {
+                    colors.forEach(color => {
+                        if (getComputedStyle(color).getPropertyValue("--color") == data.color) {
+                            color.classList.add("active");
+                        }
+                    });
+                }
                 data.thickness = getComputedStyle(size).getPropertyValue("--width");
                 ctx.lineWidth = data.thickness;
                 ctx.strokeStyle = data.color;
@@ -89,7 +92,7 @@ const WhiteBoard = () => {
 
         eraser.addEventListener("click", () => {
 
-            ctx.strokeStyle = "#fff";
+            ctx.strokeStyle = "black";
             ctx.lineWidth = 20;
             eraser.classList.add("active");
             sizes.forEach(size => size.classList.remove("active"));
@@ -110,11 +113,16 @@ const WhiteBoard = () => {
             pen.classList.add("active")
             changeColorShape();
             sizes[data.thickness - 1].classList.add("active");
-            colors.forEach(color => {
-                if (getComputedStyle(color).getPropertyValue("--color") == data.color) {
-                    color.classList.add("active");
-                }
-            });
+            if (data.color == "white") {
+                colors[0].classList.add("active");
+            } else {
+                colors.forEach(color => {
+                    if (getComputedStyle(color).getPropertyValue("--color") == data.color) {
+                        color.classList.add("active");
+                    }
+                });
+            }
+
         })
 
         shapes.forEach(shape => {
@@ -126,11 +134,15 @@ const WhiteBoard = () => {
                 ctx.lineWidth = data.thickness;
                 ctx.strokeStyle = data.color;
                 sizes[data.thickness - 1].classList.add("active");
-                colors.forEach(color => {
-                    if (getComputedStyle(color).getPropertyValue("--color") == data.color) {
-                        color.classList.add("active");
-                    }
-                });
+                if (data.color == "white") {
+                    colors[0].classList.add("active");
+                } else {
+                    colors.forEach(color => {
+                        if (getComputedStyle(color).getPropertyValue("--color") == data.color) {
+                            color.classList.add("active");
+                        }
+                    });
+                }
                 clearInterval(colorInterval);
                 changeColorShape();
             })
@@ -143,8 +155,8 @@ const WhiteBoard = () => {
                     shape.style.color = data.color;
                     shape.style.borderColor = data.color;
                 } else {
-                    shape.style.color = "black";
-                    shape.style.borderColor = "black";
+                    shape.style.color = root.classList.contains("dark") ? "white" : "black";
+                    shape.style.borderColor = root.classList.contains("dark") ? "white" : "black";
                 }
             })
         }
@@ -153,7 +165,6 @@ const WhiteBoard = () => {
         // event listeners
 
         function dragged(e) {
-            console.log("dragged working");
             if (!whiteBoard.classList.contains("active")) return;
             if (e.target != canvas) {
                 cursor.style.display = "none";
@@ -235,13 +246,13 @@ const WhiteBoard = () => {
 
         function drawLine() {
             ctx.beginPath();
-            ctx.strokeStyle = eraser.classList.contains("active") ? "#fff" : data.color;
+            ctx.strokeStyle = eraser.classList.contains("active") ? root.classList.contains("dark") ? "#222" : "#fff" : data.color;
             ctx.moveTo(prevX, prevY)
             ctx.lineTo(x, y);
             ctx.stroke();
-            socket.emit("drawData", { prevX, prevY, x, y, color: data.color, thickness: data.thickness, shape: eraser.classList.contains("active") ? "eraser" : "pen" });
+            socket.emit("drawData", { roomId: roomId, prevX, prevY, x, y, color: data.color, thickness: data.thickness, shape: eraser.classList.contains("active") ? "eraser" : "pen" });
             count++;
-            console.log(count);
+            // console.log(count);
         }
 
 
@@ -257,22 +268,22 @@ const WhiteBoard = () => {
             if (shape.id == "rectangle") {
                 rectangle[2] = e.offsetX;
                 rectangle[3] = e.offsetY;
-                shapeDemo.style.borderRadius = "0%";
-                shapeDemo.style.left = rectangle[0] + "px";
-                shapeDemo.style.top = rectangle[1] + toolbar.offsetHeight + "px";
-                shapeDemo.style.width = rectangle[2] - rectangle[0] + "px";
-                shapeDemo.style.height = rectangle[3] - rectangle[1] + "px";
+                // shapeDemo.style.borderRadius = "0%";
+                // shapeDemo.style.left = rectangle[0] + "px";
+                // shapeDemo.style.top = rectangle[1] + toolbar.offsetHeight + "px";
+                // shapeDemo.style.width = rectangle[2] - rectangle[0] + "px";
+                // shapeDemo.style.height = rectangle[3] - rectangle[1] + "px";
             }
 
             if (shape.id == "circle") {
                 circle[2] = (e.offsetX - circle[0]) / 2 + circle[0];
                 circle[3] = (e.offsetY - circle[1]) / 2 + circle[1];
                 circle[4] = Math.sqrt(Math.pow(e.offsetX - circle[2], 2) + Math.pow(e.offsetY - circle[3], 2));
-                shapeDemo.style.borderRadius = "50%";
-                shapeDemo.style.left = circle[2] - circle[4] + "px";
-                shapeDemo.style.top = circle[3] - circle[4] + toolbar.offsetHeight + "px";
-                shapeDemo.style.width = circle[4] * 2 + "px";
-                shapeDemo.style.height = circle[4] * 2 + "px"
+                // shapeDemo.style.borderRadius = "50%";
+                // shapeDemo.style.left = circle[2] - circle[4] + "px";
+                // shapeDemo.style.top = circle[3] - circle[4] + toolbar.offsetHeight + "px";
+                // shapeDemo.style.width = circle[4] * 2 + "px";
+                // shapeDemo.style.height = circle[4] * 2 + "px"
 
             }
         }
@@ -286,7 +297,7 @@ const WhiteBoard = () => {
             ctx.lineTo(triangle[2].x, triangle[2].y);
             ctx.lineTo(triangle[0].x, triangle[0].y);
             ctx.stroke();
-            shapeDemo.style.width = shapeDemo.style.height = 0;
+            // shapeDemo.style.width = shapeDemo.style.height = 0;
             socket.emit("drawData", { triangle, color: data.color, thickness: data.thickness, shape: "triangle" });
         }
 
@@ -296,7 +307,7 @@ const WhiteBoard = () => {
             ctx.beginPath();
             ctx.rect(rectangle[0], rectangle[1], rectangle[2] - rectangle[0], rectangle[3] - rectangle[1]);
             ctx.stroke();
-            shapeDemo.style.width = shapeDemo.style.height = 0;
+            // shapeDemo.style.width = shapeDemo.style.height = 0;
             socket.emit("drawData", { rectangle, color: data.color, thickness: data.thickness, shape: "rectangle" });
         }
 
@@ -306,12 +317,13 @@ const WhiteBoard = () => {
             ctx.beginPath();
             ctx.arc(circle[2], circle[3], circle[4], 0, 2 * Math.PI);
             ctx.stroke();
-            shapeDemo.style.width = shapeDemo.style.height = 0;
+            // shapeDemo.style.width = shapeDemo.style.height = 0;
 
             socket.emit("drawData", { x: circle[2], y: circle[3], radius: circle[4], color: data.color, thickness: data.thickness, shape: "circle" });
         }
 
         socket.on("drawData", (data) => {
+            // console.log(data);
             ctx.strokeStyle = data.color;
             ctx.lineWidth = data.thickness;
             if (data.shape === "triangle") {
@@ -363,7 +375,7 @@ const WhiteBoard = () => {
                 </div>
 
                 <div className="colors">
-                    <div className="color active" style={{ "--color": "black" }}></div>
+                    <div className="color active" style={{ "--color": "white" }}></div>
                     <div className="color" style={{ "--color": "blue" }}></div>
                     <div className="color" style={{ "--color": "green" }}></div>
                     <div className="color" style={{ "--color": "yellow" }}></div>
@@ -399,7 +411,7 @@ const WhiteBoard = () => {
 
             </div>
             <div id="cursor"></div>
-            <div id="shape-demo"></div>
+            {/* <div id="shape-demo"></div> */}
             <canvas></canvas>
             <button id="white-board-btn" ><span>WhiteBoard</span></button>
         </div >

@@ -1,4 +1,4 @@
-import './App.css';
+import './Styles/App.css';
 import Login from './Components/Login';
 import DataContextProvider from './Components/DataContext';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
@@ -9,6 +9,15 @@ function App() {
   useEffect(() => {
     document.querySelector("#change-theme").addEventListener('click', () => {
       document.querySelector("#root").classList.toggle("dark");
+      if (document.querySelector("#root").classList.contains("dark")) {
+        // change computed style value
+
+        const colors = document.querySelectorAll(".colors .color");
+        if (colors) colors[0].style.setProperty('--color', '#fff');
+      } else {
+        const colors = document.querySelectorAll(".colors .color");
+        if (colors) colors[0].style.setProperty('--color', '#000');
+      }
     });
   })
   return (
@@ -16,8 +25,8 @@ function App() {
       <div className="App">
         <div id="change-theme">
           <button id="change-theme-button">
-            <i class="fas fa-moon"></i>
-            <i class="fas fa-sun"></i>
+            <i className="fas fa-moon"></i>
+            <i className="fas fa-sun"></i>
           </button>
         </div>
         <Router>
