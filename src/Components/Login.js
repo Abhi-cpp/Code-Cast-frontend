@@ -5,6 +5,7 @@ import RoomData from './RoomData';
 import { DataContext } from "./DataContext";
 import Loader from "./Loader";
 import { ToastContainer, toast } from "react-toastify";
+import { generateFromString } from 'generate-avatar'
 
 
 const clientId = process.env.REACT_APP_CLIENT_ID;
