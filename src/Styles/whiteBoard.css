@@ -102,7 +102,7 @@
 }
 #white-board .toolbar .extras #eraser {
   min-width: 20px;
-  background: url("../public/eraser.png") no-repeat center;
+  background: url("../../public/eraser.png") no-repeat center;
   background-size: contain;
 }
 #white-board .toolbar .extras #eraser.active {
@@ -155,10 +155,51 @@
   position: absolute;
   box-shadow: 0 -5px 10px 0px rgba(0, 0, 0, 0.3);
 }
+.dark #white-board {
+  background-color: #222;
+}
+.dark #white-board .toolbar {
+  box-shadow: 0 0 10px white;
+}
+.dark #white-board .toolbar .sizes {
+  color: white;
+}
+.dark #white-board .toolbar .sizes > * {
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+}
+.dark #white-board .toolbar .sizes > *::before {
+  background-color: white;
+}
+.dark #white-board .toolbar .sizes > *.active {
+  box-shadow: 0 0 10px 4px white;
+}
+.dark #white-board .toolbar .color.active {
+  border: 3px solid white;
+  transform: scale(1.25);
+  box-shadow: 0 0 10px 1px white;
+}
+.dark #white-board .toolbar .extras #clearScreen,
+.dark #white-board .toolbar .extras #eraser {
+  border: 2px solid white;
+  color: white;
+}
+.dark #white-board .toolbar .extras #clearScreen.active,
+.dark #white-board .toolbar .extras #eraser.active {
+  border: 4px solid white;
+}
+.dark #white-board .toolbar .extras .shapes .shape,
+.dark #white-board .toolbar .extras .shapes #pen {
+  color: white;
+  border: 2px solid white;
+}
+.dark #white-board .toolbar .extras .shapes .shape.active,
+.dark #white-board .toolbar .extras .shapes #pen.active {
+  border: 4px solid white;
+}
 
 #cursor {
   position: absolute;
-  background-image: url("../public/pencil.png");
+  background-image: url("../../public/pencil.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;

@@ -347,26 +347,38 @@
             border-radius: 5px;
             outline: none;
             border: none;
-            box-shadow: 0 0 6px rgba($color: #000000, $alpha: 0.6);
+            box-shadow: 0 0 15px rgba(#444, 0.6), 0 0 30px rgba(#444, 0.6),
+              0 0 60px rgba(#444, 0.6), 0 0 45px rgba(#444, 0.6);
             transition: all 0.3s ease-in-out;
             cursor: pointer;
 
             &.join-btn {
-              background-color: #b8ffb8;
+              background-color: #beffbe;
 
               &:hover {
-                background-color: #00d100;
+                background-color: #018901;
                 color: white;
+                box-shadow: 0 0 10px rgba(#018901, 0.5),
+                  0 0 20px rgba(#018901, 0.5), 0 0 5px rgba(#018901, 0.5),
+                  0 0 15px rgba(#018901, 0.5);
               }
             }
 
             &.delete-btn {
-              background-color: #ffc9c9;
+              background-color: #ffb8b8;
 
               &:hover {
                 background-color: #e80000;
                 color: white;
+                box-shadow: 0 0 10px rgba(#e80000, 0.5),
+                  0 0 20px rgba(#e80000, 0.5), 0 0 5px rgba(#e80000, 0.5),
+                  0 0 15px rgba(#e80000, 0.5);
               }
+            }
+
+            .dark & {
+              box-shadow: 0 0 10px rgba(#bbb, 0.3), 0 0 20px rgba(#bbb, 0.3),
+                0 0 30px rgba(#bbb, 0.3), 0 0 40px rgba(#bbb, 0.3);
             }
           }
         }
@@ -515,7 +527,7 @@
       padding-bottom: 10px;
       align-items: center;
       flex-direction: column;
-
+      font-family: sans-serif;
       .dark & {
         color: white;
       }
@@ -538,6 +550,7 @@
           align-items: center;
           background-color: #272822;
           transition: all 0.3s ease-in-out;
+          position: relative;
 
           .dark & {
             border: 2px solid black;
@@ -557,6 +570,42 @@
             object-fit: cover;
             transition: all 0.5s linear;
             pointer-events: none;
+          }
+
+          .waiting-video {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            width: 100%;
+            text-align: center;
+
+            .dark & {
+              color: black;
+            }
+
+            &.active {
+              display: block;
+            }
+          }
+
+          .user-name {
+            position: absolute;
+            display: none;
+            bottom: 5px;
+            left: 5px;
+            font-size: 1.3rem;
+            font-family: sans-serif;
+            text-transform: uppercase;
+            font-weight: 600;
+            color: white;
+            text-shadow: 0 0 10px black;
+
+            &.active {
+              display: block;
+            }
           }
         }
 
@@ -714,7 +763,7 @@
     position: absolute;
     z-index: 1000;
     top: 20px;
-    right: 20px;
+    left: 20px;
     height: 50px;
     width: 50px;
     display: flex;
