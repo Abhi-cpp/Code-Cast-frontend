@@ -138,9 +138,10 @@
   padding: 10px;
   background-color: white;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
+  transition: all 0.3s ease-in-out;
   border-radius: 4px;
   position: relative;
+  outline: 0;
 }
 #white-board #white-board-btn:hover {
   background-color: black;
@@ -157,6 +158,7 @@
 }
 .dark #white-board {
   background-color: #222;
+  box-shadow: 0 5px 10px 0px rgba(255, 255, 255, 0.3);
 }
 .dark #white-board .toolbar {
   box-shadow: 0 0 10px white;
@@ -195,6 +197,18 @@
 .dark #white-board .toolbar .extras .shapes .shape.active,
 .dark #white-board .toolbar .extras .shapes #pen.active {
   border: 4px solid white;
+}
+.dark #white-board #white-board-btn {
+  background-color: black;
+  border: 1px solid white;
+  color: white;
+}
+.dark #white-board #white-board-btn:hover {
+  background-color: white;
+  color: black;
+}
+.dark #white-board #white-board-btn::before {
+  box-shadow: 0 -5px 10px 0px rgba(255, 255, 255, 0.3);
 }
 
 #cursor {

@@ -1,11 +1,11 @@
 // using webrtc and  peerjs creat audio chat.
 import { Peer } from "peerjs";
 import React, { useEffect, useRef, useState } from "react";
-const VideoChat = ({ socket, roomid, user }) => {
+const VideoChat = ({ socket, roomid, user, userVideo, closeIt }) => {
     const [peerId, setPeerId] = useState('');
     const [remotePeerIdValue, setRemotePeerIdValue] = useState('');
     const remoteVideoRef = useRef(null);
-    const userVideoRef = useRef(null);
+    // const userVideo = useRef(null);
     const peerInstance = useRef(null);
     const [audio, setAudio] = useState(true);
     const [video, setVideo] = useState(true);
@@ -23,12 +23,10 @@ const VideoChat = ({ socket, roomid, user }) => {
     }
 
     function quitVideoCall() {
-        setScreen(false);
         socket.emit("quit-video", { roomId: roomid, peerId });
-        userVideoRef.current.srcObject.getAudioTracks()[0].stop();
-        userVideoRef.current.srcObject.getVideoTracks()[0].stop();
+        closeIt();
         peerInstance.current.destroy();
-
+        setScreen(false);
 
     }
 
@@ -48,8 +46,8 @@ const VideoChat = ({ socket, roomid, user }) => {
 
         getUserMedia({ video: true, audio: true }, (mediaStream) => {
 
-            userVideoRef.current.srcObject = mediaStream;
-            userVideoRef.current.play();
+            userVideo.current.srcObject = mediaStream;
+            userVideo.current.play();
 
             if (remotePeerIdValue) {
                 const call = peerInstance.current.call(remotePeerIdValue, mediaStream)
@@ -60,7 +58,7 @@ const VideoChat = ({ socket, roomid, user }) => {
                 });
                 call.on('close', () => {
                     console.log("call closed")
-                    userVideoRef.current.srcObject = null;
+                    userVideo.current.srcObject = null;
                     remoteVideoRef.current.srcObject = null;
                     peerInstance.current.destroy();
 
@@ -80,8 +78,8 @@ const VideoChat = ({ socket, roomid, user }) => {
             let getUserMedia = navigator.getUserMedia;
 
             getUserMedia({ video: true, audio: true }, (mediaStream) => {
-                userVideoRef.current.srcObject = mediaStream;
-                userVideoRef.current.play();
+                userVideo.current.srcObject = mediaStream;
+                userVideo.current.play();
                 call.answer(mediaStream)
                 call.on('stream', function (remoteStream) {
                     remoteVideoRef.current.srcObject = remoteStream
@@ -110,12 +108,12 @@ const VideoChat = ({ socket, roomid, user }) => {
         peerInstance.current = peer;
     }, [])
     useEffect(() => {
-        if (userVideoRef.current && screen) {
-            userVideoRef.current.srcObject.getAudioTracks()[0].enabled = audio;
+        if (userVideo.current && screen) {
+            userVideo.current.srcObject.getAudioTracks()[0].enabled = audio;
         }
 
-        if (userVideoRef.current && screen) {
-            userVideoRef.current.srcObject.getVideoTracks()[0].enabled = video;
+        if (userVideo.current && screen) {
+            userVideo.current.srcObject.getVideoTracks()[0].enabled = video;
         }
     }, [audio, video])
 
@@ -137,6 +135,8 @@ const VideoChat = ({ socket, roomid, user }) => {
             user.classList.remove("active");
             guest.classList.remove("active");
             guest.querySelector(" .waiting-video").classList.remove("active");
+            guest.querySelector(".user-name").classList.remove("active");
+            user.querySelector(".user-name").classList.remove("active");
 
         }
     }, [remotePeerIdValue, screen])
@@ -150,7 +150,7 @@ const VideoChat = ({ socket, roomid, user }) => {
                     <h2 className="user-name">{guestName.current}</h2>
                 </div>
                 <div className="user-video">
-                    <video ref={userVideoRef} muted />
+                    <video ref={userVideo} muted />
                     <h2 className="user-name">{user.name}</h2>
                 </div>
             </div>

@@ -323,7 +323,7 @@ const WhiteBoard = ({ socket, roomId }) => {
         }
 
         socket.on("drawData", (data) => {
-            // console.log(data);
+            console.log(data);
             ctx.strokeStyle = data.color;
             ctx.lineWidth = data.thickness;
             if (data.shape === "triangle") {
