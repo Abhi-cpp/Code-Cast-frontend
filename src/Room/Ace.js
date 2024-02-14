@@ -42,7 +42,7 @@ const Ace = ({
     run
 }) => {
     const dmp = new diff_match_patch();
-    const [theme, setTheme] = useState('monokai');
+    const [theme, setTheme] = useState('vibrant_ink');
     const [fontSize, setFontSize] = useState(18);
     const [fontFamily, setFontFamily] = useState('monospace');
     const sent = useRef(true);
