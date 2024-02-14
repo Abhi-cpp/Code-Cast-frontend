@@ -25,6 +25,7 @@ const Room = () => {
     const [running, setRunning] = useState(false);
     const EditorRef = useRef(null);
     const [isWhiteBoard, setIsWhiteBoard] = useState(false);
+    const userVideoRef = useRef(null);
     function updateRoom(patch) {
         socket.emit('update', { roomid, patch })
     }
@@ -231,8 +232,19 @@ const Room = () => {
             })
     }
 
+    const closeCameraAndMircrophone = () => {
+        if (userVideoRef.current.srcObject) {
+            userVideoRef.current.srcObject.getAudioTracks()[0].stop();
+            userVideoRef.current.srcObject.getVideoTracks()[0].stop();
+            userVideoRef.current.srcObject.getVideoTracks()[0].enabled = false;
+            userVideoRef.current.srcObject.getAudioTracks()[0].enabled = false;
+        }
+
+    }
+
 
     async function leaveRoom() {
+        closeCameraAndMircrophone();
         socket.emit('leave', { roomid });
         socket.off();
         navigate('/');
@@ -244,7 +256,7 @@ const Room = () => {
                 <button id="leave-room" className="active" onClick={leaveRoom}>Leave Room</button>
                 <div className="users-joined">
                     {inRoomUsers.map((user) => (
-                        console.log(user),
+
                         <div className="user-joined" key={user.id}>
                             <img src={user.avatar} alt="" />
                             <div className="name">{user.name}</div>
@@ -269,11 +281,14 @@ const Room = () => {
                     running={running}
                 />
                 <div id="resize-editor">
+                    <div id="lines-resize"></div>
                 </div>
                 <VideoChat
                     socket={socket}
                     roomid={roomid}
                     user={user}
+                    userVideo={userVideoRef}
+                    closeIt={closeCameraAndMircrophone}
                 />
                 <WhiteBoard roomId={roomid} socket={socket} />
                 <ToastContainer autoClose={2000} />

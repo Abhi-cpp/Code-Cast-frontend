@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import AceEditor from 'react-ace';
 import axios from 'axios';
 import Settings from './EditorSettings.js';
@@ -25,7 +25,6 @@ import 'ace-builds/src-noconflict/theme-one_dark'
 import 'ace-builds/src-noconflict/ext-language_tools';
 
 
-
 const Ace = ({
     updateRoom,
     code,
@@ -43,12 +42,16 @@ const Ace = ({
     run
 }) => {
     const dmp = new diff_match_patch();
-    const [theme, setTheme] = useState('monokai');
+    const [theme, setTheme] = useState('vibrant_ink');
     const [fontSize, setFontSize] = useState(18);
     const [fontFamily, setFontFamily] = useState('monospace');
+    const sent = useRef(true);
 
 
     useEffect(() => {
+        if (!sent.current) return;
+
+        sent.current = false;
         const sendData = setTimeout(() => {
             axios({
                 method: 'patch',
@@ -65,26 +68,37 @@ const Ace = ({
                 }
             })
                 .then((res) => {
-                    console.log("patched successfully", res)
+                    // console.log("patched successfully", res)
                 })
                 .catch((err) => {
-                    console.log("error from axios", err)
+                    // console.log("error from axios", err)
                 })
+            sent.current = true;
         }, 2000)
 
-        return () => clearTimeout(sendData)
+
+
     }, [code])
+
+    useEffect(() => {
+        document.querySelector("#change-theme").addEventListener('click', () => {
+            if (document.querySelector("#root").classList.contains("dark")) {
+                setTheme('monokai')
+            } else {
+                setTheme('github')
+            }
+        })
+    }, [])
 
 
     function handleChange(newValue, event) {
+
         const patch = dmp.patch_make(code, newValue);
         code = newValue;
         updateRoom(patch);
         setCode(newValue)
         // console.log(code, newValue);
     }
-
-
 
     const handleIOChange = (newValue) => {
         setInput(newValue)

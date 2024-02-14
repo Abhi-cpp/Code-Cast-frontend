@@ -3,6 +3,8 @@ import {
     AppBar, Toolbar, IconButton, Typography,
     FormControl, InputLabel, Select, MenuItem
 } from "@mui/material";
+import getColor from './themeColors';
+import { useState } from 'react';
 
 const languageOptions = [
     { value: 'javascript', label: 'JavaScript' },
@@ -15,7 +17,7 @@ const languageOptions = [
 ];
 
 const themeOptions = [
-    { value: 'github', label: 'Github' },
+    { value: 'github', label: 'Github', },
     { value: 'cobalt', label: 'Cobalt' },
     { value: 'dracula', label: 'Dracula' },
     { value: 'monokai', label: 'Monokai' },
@@ -59,82 +61,72 @@ const Settings = ({
 
 }) => {
 
+    // I need to choose a color everytime the theme changes
+    // should I use usestate or useRef
+
+    const { backColor, fontColor } = getColor(theme);
     return (
-        <div className="editor-settings">
-            <AppBar position='Static' style={{ minHeight: 70 }} >
-                <Toolbar>
-                    <Typography variant="h5" style={{ flexGrow: 5 }}>
-                        {roomName}{'\n' + roomid}
-                    </Typography>
-                    <FormControl style={{ minWidth: 100, maxHeight: 40, marginRight: "16px" }}>
-                        <InputLabel id="language-selector-label">Language</InputLabel>
-                        <Select
-                            labelId="language-selector-label"
-                            id="language-selector"
-                            value={language}
-                            onChange={(e) => handleLangChange(e.target.value)}
-                        >
-                            {languageOptions.map((option) => (
-                                <MenuItem key={option.value} value={option.value}>
-                                    {option.label}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                    <FormControl style={{ minWidth: 100, maxHeight: 40 }}>
-                        <InputLabel id="theme-selector-label">Theme</InputLabel>
-                        <Select
-                            labelId="theme-selector-label"
-                            id="theme-selector"
-                            value={theme}
-                            onChange={(e) => setTheme(e.target.value)}
-                        >
-                            {themeOptions.map((option) => (
-                                <MenuItem key={option.value} value={option.value}>
-                                    {option.label}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                    <FormControl style={{ minWidth: 100, marginLeft: "16px", maxHeight: 40 }}>
-                        <InputLabel id="font-family-selector-label">Font Family</InputLabel>
-                        <Select
-                            labelId="font-family-selector-label"
-                            id="font-family-selector"
-                            value={fontFamily}
-                            onChange={(e) => setFontFamily(e.target.value)}
-                        >
-                            {fontFamilyOptions.map((option) => (
-                                <MenuItem key={option.value} value={option.value}>
-                                    {option.label}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                    <FormControl style={{ minWidth: 70, marginLeft: "16px", maxHeight: 40 }}>
-                        <InputLabel id="font-size-selector-label">Font Size</InputLabel>
-                        <Select
-                            labelId="font-size-selector-label"
-                            id="font-size-selector"
-                            value={fontSize}
-                            onChange={(e) => setFontSize(e.target.value)}
-                        >
-                            {fontSizeOptions.map((option) => (
-                                <MenuItem key={option} value={option}>
-                                    {option}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-
-                    <IconButton
-                        {...{ disabled: running }}
-                        color="inherit" style={{ marginL: '10px', maxHeight: 40 }} onClick={run}>
-                        <PlayArrowIcon />
-                    </IconButton>
-                </Toolbar>
-            </AppBar>
-
+        <div className="editor-settings" style={{ backgroundColor: backColor, color: fontColor }}>
+            <div>
+                <h3>{roomName} - {roomid}</h3>
+                <Select
+                    labelId="language-selector-label"
+                    id="language-selector"
+                    value={language}
+                    onChange={(e) => handleLangChange(e.target.value)}
+                    style={{ color: fontColor }}
+                >
+                    {languageOptions.map((option) => (
+                        <MenuItem key={option.value} value={option.value} >
+                            {option.label}
+                        </MenuItem>
+                    ))}
+                </Select>
+                <Select
+                    labelId="theme-selector-label"
+                    id="theme-selector"
+                    value={theme}
+                    onChange={(e) => setTheme(e.target.value)}
+                    style={{ color: fontColor }}
+                >
+                    {themeOptions.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                            {option.label}
+                        </MenuItem>
+                    ))}
+                </Select>
+                <Select
+                    labelId="font-family-selector-label"
+                    id="font-family-selector"
+                    value={fontFamily}
+                    onChange={(e) => setFontFamily(e.target.value)}
+                    style={{ color: fontColor }}
+                >
+                    {fontFamilyOptions.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                            {option.label}
+                        </MenuItem>
+                    ))}
+                </Select>
+                <Select
+                    labelId="font-size-selector-label"
+                    id="font-size-selector"
+                    value={fontSize}
+                    onChange={(e) => setFontSize(e.target.value)}
+                    style={{ color: fontColor }}
+                >
+                    {fontSizeOptions.map((option) => (
+                        <MenuItem key={option} value={option}>
+                            {option}
+                        </MenuItem>
+                    ))}
+                </Select>
+                <IconButton
+                    {...{ disabled: running }}
+                    style={{ marginL: '10px', maxHeight: 40, color: fontColor }} onClick={run}>
+                    <PlayArrowIcon />
+                </IconButton>
+            </div>
         </div >
     )
 

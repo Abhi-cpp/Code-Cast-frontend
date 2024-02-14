@@ -10,8 +10,6 @@ function App() {
     document.querySelector("#change-theme").addEventListener('click', () => {
       document.querySelector("#root").classList.toggle("dark");
       if (document.querySelector("#root").classList.contains("dark")) {
-        // change computed style value
-
         const colors = document.querySelectorAll(".colors .color");
         if (colors) colors[0].style.setProperty('--color', '#fff');
       } else {
@@ -19,7 +17,7 @@ function App() {
         if (colors) colors[0].style.setProperty('--color', '#000');
       }
     });
-  })
+  }, [])
   return (
     <DataContextProvider>
       <div className="App">

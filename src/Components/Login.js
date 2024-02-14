@@ -44,40 +44,7 @@ function Login() {
                 console.log("error in axios jwt call", error);
             });
         } else {
-            // const boxes = document.querySelectorAll("#login-form form label");
-            // boxes.forEach((box) => {
-            //     console.log(box.textContent);
-            //     box.innerHTML = box.textContent
-            //         .split("")
-            //         .map((letter, index) => `<span style="transition-delay : ${index * 0.1}s">${letter}</span>`)
-            //         .join("");
-            //     console.log(box.textContent, box.innerHTML);
-            // });
 
-            // const inputs = document.querySelectorAll("#login-form form input:not([type='submit])");
-            // inputs.forEach(input => {
-            //     input.addEventListener("focus", () => {
-            //         input.previousElementSibling.classList.add("active");
-            //     });
-
-            //     input.addEventListener("blur", () => {
-            //         if (input.value === "") {
-            //             input.previousElementSibling.classList.remove("active");
-            //         }
-            //     });
-            // })
-
-            // const text = box.textContent;
-            // box.innerHTML = text
-            //   .split("")
-            //   .map((letter) => `<span>letter</span>`)
-            //   .join("");
-
-            // const letters = document.querySelectorAll(".welcome span");
-            // const spaces = [...letters].filter((letter) => letter.innerHTML === " ");
-            // spaces.forEach((space) => {
-            //   space.innerHTML = "&nbsp";
-            // });
         }
 
     }, []);
@@ -158,7 +125,7 @@ function Login() {
         }
 
 
-        axios.post(process.env.REACT_APP_USERS_LOGIN, data).then((response) => {
+        axios.post(process.env.REACT_APP_BACKEND_URL + "users/login", data).then((response) => {
             setUser(response.data.user);
             localStorage.setItem('user', response.data.token);
         }).catch((error) => {
@@ -196,6 +163,18 @@ function Login() {
                             <img src="./app-logo.png" alt="logo" />
                             <img src="./app-logo-light.png" alt="logo-light" />
                         </div>
+                        <GoogleOAuthProvider clientId={clientId}>
+                            <GoogleLogin id="googlelogin"
+                                onSuccess={credentialResponse => {
+                                    onSuccess(credentialResponse);
+                                }}
+                                onError={() => {
+                                    console.log('Login Failed');
+                                }}
+                                useOneTap
+                            />
+                        </GoogleOAuthProvider>
+
                         <div id="login-form" className="active">
                             <h1>Login</h1>
                             <form onSubmit={loginUser}>
@@ -227,17 +206,7 @@ function Login() {
                         <div id="error-message" className="error">
                             <p></p>
                         </div>
-                        <GoogleOAuthProvider clientId={clientId}>
-                            <GoogleLogin id="googlelogin"
-                                onSuccess={credentialResponse => {
-                                    onSuccess(credentialResponse);
-                                }}
-                                onError={() => {
-                                    console.log('Login Failed');
-                                }}
-                                useOneTap
-                            />
-                        </GoogleOAuthProvider>
+
                     </div>
                     <ToastContainer autoClose={2000} />
                 </>
