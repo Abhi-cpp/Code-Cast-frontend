@@ -5,30 +5,13 @@
 }
 
 #white-board {
-  position: absolute;
-  top: calc(-100vh + 50px);
-  left: 0;
-  width: 100vw;
-  z-index: 100;
+  width: calc(100vw - 50px);
   height: 100vh;
   background-color: #fff;
   overflow: hidden;
   transition: all 0.5s ease-in-out;
-  cursor: none;
+  cursor: crosshair;
 
-  &.active {
-    top: 0;
-
-    #white-board-btn {
-      span {
-        display: none;
-      }
-
-      &::after {
-        content: "Code Editor";
-      }
-    }
-  }
   .toolbar {
     width: 100vw;
     height: 80px;
@@ -150,30 +133,41 @@
     }
   }
 
-  #white-board-btn {
-    margin: 0 auto;
-    display: block;
-    padding: 10px;
-    background-color: white;
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
-    border-radius: 4px;
-    position: relative;
-    outline: 0;
-
-    &:hover {
+  .change-component-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 0;
+    .change-btn {
+      padding: 10px 20px;
       background-color: black;
+      border: 1px solid white;
       color: white;
-    }
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+      border-radius: 5px;
+      position: relative;
 
-    &::before {
-      width: 100vw;
-      height: 50px;
-      top: -10px;
-      left: calc(-50vw + 50%);
-      content: "";
-      position: absolute;
-      box-shadow: 0 -5px 10px 0px rgba(0, 0, 0, 0.3);
+      &:hover {
+        background-color: white;
+        color: black;
+      }
+
+      &.whiteboard-open {
+        p {
+          visibility: hidden;
+        }
+
+        &::after {
+          content: "Code-Editor";
+          position: absolute;
+          inset: 0;
+          font-size: 0.8rem;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+      }
     }
   }
 
@@ -247,26 +241,4 @@
       }
     }
   }
-}
-
-#cursor {
-  position: absolute;
-  background-image: url("../../public/pencil.png");
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  width: 25px;
-  height: 25px;
-  z-index: 1000;
-  pointer-events: none;
-  left: 100px;
-  top: 100px;
-}
-
-#shape-demo {
-  position: absolute;
-  border: 1px solid black;
-  z-index: 1000;
-  left: 100px;
-  top: 100px;
 }

@@ -3,8 +3,6 @@ import {
     AppBar, Toolbar, IconButton, Typography,
     FormControl, InputLabel, Select, MenuItem
 } from "@mui/material";
-import getColor from './themeColors';
-import { useState } from 'react';
 
 const languageOptions = [
     { value: 'javascript', label: 'JavaScript' },
@@ -44,7 +42,6 @@ const fontFamilyOptions = [
 
 const fontSizeOptions = [14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40];
 
-
 const Settings = ({
     setTheme,
     setFontSize,
@@ -58,15 +55,10 @@ const Settings = ({
     handleLangChange,
     roomid,
     running
-
 }) => {
 
-    // I need to choose a color everytime the theme changes
-    // should I use usestate or useRef
-
-    const { backColor, fontColor } = getColor(theme);
     return (
-        <div className="editor-settings" style={{ backgroundColor: backColor, color: fontColor }}>
+        <div className="editor-settings" >
             <div>
                 <h3>{roomName} - {roomid}</h3>
                 <Select
@@ -74,7 +66,6 @@ const Settings = ({
                     id="language-selector"
                     value={language}
                     onChange={(e) => handleLangChange(e.target.value)}
-                    style={{ color: fontColor }}
                 >
                     {languageOptions.map((option) => (
                         <MenuItem key={option.value} value={option.value} >
@@ -87,7 +78,6 @@ const Settings = ({
                     id="theme-selector"
                     value={theme}
                     onChange={(e) => setTheme(e.target.value)}
-                    style={{ color: fontColor }}
                 >
                     {themeOptions.map((option) => (
                         <MenuItem key={option.value} value={option.value}>
@@ -100,7 +90,6 @@ const Settings = ({
                     id="font-family-selector"
                     value={fontFamily}
                     onChange={(e) => setFontFamily(e.target.value)}
-                    style={{ color: fontColor }}
                 >
                     {fontFamilyOptions.map((option) => (
                         <MenuItem key={option.value} value={option.value}>
@@ -113,7 +102,6 @@ const Settings = ({
                     id="font-size-selector"
                     value={fontSize}
                     onChange={(e) => setFontSize(e.target.value)}
-                    style={{ color: fontColor }}
                 >
                     {fontSizeOptions.map((option) => (
                         <MenuItem key={option} value={option}>
@@ -123,7 +111,7 @@ const Settings = ({
                 </Select>
                 <IconButton
                     {...{ disabled: running }}
-                    style={{ marginL: '10px', maxHeight: 40, color: fontColor }} onClick={run}>
+                    style={{ marginL: '10px', maxHeight: 40, }} onClick={run}>
                     <PlayArrowIcon />
                 </IconButton>
             </div>

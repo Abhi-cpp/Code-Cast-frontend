@@ -23,7 +23,6 @@ function Login() {
     }
 
     useEffect(() => {
-
         const token = localStorage.getItem('user');
         if (token) {
             loadingStart();
@@ -47,12 +46,10 @@ function Login() {
         }
 
     }, []);
-
-
-
     const onSuccess = (credentialResponse) => {
         console.log(credentialResponse)
         loadingStart();
+        console.log(process.env.REACT_APP_BACKEND_URL + "users/login")
         axios({
             method: 'post',
             url: process.env.REACT_APP_BACKEND_URL + "users/login",
@@ -217,7 +214,6 @@ function Login() {
             ))
 
     );
-
 }
 
 export default Login;

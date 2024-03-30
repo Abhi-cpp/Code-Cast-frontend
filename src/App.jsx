@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 
 function App() {
   useEffect(() => {
-    document.querySelector("#change-theme").addEventListener('click', () => {
+    document.querySelector("#change-theme")?.addEventListener('click', () => {
       document.querySelector("#root").classList.toggle("dark");
       if (document.querySelector("#root").classList.contains("dark")) {
         const colors = document.querySelectorAll(".colors .color");
@@ -21,12 +21,12 @@ function App() {
   return (
     <DataContextProvider>
       <div className="App">
-        <div id="change-theme">
+        {/* <div id="change-theme">
           <button id="change-theme-button">
             <i className="fas fa-moon"></i>
             <i className="fas fa-sun"></i>
           </button>
-        </div>
+        </div> */}
         <Router>
           <Routes>
             <Route path="/" element={<Login />} />

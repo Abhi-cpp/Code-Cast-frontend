@@ -1,11 +1,14 @@
-import { useEffect } from "react";
+import { useContext, useEffect, useRef } from "react";
 import '../Styles/whiteBoard.css'
 import { io } from "socket.io-client";
+import { DataContext } from "../Components/DataContext";
 
-const WhiteBoard = ({ socket, roomId }) => {
+const WhiteBoard = () => {
+    const { user, currRoom, socket } = useContext(DataContext);
+    const roomId = useRef(currRoom ? currRoom.roomid : "");
+    const isWhiteBoardOpen = useRef(false);
 
     useEffect(() => {
-        // eslint-disable-next-line no-undef
         socket.on("connect", () => {
             console.log("connected");
         });
@@ -16,23 +19,16 @@ const WhiteBoard = ({ socket, roomId }) => {
         const width = canvas.width = window.innerWidth;
         const height = canvas.height = window.innerHeight - 80 - 50;
         let time = performance.now();
-        const cursor = document.querySelector("#cursor");
-        const shapeDemo = document.querySelector("#shape-demo");
-        let count = 0;
 
         let interval = 0;
         let colorInterval = 0;
-        let prevX = 0;
-        let prevY = 0;
-        let x = 0;
-        let y = 0;
         const triangle = [{ x: 0, y: 0 }, { x: 0, y: 0 }, { x: 0, y: 0 }];
         const rectangle = [0, 0, 0, 0];
         const circle = [0, 0, 0, 0, 0];
 
 
         const whiteBoard = document.querySelector("#white-board");
-        const data = { color: root.classList.contains("dark") ? "white" : "black", thickness: 1 };
+        const data = { color: root.classList.contains("dark") ? "white" : "black", thickness: 1, prevX: 0, prevY: 0, x: 0, y: 0 };
         const colors = document.querySelectorAll(".colors .color");
         const sizes = document.querySelectorAll(".sizes .size");
         const eraser = document.querySelector("#eraser");
@@ -161,38 +157,18 @@ const WhiteBoard = ({ socket, roomId }) => {
             })
         }
 
-
-        // event listeners
-
         function dragged(e) {
-            if (!whiteBoard.classList.contains("active")) return;
-            if (e.target != canvas) {
-                cursor.style.display = "none";
-                whiteBoard.style.cursor = "default";
-                return;
-            }
-            cursor.style.display = "block";
-            whiteBoard.style.cursor = "none";
-            if (eraser.classList.contains("active")) {
-                cursor.style.backgroundImage = "url('./eraser.png')"
-            } else if (pen.classList.contains("active")) {
-                cursor.style.backgroundImage = "url('./pencil.png')"
-            } else {
-                whiteBoard.style.cursor = "crosshair";
-                cursor.style.backgroundImage = "none";
-
-            }
-            cursor.style.left = e.clientX + "px";
-            cursor.style.top = e.clientY + "px";
+            console.log("dragged");
             if (performance.now() - time < 10) return;
-            prevX = x;
-            prevY = y;
-            x = e.offsetX;
-            y = e.offsetY;
+            data.prevX = data.x;
+            data.prevY = data.y;
+            data.x = e.offsetX;
+            data.y = e.offsetY;
             time = performance.now();
         }
 
         function pressed(e) {
+            console.log("pressed");
             const shape = Array.from(shapes).find(shape => shape.classList.contains("active"));
 
             if (shape) {
@@ -203,14 +179,8 @@ const WhiteBoard = ({ socket, roomId }) => {
                 circle[0] = e.offsetX;
                 circle[1] = e.offsetY;
 
-                canvas.addEventListener("mousemove", callDrawShape);
-
-                function callDrawShape(e) {
-                    drawShape(e, shape);
-                }
-
-                canvas.addEventListener("mouseup", () => {
-                    canvas.removeEventListener("mousemove", callDrawShape);
+                canvas.addEventListener("mouseup", (e2) => {
+                    drawShape(e2, shape);
                     if (shape.id == "triangle") {
                         drawTriangle()
                     } else if (shape.id == "rectangle") {
@@ -220,44 +190,33 @@ const WhiteBoard = ({ socket, roomId }) => {
                     }
                 }, { once: true })
 
-
-                return;
-            };
-            interval = setInterval(() => drawLine(), 10);
+            } else {
+                data.prevX = data.x = e.offsetX;
+                data.prevY = data.y = e.offsetY;
+                canvas.addEventListener('mousemove', dragged);
+                canvas.addEventListener('mouseup', lifted);
+                interval = setInterval(() => drawLine(), 10);
+            }
         }
 
         function lifted() {
             if (Array.from(shapes).some(shape => shape.classList.contains("active"))) return;
+            console.log("lifted");
             clearInterval(interval);
+            canvas.removeEventListener('mousemove', dragged);
         }
-        window.addEventListener('touchstart', pressed);
         canvas.addEventListener('mousedown', pressed);
-        window.addEventListener('mousemove', dragged);
-        window.addEventListener('touchmove', dragged);
-        canvas.addEventListener('mouseup', lifted);
-        canvas.addEventListener('touchend', lifted);
-
-        canvas.addEventListener("mouseleave", () => {
-            clearInterval(interval);
-        })
-        canvas.addEventListener("touchcancel", () => {
-            clearInterval(interval);
-        })
 
         function drawLine() {
             ctx.beginPath();
             ctx.strokeStyle = eraser.classList.contains("active") ? root.classList.contains("dark") ? "#222" : "#fff" : data.color;
-            ctx.moveTo(prevX, prevY)
-            ctx.lineTo(x, y);
+            ctx.moveTo(data.prevX, data.prevY)
+            ctx.lineTo(data.x, data.y);
             ctx.stroke();
-            socket.emit("drawData", { roomId: roomId, prevX, prevY, x, y, color: data.color, thickness: data.thickness, shape: eraser.classList.contains("active") ? "eraser" : "pen" });
-            count++;
-            // console.log(count);
+            socket.emit("drawData", { roomId: roomId.current, prevX: data.prevX, prevY: data.prevY, x: data.x, y: data.y, color: data.color, thickness: data.thickness, shape: eraser.classList.contains("active") ? "eraser" : "pen" });
         }
 
-
         function drawShape(e, shape) {
-            const toolbar = document.querySelector(".toolbar");
             if (shape.id == "triangle") {
                 triangle[0].y = e.offsetY;
                 triangle[2].x = e.offsetX;
@@ -268,27 +227,17 @@ const WhiteBoard = ({ socket, roomId }) => {
             if (shape.id == "rectangle") {
                 rectangle[2] = e.offsetX;
                 rectangle[3] = e.offsetY;
-                // shapeDemo.style.borderRadius = "0%";
-                // shapeDemo.style.left = rectangle[0] + "px";
-                // shapeDemo.style.top = rectangle[1] + toolbar.offsetHeight + "px";
-                // shapeDemo.style.width = rectangle[2] - rectangle[0] + "px";
-                // shapeDemo.style.height = rectangle[3] - rectangle[1] + "px";
             }
 
             if (shape.id == "circle") {
                 circle[2] = (e.offsetX - circle[0]) / 2 + circle[0];
                 circle[3] = (e.offsetY - circle[1]) / 2 + circle[1];
                 circle[4] = Math.sqrt(Math.pow(e.offsetX - circle[2], 2) + Math.pow(e.offsetY - circle[3], 2));
-                // shapeDemo.style.borderRadius = "50%";
-                // shapeDemo.style.left = circle[2] - circle[4] + "px";
-                // shapeDemo.style.top = circle[3] - circle[4] + toolbar.offsetHeight + "px";
-                // shapeDemo.style.width = circle[4] * 2 + "px";
-                // shapeDemo.style.height = circle[4] * 2 + "px"
-
             }
         }
 
         function drawTriangle() {
+            console.log(triangle);
             ctx.fillStyle = data.color;
             ctx.lineWidth = data.thickness;
             ctx.beginPath();
@@ -297,7 +246,6 @@ const WhiteBoard = ({ socket, roomId }) => {
             ctx.lineTo(triangle[2].x, triangle[2].y);
             ctx.lineTo(triangle[0].x, triangle[0].y);
             ctx.stroke();
-            // shapeDemo.style.width = shapeDemo.style.height = 0;
             socket.emit("drawData", { triangle, color: data.color, thickness: data.thickness, shape: "triangle" });
         }
 
@@ -307,7 +255,6 @@ const WhiteBoard = ({ socket, roomId }) => {
             ctx.beginPath();
             ctx.rect(rectangle[0], rectangle[1], rectangle[2] - rectangle[0], rectangle[3] - rectangle[1]);
             ctx.stroke();
-            // shapeDemo.style.width = shapeDemo.style.height = 0;
             socket.emit("drawData", { rectangle, color: data.color, thickness: data.thickness, shape: "rectangle" });
         }
 
@@ -317,8 +264,6 @@ const WhiteBoard = ({ socket, roomId }) => {
             ctx.beginPath();
             ctx.arc(circle[2], circle[3], circle[4], 0, 2 * Math.PI);
             ctx.stroke();
-            // shapeDemo.style.width = shapeDemo.style.height = 0;
-
             socket.emit("drawData", { x: circle[2], y: circle[3], radius: circle[4], color: data.color, thickness: data.thickness, shape: "circle" });
         }
 
@@ -352,20 +297,27 @@ const WhiteBoard = ({ socket, roomId }) => {
                 ctx.strokeStyle = "#fff";
             }
             ctx.beginPath();
-            ctx.moveTo(data.prevX, data.prevY)
+            ctx.moveTo(data.data.prevX, data.data.prevY)
             ctx.lineTo(data.x, data.y);
             ctx.stroke();
         });
 
-
-        const whiteBoardBtn = document.querySelector("#white-board  button");
+        const whiteBoardBtn = document.querySelector(".change-component-btn .change-btn");
         whiteBoardBtn.addEventListener("click", () => {
-            whiteBoardBtn.parentElement.classList.toggle("active");
-            document.querySelector("#leave-room").classList.toggle("active");
+            const coreComponentsParent = document.querySelector(".core-components");
+            let topPosition = !isWhiteBoardOpen.current ? coreComponentsParent.scrollHeight : 0;
+            coreComponentsParent.scrollTo({ top: topPosition, behavior: "smooth" });
+            isWhiteBoardOpen.current = !isWhiteBoardOpen.current;
+            whiteBoardBtn.classList.toggle("whiteboard-open")
         })
     }, []);
     return (
         <div id="white-board" >
+            <div className="change-component-btn">
+                <button className="change-btn" >
+                    <p>WhiteBoard</p>
+                </button>
+            </div>
             <div className="toolbar">
                 <div className="sizes">
                     <div className="size active" style={{ "--width": 1 }}></div>
@@ -410,10 +362,7 @@ const WhiteBoard = ({ socket, roomId }) => {
                 </div>
 
             </div>
-            <div id="cursor"></div>
-            {/* <div id="shape-demo"></div> */}
             <canvas></canvas>
-            <button id="white-board-btn" ><span>WhiteBoard</span></button>
         </div >
     )
 };
