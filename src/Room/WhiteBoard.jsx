@@ -1,10 +1,9 @@
 import { useContext, useEffect, useRef } from "react";
 import '../Styles/whiteBoard.css'
-import { io } from "socket.io-client";
 import { DataContext } from "../Components/DataContext";
 
 const WhiteBoard = () => {
-    const { user, currRoom, socket } = useContext(DataContext);
+    const { currRoom, socket } = useContext(DataContext);
     const roomId = useRef(currRoom ? currRoom.roomid : "");
     const isWhiteBoardOpen = useRef(false);
 
@@ -87,8 +86,10 @@ const WhiteBoard = () => {
         });
 
         eraser.addEventListener("click", () => {
-
-            ctx.strokeStyle = "black";
+            console.log("using eraser");
+            const newColor = document.querySelector(".room").style.getPropertyValue("--primary-background-color");
+            ctx.strokeStyle = newColor
+            console.log(newColor, ctx.strokeStyle);
             ctx.lineWidth = 20;
             eraser.classList.add("active");
             sizes.forEach(size => size.classList.remove("active"));
@@ -209,7 +210,6 @@ const WhiteBoard = () => {
 
         function drawLine() {
             ctx.beginPath();
-            ctx.strokeStyle = eraser.classList.contains("active") ? root.classList.contains("dark") ? "#222" : "#fff" : data.color;
             ctx.moveTo(data.prevX, data.prevY)
             ctx.lineTo(data.x, data.y);
             ctx.stroke();

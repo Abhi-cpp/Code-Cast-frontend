@@ -7,7 +7,7 @@
 #white-board {
   width: calc(100vw - 50px);
   height: 100vh;
-  background-color: #fff;
+  background-color: var(--primary-background-color);
   overflow: hidden;
   transition: all 0.5s ease-in-out;
   cursor: crosshair;
@@ -43,12 +43,12 @@
           content: "";
           width: 100%;
           height: calc(1px * var(--width));
-          background-color: black;
+          background-color: var(--primary-text-color);
         }
 
         &.active {
           transform: scale(1.1);
-          box-shadow: 0 0 10px rgba(0, 0, 0, 1);
+          box-shadow: 0 0 10px var(--primary-text-color);
         }
       }
     }
@@ -66,11 +66,12 @@
         cursor: pointer;
         background: var(--color);
         transition: all 0.2s ease-in-out;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
       }
 
       .color.active {
         transform: scale(1.1);
-        border: 3px solid black;
+        border: 3px solid var(--primary-text-color);
         box-shadow: 0 0 10px var(--color);
       }
     }
@@ -87,7 +88,7 @@
         aspect-ratio: 1/1;
         margin: 0 10px;
         cursor: pointer;
-        border: 2px solid black;
+        border: 2px solid var(--secondary-text-color);
         display: flex;
         justify-content: center;
         align-items: center;
@@ -117,7 +118,8 @@
           aspect-ratio: 1 /1;
           margin: 0 10px;
           cursor: pointer;
-          border: 2px solid black;
+          border: 2px solid var(--primary-text-color);
+          color: var(--primary-text-color);
           display: flex;
           justify-content: center;
           align-items: center;
@@ -126,7 +128,7 @@
 
           &.active {
             transform: scale(1.1);
-            border: 4px solid black;
+            border: 4px solid var(--primary-text-color);
           }
         }
       }
@@ -167,77 +169,6 @@
           justify-content: center;
           align-items: center;
         }
-      }
-    }
-  }
-
-  .dark & {
-    background-color: #222;
-    box-shadow: 0 5px 10px 0px rgba(#fff, 0.3);
-
-    .toolbar {
-      box-shadow: 0 0 10px rgba(#fff, 1);
-
-      .sizes {
-        color: white;
-
-        > * {
-          box-shadow: 0 0 10px rgba(#fff, 0.8);
-
-          &::before {
-            background-color: white;
-          }
-
-          &.active {
-            box-shadow: 0 0 10px 4px rgba(#fff, 1);
-          }
-        }
-      }
-
-      .color {
-        &.active {
-          border: 3px solid white;
-          transform: scale(1.25);
-          box-shadow: 0 0 10px 1px white;
-        }
-      }
-
-      .extras {
-        #clearScreen,
-        #eraser {
-          border: 2px solid white;
-          color: white;
-
-          &.active {
-            border: 4px solid white;
-          }
-        }
-
-        .shapes {
-          .shape,
-          #pen {
-            color: white;
-            border: 2px solid white;
-
-            &.active {
-              border: 4px solid white;
-            }
-          }
-        }
-      }
-    }
-
-    #white-board-btn {
-      background-color: black;
-      border: 1px solid white;
-      color: white;
-
-      &:hover {
-        background-color: white;
-        color: black;
-      }
-      &::before {
-        box-shadow: 0 -5px 10px 0px rgba(#fff, 0.3);
       }
     }
   }

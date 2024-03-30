@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState, useRef } from 'react';
 import { DataContext } from '../Components/DataContext';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
@@ -14,6 +14,8 @@ const Room = () => {
     const navigate = useNavigate();
     let roomid = currRoom ? currRoom.roomid : "";
     const [inRoomUsers, setInRoomUsers] = useState([]);
+    const [userUpdated, setUserUpdated] = useState(null);
+    const userAdded = useRef(false);
 
     useEffect(() => {
         if (user === null || currRoom === null) {
@@ -61,18 +63,15 @@ const Room = () => {
     useEffect(() => {
         if (socket.connected) {
             socket.on('userJoin', ({ msg, newUser }) => {
-                const arr = [];
-                arr.push(newUser);
-                for (let user of inRoomUsers)
-                    arr.push(user);
-                setInRoomUsers([...arr]);
+                setUserUpdated(newUser);
+                userAdded.current = true;
                 toast.success(msg, {
                     position: toast.POSITION.TOP_RIGHT
                 });
             })
             socket.on('userLeft', ({ msg, userId }) => {
-                const arr = inRoomUsers.filter(user => user.id !== userId);
-                setInRoomUsers(arr);
+                setUserUpdated({ id: userId });
+                userAdded.current = false;
                 toast.error(msg, {
                     position: toast.POSITION.TOP_RIGHT
                 });
@@ -82,6 +81,16 @@ const Room = () => {
             })
         }
     }, [socket])
+
+
+    useEffect(() => {
+        if (!userUpdated) return;
+        if (userAdded.current) {
+            setInRoomUsers([...inRoomUsers, userUpdated]);
+        } else {
+            setInRoomUsers(inRoomUsers.filter((user) => user.id !== userUpdated.id));
+        }
+    }, [userUpdated])
 
     const updateRoomUsers = (users) => {
         setInRoomUsers([...users]);

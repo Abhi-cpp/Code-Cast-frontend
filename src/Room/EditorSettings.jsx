@@ -16,6 +16,7 @@ const languageOptions = [
 
 const themeOptions = [
     { value: 'github', label: 'Github', },
+    { value: 'github_dark', label: 'Github Dark' },
     { value: 'cobalt', label: 'Cobalt' },
     { value: 'dracula', label: 'Dracula' },
     { value: 'monokai', label: 'Monokai' },

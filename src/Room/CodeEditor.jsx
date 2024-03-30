@@ -23,6 +23,7 @@ import 'ace-builds/src-noconflict/theme-tomorrow_night';
 import 'ace-builds/src-noconflict/theme-vibrant_ink';
 import 'ace-builds/src-noconflict/theme-one_dark'
 import 'ace-builds/src-noconflict/ext-language_tools';
+import 'ace-builds/src-noconflict/theme-github_dark.js';
 import { toast } from 'react-toastify';
 
 
@@ -196,10 +197,12 @@ const CodeEditor = ({
         let gutterBackColor = aceGutterStyle.backgroundColor;
         let gutterTextColor = aceGutterStyle.color;
 
-        let editor = document.querySelector('#editor');
-        editor.style.setProperty('--secondary-background-color', gutterBackColor);
-        editor.style.setProperty('--primary-text-color', aceTextColor);
-        editor.style.setProperty('--secondary-text-color', gutterTextColor);
+        let room = document.querySelector('.room');
+        console.log(aceBackgroundColor, gutterBackColor);
+        room.style.setProperty('--primary-background-color', aceBackgroundColor);
+        room.style.setProperty('--secondary-background-color', gutterBackColor);
+        room.style.setProperty('--primary-text-color', aceTextColor);
+        room.style.setProperty('--secondary-text-color', gutterTextColor);
     }, [theme])
 
 

@@ -6,6 +6,10 @@
   align-self: flex-end;
   height: 100vh;
   overflow: hidden;
+  --primary-background-color: white;
+  --secondary-background-color: black;
+  --primary-text-color: white;
+  --secondary-text-color: black;
 }
 .room #leave-room {
   font-size: 1rem;
@@ -46,11 +50,10 @@
   gap: 15px;
   z-index: 10;
   box-shadow: 5px 0px 10px rgba(0, 0, 0, 0.5);
-  background-color: #fff;
+  background-color: var(--primary-background-color);
 }
 .dark .room .users-joined {
   box-shadow: 5px 0px 10px rgba(255, 255, 255, 0.2);
-  background-color: #272822;
 }
 .room .users-joined .user-joined {
   display: flex;
@@ -92,10 +95,7 @@
   align-items: center;
 }
 .room .core-components .code-editor-video-chat-parent #editor {
-  --secondary-background-color: black;
-  --primary-text-color: white;
-  --secondary-text-color: black;
-  width: 100%;
+  width: 60%;
   height: 100%;
   overflow: hidden;
   border-radius: 10px;
@@ -121,6 +121,7 @@
   padding: 5px 10px;
   font-family: sans-serif;
   z-index: 100;
+  border: 1px solid var(--secondary-text-color);
 }
 .room .core-components .code-editor-video-chat-parent #editor .editor-settings div {
   display: flex;
@@ -152,6 +153,7 @@
 .room .core-components .code-editor-video-chat-parent #editor #workspace #io > * {
   width: 100%;
   height: 50%;
+  border: 1px solid var(--secondary-text-color);
 }
 .room .core-components .code-editor-video-chat-parent #editor #workspace #io > * h5 {
   background-color: var(--secondary-background-color);

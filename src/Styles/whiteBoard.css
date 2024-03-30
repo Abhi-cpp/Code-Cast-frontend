@@ -7,7 +7,7 @@
 #white-board {
   width: calc(100vw - 50px);
   height: 100vh;
-  background-color: #fff;
+  background-color: var(--primary-background-color);
   overflow: hidden;
   transition: all 0.5s ease-in-out;
   cursor: crosshair;
@@ -43,11 +43,11 @@
   content: "";
   width: 100%;
   height: calc(1px * var(--width));
-  background-color: black;
+  background-color: var(--primary-text-color);
 }
 #white-board .toolbar .sizes .size.active {
   transform: scale(1.1);
-  box-shadow: 0 0 10px rgb(0, 0, 0);
+  box-shadow: 0 0 10px var(--primary-text-color);
 }
 #white-board .toolbar .colors {
   max-width: 33%;
@@ -62,10 +62,11 @@
   cursor: pointer;
   background: var(--color);
   transition: all 0.2s ease-in-out;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 #white-board .toolbar .colors .color.active {
   transform: scale(1.1);
-  border: 3px solid black;
+  border: 3px solid var(--primary-text-color);
   box-shadow: 0 0 10px var(--color);
 }
 #white-board .toolbar .extras {
@@ -80,7 +81,7 @@
   aspect-ratio: 1/1;
   margin: 0 10px;
   cursor: pointer;
-  border: 2px solid black;
+  border: 2px solid var(--secondary-text-color);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -107,7 +108,8 @@
   aspect-ratio: 1/1;
   margin: 0 10px;
   cursor: pointer;
-  border: 2px solid black;
+  border: 2px solid var(--primary-text-color);
+  color: var(--primary-text-color);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -117,7 +119,7 @@
 #white-board .toolbar .extras .shapes .shape.active,
 #white-board .toolbar .extras .shapes #pen.active {
   transform: scale(1.1);
-  border: 4px solid black;
+  border: 4px solid var(--primary-text-color);
 }
 #white-board .change-component-btn {
   display: flex;
@@ -150,58 +152,4 @@
   display: flex;
   justify-content: center;
   align-items: center;
-}
-.dark #white-board {
-  background-color: #222;
-  box-shadow: 0 5px 10px 0px rgba(255, 255, 255, 0.3);
-}
-.dark #white-board .toolbar {
-  box-shadow: 0 0 10px white;
-}
-.dark #white-board .toolbar .sizes {
-  color: white;
-}
-.dark #white-board .toolbar .sizes > * {
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-}
-.dark #white-board .toolbar .sizes > *::before {
-  background-color: white;
-}
-.dark #white-board .toolbar .sizes > *.active {
-  box-shadow: 0 0 10px 4px white;
-}
-.dark #white-board .toolbar .color.active {
-  border: 3px solid white;
-  transform: scale(1.25);
-  box-shadow: 0 0 10px 1px white;
-}
-.dark #white-board .toolbar .extras #clearScreen,
-.dark #white-board .toolbar .extras #eraser {
-  border: 2px solid white;
-  color: white;
-}
-.dark #white-board .toolbar .extras #clearScreen.active,
-.dark #white-board .toolbar .extras #eraser.active {
-  border: 4px solid white;
-}
-.dark #white-board .toolbar .extras .shapes .shape,
-.dark #white-board .toolbar .extras .shapes #pen {
-  color: white;
-  border: 2px solid white;
-}
-.dark #white-board .toolbar .extras .shapes .shape.active,
-.dark #white-board .toolbar .extras .shapes #pen.active {
-  border: 4px solid white;
-}
-.dark #white-board #white-board-btn {
-  background-color: black;
-  border: 1px solid white;
-  color: white;
-}
-.dark #white-board #white-board-btn:hover {
-  background-color: white;
-  color: black;
-}
-.dark #white-board #white-board-btn::before {
-  box-shadow: 0 -5px 10px 0px rgba(255, 255, 255, 0.3);
 }/*# sourceMappingURL=whiteBoard.css.map */

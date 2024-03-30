@@ -1,6 +1,6 @@
 .video-chat {
   height: 100%;
-  width: 100%;
+  width: 40%;
   display: flex;
   overflow: hidden;
   justify-content: center;
@@ -11,6 +11,7 @@
   border: 1px solid grey;
   border-radius: 10px;
   padding: 1rem;
+  background-color: var(--secondary-background-color);
 }
 .dark .video-chat {
   color: white;
@@ -25,6 +26,7 @@
   padding: 1rem;
   overflow: hidden;
   flex-wrap: wrap;
+  background-color: var(--secondary-background-color);
 }
 .video-chat .video-container .video-card {
   display: flex;
@@ -35,12 +37,14 @@
   overflow: hidden;
   position: relative;
   border: 1px solid white;
+  background-color: var(--primary-background-color);
 }
 .video-chat .video-container .video-card video {
   width: 100%;
   height: 100%;
   -o-object-fit: cover;
      object-fit: cover;
+  opacity: 0.3;
 }
 .video-chat .video-container .video-card .video-info {
   position: absolute;
@@ -71,6 +75,9 @@
   font-size: 1.2rem;
   filter: drop-shadow(2px 2px 2px black);
   color: rgb(255, 100, 100);
+}
+.video-chat .video-container .video-card.video-active video {
+  opacity: 1;
 }
 .video-chat .video-container .video-card.video-active .video-info {
   left: 10px;
