@@ -1,0 +1,464 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+#root {
+  min-height: 100vh;
+  height: 0;
+  width: 100vw;
+}
+
+.App {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  transition: all 0.3s ease-in-out;
+}
+.dark .App {
+  background-color: black;
+}
+.App .login-register {
+  width: 25%;
+  min-width: 300px;
+  min-height: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  box-shadow: 0 0 10px 2px #000, 0 0 6px rgba(0, 0, 0, 0.6);
+  border-radius: 10px;
+  padding: 0rem 2rem;
+}
+.dark .App .login-register {
+  box-shadow: 0 0 10px 2px #fff, 0 0 6px rgba(255, 255, 255, 0.6);
+}
+.App .login-register.error {
+  animation: error 0.5s ease-in-out;
+}
+@keyframes error {
+  0% {
+    transform: translateX(0px);
+    border: 3px solid red;
+  }
+  25% {
+    transform: translateX(20px);
+  }
+  50% {
+    transform: translateX(-20px);
+  }
+  75% {
+    transform: translateX(20px);
+  }
+  100% {
+    transform: translateX(0px);
+    border: 3px solid red;
+  }
+}
+.App .login-register #login-form,
+.App .login-register #register-form {
+  width: 100%;
+  height: 100%;
+  display: none;
+  flex-direction: column;
+  gap: 20px;
+  transition: all 0.3s ease-in-out;
+}
+.dark .App .login-register #login-form,
+.dark .App .login-register #register-form {
+  color: white;
+}
+.App .login-register #login-form h1,
+.App .login-register #register-form h1 {
+  text-align: center;
+}
+.App .login-register #login-form.active,
+.App .login-register #register-form.active {
+  display: flex;
+}
+.App .login-register #login-form form,
+.App .login-register #register-form form {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  gap: 10px;
+}
+.App .login-register #login-form form label,
+.App .login-register #register-form form label {
+  font-size: 1.2rem;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana, sans-serif span;
+  font-family-display: inline-block;
+  font-family-transform: translate(10px, 35px);
+  font-family-transition: 0.1s linear;
+}
+.App .login-register #login-form form label.active span,
+.App .login-register #register-form form label.active span {
+  transform: translate(10px, 0px);
+}
+.App .login-register #login-form form input:not([type=submit]),
+.App .login-register #register-form form input:not([type=submit]) {
+  width: 100%;
+  border: 1px solid #000000;
+  background-color: white;
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: 1rem;
+}
+.dark .App .login-register #login-form form input:not([type=submit]),
+.dark .App .login-register #register-form form input:not([type=submit]) {
+  border: 1px solid white;
+  background-color: #000;
+  color: white;
+}
+.App .login-register #login-form form input[type=submit],
+.App .login-register #register-form form input[type=submit] {
+  display: inline-block;
+  margin: 0 auto;
+  border-radius: 5px;
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  background-color: #fff;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  outline: 0;
+  border: 1px solid black;
+}
+.App .login-register #login-form form input[type=submit]:hover,
+.App .login-register #register-form form input[type=submit]:hover {
+  background-color: #000000;
+  color: #fff;
+}
+.dark .App .login-register #login-form form input[type=submit],
+.dark .App .login-register #register-form form input[type=submit] {
+  border: 1px solid white;
+  background-color: #000000;
+  color: #fff;
+}
+.dark .App .login-register #login-form form input[type=submit]:hover,
+.dark .App .login-register #register-form form input[type=submit]:hover {
+  background-color: #fff;
+  color: #000000;
+}
+.App .login-register #login-form p,
+.App .login-register #register-form p {
+  font-family: sans-serif;
+}
+.App .login-register #login-form p a,
+.App .login-register #register-form p a {
+  color: blue;
+  cursor: pointer;
+}
+.App .login-register #login-form p a:hover,
+.App .login-register #register-form p a:hover {
+  text-decoration: underline;
+}
+.App .login-register #error-message {
+  height: 20px;
+  transition: all 0.3s ease-in-out;
+}
+.App .login-register #error-message p {
+  height: 0;
+  font-size: 20px;
+  color: red;
+  overflow-y: hidden;
+  transition: all 0.3s ease-in-out;
+}
+.App .login-register #error-message.active {
+  margin: 10px 0;
+}
+.App .login-register #error-message.active p {
+  height: 20px;
+}
+.App .login-register #logo-login {
+  position: relative;
+}
+.App .login-register #logo-login img {
+  width: 100%;
+  display: none;
+}
+.App .login-register #logo-login img[src*=light] {
+  display: inline-block;
+}
+.dark .App .login-register #logo-login img[src*=light] {
+  display: none;
+}
+.dark .App .login-register #logo-login img {
+  display: inline-block;
+}
+.App .login-register #logo-login + div {
+  margin-bottom: 10px;
+  border-radius: 2px;
+  border: 1px solid black;
+}
+.App .login-register #logo-login + div * {
+  color: black;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+}
+.App .login-register #logo-login + div:hover * {
+  color: white;
+  background-color: #444;
+  border: 0;
+}
+.dark .App .login-register #logo-login + div * {
+  color: white;
+  background-color: black;
+}
+.dark .App .login-register #logo-login + div:hover * {
+  background-color: white;
+  color: black;
+}
+.App .room-data {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  position: relative;
+  padding: 2rem;
+  gap: 2rem;
+  transition: all 0.3s ease-in-out;
+}
+.dark .App .room-data {
+  color: white;
+}
+.App .room-data .logOut {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 1.2rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 5px;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  background-color: #fff;
+  border: 1px solid black;
+}
+.dark .App .room-data .logOut {
+  border: 1px solid white;
+  background-color: #000000;
+  color: #fff;
+}
+.dark .App .room-data .logOut:hover {
+  background-color: #fff;
+  color: #000000;
+}
+.App .room-data .logOut:hover {
+  background-color: #000000;
+  color: #fff;
+}
+.App .room-data .userData {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.App .room-data .join-room {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 100%;
+}
+.App .room-data .join-room input {
+  font-size: 1.2rem;
+  padding: 10px 20px;
+  background-color: white;
+  color: black;
+  outline: none;
+  border: 1px solid black;
+  transition: all 0.3s ease-in-out;
+}
+.dark .App .room-data .join-room input {
+  color: white;
+  background-color: black;
+  border: 1px solid white;
+}
+.App .room-data .join-room button {
+  font-size: 1.2rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 5px;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  background-color: #fff;
+}
+.dark .App .room-data .join-room button {
+  border-color: white;
+  background-color: #000000;
+  color: #fff;
+}
+.dark .App .room-data .join-room button:hover {
+  background-color: #fff;
+  color: #000000;
+}
+.App .room-data .join-room button:hover {
+  background-color: #000000;
+  color: #fff;
+}
+.App .room-data table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #000000;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  font-family: sans-serif;
+}
+.dark .App .room-data table {
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+}
+.App .room-data table tr {
+  background-color: #fff;
+  transition: all 0.3s ease-in-out;
+  color: black;
+}
+.dark .App .room-data table tr {
+  background-color: #000;
+  color: white;
+}
+.App .room-data table tr th,
+.App .room-data table tr td {
+  padding: 25px 15px;
+  font-size: 1.2rem;
+  text-align: left;
+  cursor: pointer;
+}
+.App .room-data table tr th button,
+.App .room-data table tr td button {
+  font-size: 1.2rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 5px;
+  outline: none;
+  border: none;
+  box-shadow: 0 0 15px rgba(68, 68, 68, 0.6), 0 0 30px rgba(68, 68, 68, 0.6), 0 0 60px rgba(68, 68, 68, 0.6), 0 0 45px rgba(68, 68, 68, 0.6);
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+}
+.App .room-data table tr th button.join-btn,
+.App .room-data table tr td button.join-btn {
+  background-color: #beffbe;
+}
+.App .room-data table tr th button.join-btn:hover,
+.App .room-data table tr td button.join-btn:hover {
+  background-color: #018901;
+  color: white;
+  box-shadow: 0 0 10px rgba(1, 137, 1, 0.5), 0 0 20px rgba(1, 137, 1, 0.5), 0 0 5px rgba(1, 137, 1, 0.5), 0 0 15px rgba(1, 137, 1, 0.5);
+}
+.App .room-data table tr th button.delete-btn,
+.App .room-data table tr td button.delete-btn {
+  background-color: #ffb8b8;
+}
+.App .room-data table tr th button.delete-btn:hover,
+.App .room-data table tr td button.delete-btn:hover {
+  background-color: #e80000;
+  color: white;
+  box-shadow: 0 0 10px rgba(232, 0, 0, 0.5), 0 0 20px rgba(232, 0, 0, 0.5), 0 0 5px rgba(232, 0, 0, 0.5), 0 0 15px rgba(232, 0, 0, 0.5);
+}
+.dark .App .room-data table tr th button,
+.dark .App .room-data table tr td button {
+  box-shadow: 0 0 10px rgba(187, 187, 187, 0.3), 0 0 20px rgba(187, 187, 187, 0.3), 0 0 30px rgba(187, 187, 187, 0.3), 0 0 40px rgba(187, 187, 187, 0.3);
+}
+.App #loader {
+  width: 40%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.App #loader #loader-back-img {
+  width: 100%;
+  opacity: 0.1;
+  filter: grayscale(50%);
+  display: none;
+}
+.App #loader #loader-back-img-light {
+  display: inline-block;
+  width: 100%;
+  opacity: 0.1;
+  filter: grayscale(50%);
+}
+.dark .App #loader #loader-back-img-light {
+  display: none;
+}
+.dark .App #loader #loader-back-img {
+  display: inline-block;
+}
+.App #loader #loader-front-image-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  overflow: hidden;
+  border-right: 1px solid white;
+  animation: loader 2s ease-in-out infinite;
+}
+@keyframes loader {
+  0%, 100% {
+    width: 20%;
+  }
+  50% {
+    width: 80%;
+  }
+}
+.App #loader #loader-front-image-container img {
+  display: none;
+}
+.App #loader #loader-front-image-container img[src*=light] {
+  display: inline-block;
+}
+.dark .App #loader #loader-front-image-container {
+  border-right: 1px solid black;
+}
+.dark .App #loader #loader-front-image-container img {
+  display: inline-block;
+}
+.dark .App #loader #loader-front-image-container img[src*=light] {
+  display: none;
+}
+.App #change-theme-button {
+  position: absolute;
+  z-index: 1000;
+  top: 10px;
+  left: 10px;
+  height: 50px;
+  width: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 50%;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  box-shadow: 0 0 6px #000;
+  background-color: #fff;
+  border-radius: 2px solid black;
+}
+.App #change-theme-button i[class*=sun] {
+  display: none;
+}
+.dark .App #change-theme-button {
+  background-color: #000;
+  box-shadow: 0 0 6px 3px #fff;
+  color: #fff;
+}
+.dark .App #change-theme-button i[class*=moon] {
+  display: none;
+}
+.dark .App #change-theme-button i[class*=sun] {
+  display: inline-block;
+}
+.dark .App #change-theme-button:hover {
+  background-color: #fff;
+  color: #000;
+}
+.App #change-theme-button:hover {
+  background-color: #000000;
+  color: #fff;
+}/*# sourceMappingURL=App.css.map */
