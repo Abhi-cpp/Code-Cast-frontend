@@ -92,7 +92,6 @@ const RoomData = () => {
             url: process.env.REACT_APP_BACKEND_URL + `rooms/fetch?id=${roomID}`,
             headers: {
                 Authorization: `Bearer ${localStorage.getItem('user')}`
-
             }
         })
             .then((response) => {

@@ -5,7 +5,7 @@ import RoomData from './RoomData';
 import { DataContext } from "./DataContext";
 import Loader from "./Loader";
 import { ToastContainer, toast } from "react-toastify";
-import { generateFromString } from 'generate-avatar'
+
 
 const clientId = process.env.REACT_APP_CLIENT_ID;
 axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
@@ -23,7 +23,6 @@ function Login() {
     }
 
     useEffect(() => {
-
         const token = localStorage.getItem('user');
         if (token) {
             loadingStart();
@@ -47,12 +46,10 @@ function Login() {
         }
 
     }, []);
-
-
-
     const onSuccess = (credentialResponse) => {
         console.log(credentialResponse)
         loadingStart();
+        console.log(process.env.REACT_APP_BACKEND_URL + "users/login")
         axios({
             method: 'post',
             url: process.env.REACT_APP_BACKEND_URL + "users/login",
@@ -217,7 +214,6 @@ function Login() {
             ))
 
     );
-
 }
 
 export default Login;
