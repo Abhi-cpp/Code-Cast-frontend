@@ -172,7 +172,6 @@ const CodeEditor = ({
         })
 
         socket.on('updateIO', ({ newinput, newoutput, newlanguage }) => {
-            console.log('updateIo', newinput, newoutput, newlanguage);
             setLanguage(newlanguage);
             setInput(newinput);
             setOutput(newoutput);
@@ -198,7 +197,6 @@ const CodeEditor = ({
         let gutterTextColor = aceGutterStyle.color;
 
         let room = document.querySelector('.room');
-        console.log(aceBackgroundColor, gutterBackColor);
         room.style.setProperty('--primary-background-color', aceBackgroundColor);
         room.style.setProperty('--secondary-background-color', gutterBackColor);
         room.style.setProperty('--primary-text-color', aceTextColor);

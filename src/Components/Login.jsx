@@ -47,9 +47,7 @@ function Login() {
 
     }, []);
     const onSuccess = (credentialResponse) => {
-        console.log(credentialResponse)
         loadingStart();
-        console.log(process.env.REACT_APP_BACKEND_URL + "users/login")
         axios({
             method: 'post',
             url: process.env.REACT_APP_BACKEND_URL + "users/login",
@@ -95,7 +93,6 @@ function Login() {
             }
             const url = process.env.REACT_APP_BACKEND_URL + "users/register"
             axios.post(url, data).then((response) => {
-                console.log(response);
                 setUser(response.data.user);
                 localStorage.setItem('user', response.data.token);
             }).catch((error) => {

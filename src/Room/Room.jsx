@@ -25,9 +25,19 @@ const Room = () => {
             console.log('connected');
         })
 
+        window.addEventListener("scroll", stopScroll)
+
+
+        function stopScroll(e) {
+            e.preventDefault();
+        }
+
         return () => {
             socket.off();
+            window.removeEventListener("scroll", stopScroll);
         }
+
+
     }, [])
 
     useEffect(() => {
