@@ -8,10 +8,6 @@ const WhiteBoard = () => {
     const isWhiteBoardOpen = useRef(false);
 
     useEffect(() => {
-        socket.on("connect", () => {
-            console.log("connected");
-        });
-
         const root = document.querySelector("#root");
         const canvas = document.querySelector(' #white-board canvas');
         const ctx = canvas.getContext('2d');
@@ -86,10 +82,8 @@ const WhiteBoard = () => {
         });
 
         eraser.addEventListener("click", () => {
-            console.log("using eraser");
             const newColor = document.querySelector(".room").style.getPropertyValue("--primary-background-color");
             ctx.strokeStyle = newColor
-            console.log(newColor, ctx.strokeStyle);
             ctx.lineWidth = 20;
             eraser.classList.add("active");
             sizes.forEach(size => size.classList.remove("active"));
@@ -159,7 +153,6 @@ const WhiteBoard = () => {
         }
 
         function dragged(e) {
-            console.log("dragged");
             if (performance.now() - time < 10) return;
             data.prevX = data.x;
             data.prevY = data.y;
@@ -169,7 +162,6 @@ const WhiteBoard = () => {
         }
 
         function pressed(e) {
-            console.log("pressed");
             const shape = Array.from(shapes).find(shape => shape.classList.contains("active"));
 
             if (shape) {
@@ -202,7 +194,6 @@ const WhiteBoard = () => {
 
         function lifted() {
             if (Array.from(shapes).some(shape => shape.classList.contains("active"))) return;
-            console.log("lifted");
             clearInterval(interval);
             canvas.removeEventListener('mousemove', dragged);
         }
@@ -237,7 +228,6 @@ const WhiteBoard = () => {
         }
 
         function drawTriangle() {
-            console.log(triangle);
             ctx.fillStyle = data.color;
             ctx.lineWidth = data.thickness;
             ctx.beginPath();
@@ -268,7 +258,6 @@ const WhiteBoard = () => {
         }
 
         socket.on("drawData", (data) => {
-            console.log(data);
             ctx.strokeStyle = data.color;
             ctx.lineWidth = data.thickness;
             if (data.shape === "triangle") {
@@ -297,7 +286,7 @@ const WhiteBoard = () => {
                 ctx.strokeStyle = "#fff";
             }
             ctx.beginPath();
-            ctx.moveTo(data.data.prevX, data.data.prevY)
+            ctx.moveTo(data.prevX, data.prevY)
             ctx.lineTo(data.x, data.y);
             ctx.stroke();
         });
