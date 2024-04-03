@@ -43,6 +43,7 @@ const RoomData = () => {
                     Authorization: `Bearer ${localStorage.getItem('user')}`
                 }
             }).then((response) => {
+                console.log(response, response.data);
                 setCurrRoom(response.data.room);
                 loadingStop();
                 navigate('/room');
@@ -70,7 +71,7 @@ const RoomData = () => {
             }
         })
             .then((response) => {
-                console.log(response.data.room);
+                console.log(response, response.data);
                 setCurrRoom(response.data.room);
                 loadingStop();
                 navigate('/room');
