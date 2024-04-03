@@ -132,7 +132,7 @@ const CodeEditor = ({
             })
         }
 
-        socket.on('join', ({ msg, room }) => {
+        socket.on('join', ({ msg, room, socketId }) => {
             toast(msg, {
                 position: toast.POSITION.TOP_RIGHT
             });

@@ -2,10 +2,8 @@
 const io = require("socket.io-client");
 const socket = io("localhost:3001");
 socket.on("connect", () => {
-    console.log("connected");
+    console.log("connected", socket.id);
 });
-
-
 
 const canvas = document.querySelector(' #white-board canvas');
 const ctx = canvas.getContext('2d');

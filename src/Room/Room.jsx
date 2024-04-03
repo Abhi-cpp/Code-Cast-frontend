@@ -15,6 +15,7 @@ const Room = () => {
     let roomid = currRoom ? currRoom.roomid : "";
     const [inRoomUsers, setInRoomUsers] = useState([]);
     const [userUpdated, setUserUpdated] = useState(null);
+    const requestId = useRef(null);
     const userAdded = useRef(false);
 
     useEffect(() => {
@@ -23,10 +24,16 @@ const Room = () => {
         }
         socket.on('connect', () => {
             console.log('connected');
+            console.log(socket.id);
         })
-
+        socket.on("join permission", (({ user, senderID }) => {
+            const permissionBlock = document.querySelector(".room .permission-block");
+            permissionBlock.classList.add("active");
+            permissionBlock.children[0].children[1].innerHTML = `<span>${user.name}</span>  wants to join the room`;
+            permissionBlock.children[0].children[0].src = user.avatar;
+            requestId.current = senderID;
+        }))
         window.addEventListener("scroll", stopScroll)
-
 
         function stopScroll(e) {
             e.preventDefault();
@@ -36,7 +43,6 @@ const Room = () => {
             socket.off();
             window.removeEventListener("scroll", stopScroll);
         }
-
 
     }, [])
 
@@ -113,6 +119,18 @@ const Room = () => {
         window.location.reload();
     }
 
+    function acceptPermission() {
+        const permissionBlock = document.querySelector(".room .permission-block");
+        permissionBlock.classList.remove("active");
+        socket.emit("accept permission", { senderID: requestId.current });
+    }
+
+    function rejectPermission() {
+        const permissionBlock = document.querySelector(".room .permission-block");
+        permissionBlock.classList.remove("active");
+        socket.emit("reject permission", { senderID: requestId.current });
+    }
+
     if (currRoom && user) {
         return (
             <div className='room'>
@@ -139,6 +157,16 @@ const Room = () => {
 
                     </div>
                     <WhiteBoard />
+                </div>
+                <div className="permission-block">
+                    <div className="user-info">
+                        <img src="" alt="" />
+                        <div className="user-name"></div>
+                    </div>
+                    <div className="buttons">
+                        <button className="accept" onClick={acceptPermission}>Accept</button>
+                        <button className="reject" onClick={rejectPermission}>Reject</button>
+                    </div>
                 </div>
                 <ToastContainer autoClose={2000} />
             </div >

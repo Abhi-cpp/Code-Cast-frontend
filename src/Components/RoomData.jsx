@@ -14,7 +14,7 @@ const override = {
 };
 
 const RoomData = () => {
-    const { user, setCurrRoom, setUser } = useContext(DataContext);
+    const { user, setCurrRoom, setUser, socket, currRoom } = useContext(DataContext);
     const navigate = useNavigate();
 
     const [isLoading, setIsLoading] = useState(false);
@@ -43,7 +43,7 @@ const RoomData = () => {
                     Authorization: `Bearer ${localStorage.getItem('user')}`
                 }
             }).then((response) => {
-                setCurrRoom(response.data);
+                setCurrRoom(response.data.room);
                 loadingStop();
                 navigate('/room');
             })
@@ -68,10 +68,10 @@ const RoomData = () => {
             data: {
                 name: roomName
             }
-
         })
             .then((response) => {
-                setCurrRoom(response.data);
+                console.log(response.data.room);
+                setCurrRoom(response.data.room);
                 loadingStop();
                 navigate('/room');
             })
@@ -84,7 +84,7 @@ const RoomData = () => {
             });
     }
 
-    const joinRoom = async () => {
+    const joinOtherRoom = async () => {
         let roomID = document.getElementById('roomID').value;
         loadingStart();
         axios({
@@ -95,9 +95,20 @@ const RoomData = () => {
             }
         })
             .then((response) => {
-                setCurrRoom(response.data);
-                loadingStop();
-                navigate('/room');
+                socket.emit("join permission", { room: response.data.room, user });
+                console.log(socket.id);
+                socket.on("permission accepted", () => {
+                    setCurrRoom(response.data.room);
+                    loadingStop();
+                    navigate('/room');
+                })
+
+                socket.on("permission rejected", () => {
+                    loadingStop();
+                    toast.error('Permission Rejected', {
+                        position: toast.POSITION.TOP_RIGHT
+                    });
+                })
             })
             .catch((error) => {
                 loadingStop();
@@ -190,7 +201,7 @@ const RoomData = () => {
                     <input id="roomName" placeholder="Enter Room Name" />
                     <button onClick={createRoom} >Create Room</button>
                     <input id="roomID" placeholder="Enter Room ID to join" />
-                    <button onClick={joinRoom} >Join Room</button>
+                    <button onClick={joinOtherRoom} >Join Room</button>
                 </div>
                 <table sx={{ minWidth: 650 }} aria-label="simple table">
                     <thead>
@@ -204,7 +215,6 @@ const RoomData = () => {
                         </tr>
                     </thead>
                     <tbody>
-
                         {user.rooms.map((item, index) => (
                             <tr key={index}>
                                 <td component="th" scope="row">{item.name}</td>
