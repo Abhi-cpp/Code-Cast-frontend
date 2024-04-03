@@ -152,4 +152,160 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+#white-board {
+  width: calc(100vw - 50px);
+  height: 100vh;
+  background-color: var(--primary-background-color);
+  overflow: hidden;
+  transition: all 0.5s ease-in-out;
+  cursor: crosshair;
+}
+#white-board .toolbar {
+  width: 100vw;
+  height: 80px;
+  box-shadow: 0 0 10px rgb(0, 0, 0);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2vw;
+}
+#white-board .toolbar .sizes {
+  max-width: 33%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#white-board .toolbar .sizes .size {
+  width: 120px;
+  aspect-ratio: 12/5;
+  margin: 0 10px;
+  padding: 0 2%;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#white-board .toolbar .sizes .size::before {
+  content: "";
+  width: 100%;
+  height: calc(1px * var(--width));
+  background-color: var(--primary-text-color);
+}
+#white-board .toolbar .sizes .size.active {
+  transform: scale(1.1);
+  box-shadow: 0 0 10px var(--primary-text-color);
+}
+#white-board .toolbar .colors {
+  max-width: 33%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#white-board .toolbar .colors .color {
+  width: 50px;
+  aspect-ratio: 1/1;
+  margin: 0 10px;
+  cursor: pointer;
+  background: var(--color);
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+#white-board .toolbar .colors .color.active {
+  transform: scale(1.1);
+  border: 3px solid var(--primary-text-color);
+  box-shadow: 0 0 10px var(--color);
+}
+#white-board .toolbar .extras {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 33%;
+}
+#white-board .toolbar .extras #clearScreen,
+#white-board .toolbar .extras #eraser {
+  width: 60px;
+  aspect-ratio: 1/1;
+  margin: 0 10px;
+  cursor: pointer;
+  border: 2px solid var(--secondary-text-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: clamp(0.6rem, 1.2vw, 1.2rem);
+  transition: 0.3s ease-in-out;
+}
+#white-board .toolbar .extras #eraser {
+  min-width: 20px;
+  background: url("../../public/eraser.png") no-repeat center;
+  background-size: contain;
+}
+#white-board .toolbar .extras #eraser.active {
+  transform: scale(1.1);
+  border: 4px solid black;
+}
+#white-board .toolbar .extras .shapes {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#white-board .toolbar .extras .shapes .shape,
+#white-board .toolbar .extras .shapes #pen {
+  width: clamp(20px, 4vw, 60px);
+  aspect-ratio: 1/1;
+  margin: 0 10px;
+  cursor: pointer;
+  border: 2px solid var(--primary-text-color);
+  color: var(--primary-text-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: clamp(1rem, 2vw, 2rem);
+  transition: 0.3s ease-in-out;
+}
+#white-board .toolbar .extras .shapes .shape.active,
+#white-board .toolbar .extras .shapes #pen.active {
+  transform: scale(1.1);
+  border: 4px solid var(--primary-text-color);
+}
+#white-board .change-component-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0;
+}
+#white-board .change-component-btn .change-btn {
+  padding: 10px 20px;
+  background-color: black;
+  border: 1px solid white;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  border-radius: 5px;
+  position: relative;
+}
+#white-board .change-component-btn .change-btn:hover {
+  background-color: white;
+  color: black;
+}
+#white-board .change-component-btn .change-btn.whiteboard-open p {
+  visibility: hidden;
+}
+#white-board .change-component-btn .change-btn.whiteboard-open::after {
+  content: "Code-Editor";
+  position: absolute;
+  inset: 0;
+  font-size: 0.8rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }/*# sourceMappingURL=whiteBoard.css.map */

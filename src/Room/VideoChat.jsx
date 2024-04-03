@@ -213,7 +213,7 @@ const VideoChat = () => {
                         <div className="name">{user.name} (You)</div>
                     </div>
                     <div className="audio-info">
-                        <fa className="fa-solid fa-microphone-slash"></fa>
+                        <i className="fa-solid fa-microphone-slash"></i>
                     </div>
                 </div>
                 {peers.map((peerData, index) => {
@@ -225,7 +225,7 @@ const VideoChat = () => {
                                 <div className="name">{peerData.name}</div>
                             </div>
                             <div className="audio-info">
-                                <fa className="fa-solid fa-microphone-slash"></fa>
+                                <i className="fa-solid fa-microphone-slash"></i>
                             </div>
                         </div>
                     )

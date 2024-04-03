@@ -10,6 +10,7 @@
   --secondary-background-color: black;
   --primary-text-color: white;
   --secondary-text-color: black;
+  position: relative;
 }
 .room #leave-room {
   font-size: 1rem;
@@ -209,4 +210,45 @@
 }
 .room .core-components .code-editor-video-chat-parent #resize-editor #lines-resize::after {
   left: -300%;
+}
+.room .permission-block {
+  position: absolute;
+  background-color: var(--primary-background-color);
+  border: var(--primary-text-color) 1px solid;
+  color: var(--primary-text-color);
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+  transition: all 0.3s ease-in-out;
+  opacity: 0;
+  right: -100px;
+  bottom: 20px;
+  padding: 1rem;
+}
+.room .permission-block.active {
+  right: 20px;
+  opacity: 1;
+}
+.room .permission-block .user-info span {
+  font-weight: bold;
+}
+.room .permission-block .buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+.room .permission-block .buttons button {
+  border: none;
+  background-color: var(--primary-background-color);
+  padding: 0.2rem;
+  transition: all 0.2s ease-in-out;
+  color: var(--secondary-text-color);
+  cursor: pointer;
+}
+.room .permission-block .buttons button:hover {
+  text-shadow: 0 0 10px var(--secondary-text-color);
 }/*# sourceMappingURL=room.css.map */
