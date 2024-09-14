@@ -119,23 +119,43 @@
 .room .core-components .code-editor-video-chat-parent #editor .editor-settings {
   height: 70px;
   background-color: var(--secondary-background-color) !important;
-  padding: 5px 10px;
+  padding: 1rem;
   font-family: sans-serif;
   z-index: 100;
   border: 1px solid var(--secondary-text-color);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
-.room .core-components .code-editor-video-chat-parent #editor .editor-settings div {
+.room .core-components .code-editor-video-chat-parent #editor .editor-settings .room-name-id {
+  white-space: nowrap;
+  color: var(--primary-text-color);
+  font-size: 1rem;
+  cursor: pointer;
+}
+.room .core-components .code-editor-video-chat-parent #editor .editor-settings .room-name-id:hover {
+  text-decoration: underline;
+}
+.room .core-components .code-editor-video-chat-parent #editor .editor-settings .settings-options {
   display: flex;
   background-color: var(--secondary-background-color);
-  justify-content: space-evenly;
+  gap: 1rem;
+  padding: 0 1rem;
   align-items: center;
+  width: 100%;
+}
+.room .core-components .code-editor-video-chat-parent #editor .editor-settings .settings-options div {
   color: var(--primary-text-color);
+  font-size: 0.8rem;
 }
-.room .core-components .code-editor-video-chat-parent #editor .editor-settings div svg path {
-  fill: var(--primary-text-color);
-}
-.room .core-components .code-editor-video-chat-parent #editor .editor-settings div fieldset {
+.room .core-components .code-editor-video-chat-parent #editor .editor-settings .settings-options fieldset {
   border: 1px solid var(--secondary-text-color);
+}
+.room .core-components .code-editor-video-chat-parent #editor .editor-settings .option-label {
+  color: var(--secondary-text-color);
+}
+.room .core-components .code-editor-video-chat-parent #editor .editor-settings svg path {
+  fill: var(--primary-text-color);
 }
 .room .core-components .code-editor-video-chat-parent #editor #workspace {
   display: flex;
@@ -151,24 +171,28 @@
   width: 30%;
   height: 100%;
 }
-.room .core-components .code-editor-video-chat-parent #editor #workspace #io > * {
+.room .core-components .code-editor-video-chat-parent #editor #workspace #io .input,
+.room .core-components .code-editor-video-chat-parent #editor #workspace #io .output {
   width: 100%;
   height: 50%;
   border: 1px solid var(--secondary-text-color);
 }
-.room .core-components .code-editor-video-chat-parent #editor #workspace #io > * h5 {
+.room .core-components .code-editor-video-chat-parent #editor #workspace #io .input h5,
+.room .core-components .code-editor-video-chat-parent #editor #workspace #io .output h5 {
   background-color: var(--secondary-background-color);
   color: var(--secondary-text-color);
   padding: 5px;
-  font-size: 1.2rem;
+  padding-left: 10px;
+  font-size: 1rem;
   font-family: sans-serif;
 }
-.room .core-components .code-editor-video-chat-parent #editor #workspace #io > * .ace_editor {
+.room .core-components .code-editor-video-chat-parent #editor #workspace #io .input .ace_editor,
+.room .core-components .code-editor-video-chat-parent #editor #workspace #io .output .ace_editor {
   width: 100%;
   height: 90%;
 }
 .room .core-components .code-editor-video-chat-parent #resize-editor {
-  width: 15px;
+  width: 10px;
   height: 100%;
   background-color: transparent;
   float: right;
@@ -177,8 +201,16 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
 }
-.room .core-components .code-editor-video-chat-parent #resize-editor:hover {
+.room .core-components .code-editor-video-chat-parent #resize-editor::before {
+  content: "";
+  height: 100%;
+  width: 5px;
+  position: relative;
+  border-radius: 5px;
+}
+.room .core-components .code-editor-video-chat-parent #resize-editor:hover::before {
   background-color: #1976d2;
 }
 .room .core-components .code-editor-video-chat-parent #resize-editor:hover #lines-resize {
@@ -187,29 +219,8 @@
 .room .core-components .code-editor-video-chat-parent #resize-editor:hover #lines-resize::before, .room .core-components .code-editor-video-chat-parent #resize-editor:hover #lines-resize::after {
   background-color: white;
 }
-.dark .room .core-components .code-editor-video-chat-parent #resize-editor {
-  background-color: transparent;
-}
-.dark .room .core-components .code-editor-video-chat-parent #resize-editor:hover {
+.dark .room .core-components .code-editor-video-chat-parent #resize-editor:hover::before {
   background-color: #1976d2;
-}
-.room .core-components .code-editor-video-chat-parent #resize-editor #lines-resize {
-  height: 25px;
-  background-color: black;
-  width: 1px;
-  position: relative;
-}
-.room .core-components .code-editor-video-chat-parent #resize-editor #lines-resize::before, .room .core-components .code-editor-video-chat-parent #resize-editor #lines-resize::after {
-  content: "";
-  height: 100%;
-  width: 100%;
-  position: absolute;
-  left: 300%;
-  top: 0;
-  background-color: black;
-}
-.room .core-components .code-editor-video-chat-parent #resize-editor #lines-resize::after {
-  left: -300%;
 }
 .room .permission-block {
   position: absolute;

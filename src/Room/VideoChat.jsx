@@ -3,11 +3,16 @@ import { useContext } from "react";
 import { DataContext } from "../Components/DataContext";
 import Peer from "simple-peer"
 import "../Styles/video-chat.css";
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
 export const reArrangeVideos = () => {
     const videoContainer = document.querySelector(".video-chat .video-container");
     let width = videoContainer.getBoundingClientRect().width;
     let height = videoContainer.getBoundingClientRect().height;
+    if (width <= 200) {
+        console.log("returning");
+        return;
+    }
     let padding = parseInt(window.getComputedStyle(videoContainer).padding);
     let gap = parseInt(window.getComputedStyle(videoContainer).gap);
     let totalComponents = document.querySelector(".video-chat .video-container").childElementCount;
@@ -49,7 +54,7 @@ export const reArrangeVideos = () => {
         }
 
         if (done) {
-            videoCards.forEach((card, index) => {
+            videoCards.forEach(card => {
                 card.style.width = `${perRowWidth}px`;
                 card.style.height = `${perRowHeight}px`;
             })
@@ -74,7 +79,7 @@ const Video = (props) => {
     );
 }
 
-const VideoChat = () => {
+const VideoChat = ({ videoCollapsed }) => {
     const { user, currRoom, socket } = useContext(DataContext);
     const [peers, setPeers] = useState([]);
     const userVideo = useRef();
@@ -98,7 +103,7 @@ const VideoChat = () => {
     useEffect(() => {
         window.addEventListener("resize", reArrangeVideos);
         window.addEventListener("load", reArrangeVideos);
-        reArrangeVideos(peers);
+        reArrangeVideos();
         socket.on("toggle-video", (data) => {
             setPeers(users => {
                 return users.map(user => {
@@ -204,7 +209,10 @@ const VideoChat = () => {
     }
 
     return (
-        <div className="video-chat">
+        <div className="video-chat" style={{ padding: `${videoCollapsed ? '0' : '1rem'}` }}>
+            <div className="expand-collapse">
+                {videoCollapsed ? <ExpandLessIcon className="collapse" /> : <ExpandLessIcon className="expand" />}
+            </div>
             <div className="video-container">
                 <div className="video-card video-active audio-active">
                     <video ref={userVideo} autoPlay playsInline muted></video>

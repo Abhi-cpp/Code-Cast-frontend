@@ -17,6 +17,8 @@ const Room = () => {
     const [userUpdated, setUserUpdated] = useState(null);
     const requestId = useRef(null);
     const userAdded = useRef(false);
+    const [editorCollapsed, setEditorCollapsed] = useState(false);
+    const [videoCollapsed, setVideoCollapsed] = useState(false);
 
     useEffect(() => {
         if (user === null || currRoom === null) {
@@ -66,9 +68,24 @@ const Room = () => {
                 const editor = document.querySelector("#editor");
                 const finalX = e.clientX;
                 let editorWidth = initialWidth + finalX - startX;
+                let videoWidth = window.innerWidth - editorWidth - 50 - 10;
+                if (videoWidth < 200) {
+                    videoWidth = 0;
+                    editorWidth = window.innerWidth - 50 - 10
+                    setVideoCollapsed(true);
+                    setEditorCollapsed(false);
+                } else if (editorWidth < 200) {
+                    editorWidth = 0;
+                    videoWidth = window.innerWidth - 50 - 10
+                    setEditorCollapsed(true);
+                    setVideoCollapsed(false);
+                } else {
+                    setVideoCollapsed(false);
+                    setEditorCollapsed(false);
+                }
                 editor.style.width = editorWidth + "px";
-                let videoWidth = window.innerWidth - editorWidth - 50;
                 videoChat.style.width = videoWidth + "px";
+
                 reArrangeVideos();
             }
 
@@ -149,11 +166,14 @@ const Room = () => {
                     <div className="code-editor-video-chat-parent">
                         <CodeEditor
                             updateRoomUsers={updateRoomUsers}
+                            editorCollapsed={editorCollapsed}
                         />
                         <div id="resize-editor">
                             <div id="lines-resize"></div>
                         </div>
-                        <VideoChat />
+                        <VideoChat
+                            videoCollapsed={videoCollapsed}
+                        />
 
                     </div>
                     <WhiteBoard />
