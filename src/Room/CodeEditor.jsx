@@ -25,18 +25,19 @@ import 'ace-builds/src-noconflict/theme-one_dark'
 import 'ace-builds/src-noconflict/ext-language_tools';
 import 'ace-builds/src-noconflict/theme-github_dark.js';
 import { toast } from 'react-toastify';
+import { THEME_OPTIONS } from '../utils/settingsOptions.js';
 
 
 const CodeEditor = ({
     updateRoomUsers,
 }) => {
     const dmp = new diff_match_patch();
-    const [theme, setTheme] = useState('vibrant_ink');
+    const [theme, setTheme] = useState('github_dark');
     const { user, currRoom, socket } = useContext(DataContext);
     let roomid = currRoom ? currRoom.roomid : "";
     let name = user ? user.name : "";
     let roomName = currRoom ? currRoom.name : "";
-    const [fontSize, setFontSize] = useState(18);
+    const [fontSize, setFontSize] = useState(14);
     const [fontFamily, setFontFamily] = useState('monospace');
     const sent = useRef(true);
     const [input, setInput] = useState('');
@@ -180,6 +181,14 @@ const CodeEditor = ({
 
     useEffect(() => {
         if (!theme) return;
+        handleThemeChange();
+    }, [theme])
+
+    const handleThemeChange = () => {
+        const newThemeType = THEME_OPTIONS.find((option) => option.value === theme).type;
+        const root = document.querySelector('#root');
+        root.classList.remove('light', 'dark');
+        root.classList.add(newThemeType);
         let strings = theme.split('_');
         let aceClass = "ace";
         strings.forEach((string) => {
@@ -190,19 +199,16 @@ const CodeEditor = ({
         if (!ace) return;
         let aceStyle = getComputedStyle(ace);
         let aceGutterStyle = getComputedStyle(ace.querySelector('.ace_gutter'));
-
         let aceBackgroundColor = aceStyle.backgroundColor;
         let aceTextColor = aceStyle.color;
         let gutterBackColor = aceGutterStyle.backgroundColor;
         let gutterTextColor = aceGutterStyle.color;
-
         let room = document.querySelector('.room');
         room.style.setProperty('--primary-background-color', aceBackgroundColor);
         room.style.setProperty('--secondary-background-color', gutterBackColor);
         room.style.setProperty('--primary-text-color', aceTextColor);
         room.style.setProperty('--secondary-text-color', gutterTextColor);
-    }, [theme])
-
+    }
 
     function handleChange(newValue, event) {
         const patch = dmp.patch_make(code, newValue);
