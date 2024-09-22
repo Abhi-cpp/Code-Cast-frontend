@@ -5,25 +5,12 @@
 }
 
 #white-board {
-  position: absolute;
-  top: calc(-100vh + 50px);
-  left: 0;
-  width: 100vw;
-  z-index: 100;
+  width: calc(100vw - 50px);
   height: 100vh;
-  background-color: #fff;
+  background-color: var(--primary-background-color);
   overflow: hidden;
   transition: all 0.5s ease-in-out;
-  cursor: none;
-}
-#white-board.active {
-  top: 0;
-}
-#white-board.active #white-board-btn span {
-  display: none;
-}
-#white-board.active #white-board-btn::after {
-  content: "Code Editor";
+  cursor: crosshair;
 }
 #white-board .toolbar {
   width: 100vw;
@@ -56,11 +43,11 @@
   content: "";
   width: 100%;
   height: calc(1px * var(--width));
-  background-color: black;
+  background-color: var(--primary-text-color);
 }
 #white-board .toolbar .sizes .size.active {
   transform: scale(1.1);
-  box-shadow: 0 0 10px rgb(0, 0, 0);
+  box-shadow: 0 0 10px var(--primary-text-color);
 }
 #white-board .toolbar .colors {
   max-width: 33%;
@@ -75,10 +62,11 @@
   cursor: pointer;
   background: var(--color);
   transition: all 0.2s ease-in-out;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 #white-board .toolbar .colors .color.active {
   transform: scale(1.1);
-  border: 3px solid black;
+  border: 3px solid var(--primary-text-color);
   box-shadow: 0 0 10px var(--color);
 }
 #white-board .toolbar .extras {
@@ -93,7 +81,7 @@
   aspect-ratio: 1/1;
   margin: 0 10px;
   cursor: pointer;
-  border: 2px solid black;
+  border: 2px solid var(--secondary-text-color);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -102,7 +90,7 @@
 }
 #white-board .toolbar .extras #eraser {
   min-width: 20px;
-  background: url("../public/eraser.png") no-repeat center;
+  background: url("../../public/eraser.png") no-repeat center;
   background-size: contain;
 }
 #white-board .toolbar .extras #eraser.active {
@@ -120,7 +108,8 @@
   aspect-ratio: 1/1;
   margin: 0 10px;
   cursor: pointer;
-  border: 2px solid black;
+  border: 2px solid var(--primary-text-color);
+  color: var(--primary-text-color);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -130,50 +119,54 @@
 #white-board .toolbar .extras .shapes .shape.active,
 #white-board .toolbar .extras .shapes #pen.active {
   transform: scale(1.1);
-  border: 4px solid black;
+  border: 4px solid var(--primary-text-color);
 }
-#white-board #white-board-btn {
-  margin: 0 auto;
-  display: block;
-  padding: 10px;
+#white-board .change-component-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0;
+}
+#white-board .change-component-btn .change-btn {
+  padding: 10px 20px;
   background-color: white;
+  border: 1px solid black;
+  color: black;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  border-radius: 4px;
+  transition: all 0.3s ease-in-out;
+  border-radius: 5px;
   position: relative;
 }
-#white-board #white-board-btn:hover {
+#white-board .change-component-btn .change-btn:hover {
   background-color: black;
   color: white;
+  border: 1px solid white;
 }
-#white-board #white-board-btn::before {
-  width: 100vw;
-  height: 50px;
-  top: -10px;
-  left: calc(-50vw + 50%);
-  content: "";
-  position: absolute;
-  box-shadow: 0 -5px 10px 0px rgba(0, 0, 0, 0.3);
+.dark #white-board .change-component-btn .change-btn {
+  background-color: black;
+  border: 1px solid white;
+  color: white;
 }
-
-#cursor {
-  position: absolute;
-  background-image: url("../public/pencil.png");
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  width: 25px;
-  height: 25px;
-  z-index: 1000;
-  pointer-events: none;
-  left: 100px;
-  top: 100px;
-}
-
-#shape-demo {
-  position: absolute;
+.dark #white-board .change-component-btn .change-btn:hover {
+  background-color: white;
+  color: black;
   border: 1px solid black;
-  z-index: 1000;
-  left: 100px;
-  top: 100px;
+}
+#white-board .change-component-btn .change-btn.whiteboard-open p {
+  visibility: hidden;
+}
+#white-board .change-component-btn .change-btn.whiteboard-open::after {
+  content: "Code-Editor";
+  position: absolute;
+  inset: 0;
+  font-size: 0.8rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }/*# sourceMappingURL=whiteBoard.css.map */
