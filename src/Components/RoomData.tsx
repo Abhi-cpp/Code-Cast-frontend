@@ -1,14 +1,18 @@
-import React, { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { DataContext } from "./DataContext.tsx";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Loader from "./Loader.tsx";
 import { generateFromString } from "generate-avatar";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import {
+  createRoomMutation,
+  deleteRoomMutation,
+} from "../services/roomService.ts";
 
 const RoomData = () => {
-  const { user, setCurrRoom, setUser, socket } = useContext(DataContext);
+  const { user, setUser } = useContext(DataContext);
   const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -26,95 +30,45 @@ const RoomData = () => {
     });
   }, []);
 
-  const getData = async (item) => {
-    loadingStart();
-    await axios
-      .get(
-        `${process.env.REACT_APP_BACKEND_URL + "rooms/fetch"}?id=${item.roomid}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("user")}`,
-          },
-        },
-      )
-      .then((response) => {
-        console.log(response, response.data);
-        setCurrRoom(response.data.room);
-        loadingStop();
-        navigate("/room");
-      })
-      .catch((error) => {
-        loadingStop();
-        toast.error("Error Fetching Room", {
-          position: toast.POSITION.TOP_RIGHT,
-        });
-        console.log(error);
-      });
-  };
-
   const createRoom = async () => {
     const roomName = (document.getElementById("roomName") as HTMLInputElement)
       ?.value;
     loadingStart();
-    axios({
-      method: "post",
-      url: process.env.REACT_APP_BACKEND_URL + "rooms/create",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("user")}`,
-      },
-      data: {
-        name: roomName,
-      },
-    })
-      .then((response) => {
-        console.log(response, response.data);
-        setCurrRoom(response.data.room);
-        loadingStop();
-        navigate("/room");
-      })
-      .catch((error) => {
-        loadingStop();
-        toast.error("Error Creating Room", {
-          position: toast.POSITION.TOP_RIGHT,
-        });
-        console.log(error);
+    try {
+      const room = await createRoomMutation(roomName);
+      navigate("/room/" + room.roomid);
+    } catch (error) {
+      loadingStop();
+      toast.error("Error Creating Room", {
+        position: toast.POSITION.TOP_RIGHT,
       });
+      console.log(error);
+    }
   };
 
-  const joinOtherRoom = async () => {
-    const roomID = (document.getElementById("roomID") as HTMLInputElement)
-      .value;
-    loadingStart();
-    axios({
-      method: "get",
-      url: process.env.REACT_APP_BACKEND_URL + `rooms/fetch?id=${roomID}`,
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("user")}`,
-      },
-    })
-      .then((response) => {
-        socket.emit("join permission", { room: response.data.room, user });
-        console.log(socket.id);
-        socket.on("permission accepted", () => {
-          setCurrRoom(response.data.room);
-          loadingStop();
-          navigate("/room");
-        });
+  const joinRoom = async (roomId) => {
+    navigate("/room/" + roomId);
+  };
 
-        socket.on("permission rejected", () => {
-          loadingStop();
-          toast.error("Permission Rejected", {
-            position: toast.POSITION.TOP_RIGHT,
-          });
-        });
-      })
-      .catch((error) => {
-        loadingStop();
-        toast.error("Room not found", {
-          position: toast.POSITION.TOP_RIGHT,
-        });
-        console.log(error);
+  const deleteRoom = (item) => async () => {
+    loadingStart();
+    try {
+      const deletedItem = await deleteRoomMutation(item._id);
+      if (user)
+        user.rooms = user?.rooms?.filter(
+          (item) => item._id !== deletedItem._id,
+        );
+      loadingStop();
+      toast.success("Room Deleted", {
+        position: toast.POSITION.TOP_RIGHT,
       });
+    } catch (error) {
+      loadingStop();
+      toast.error("Error Deleting Room", {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+      console.log(error);
+    }
   };
 
   const logout = () => {
@@ -122,39 +76,8 @@ const RoomData = () => {
     setUser(null);
   };
 
-  const deleteData = (item) => async () => {
-    loadingStart();
-    axios({
-      method: "delete",
-      url: process.env.REACT_APP_BACKEND_URL + `rooms/delete`,
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("user")}`,
-      },
-      data: {
-        id: item._id,
-      },
-    })
-      .then((response) => {
-        if (user)
-          user.rooms = user?.rooms?.filter(
-            (item) => item._id !== response.data._id,
-          );
-        loadingStop();
-        toast.success("Room Deleted", {
-          position: toast.POSITION.TOP_RIGHT,
-        });
-      })
-      .catch((error) => {
-        loadingStop();
-        toast.error("Error Deleting Room", {
-          position: toast.POSITION.TOP_RIGHT,
-        });
-        console.log(error);
-      });
-  };
-
   const copyRoomId = (e) => {
-    const id = e.target.innerText;
+    const id = e.target.parentElement.innerText;
     navigator.clipboard.writeText(id);
     toast.success("Room ID Copied ", {
       position: toast.POSITION.TOP_RIGHT,
@@ -173,7 +96,6 @@ const RoomData = () => {
           new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
         );
       });
-
       setUser({ ...user });
     }
 
@@ -212,8 +134,17 @@ const RoomData = () => {
       <div className="join-room">
         <input id="roomName" placeholder="Enter Room Name" />
         <button onClick={createRoom}>Create Room</button>
-        <input id="roomID" placeholder="Enter Room ID to join" />
-        <button onClick={joinOtherRoom}>Join Room</button>
+        <input id="room-id" placeholder="Enter Room ID to join" />
+        <button
+          onClick={() => {
+            const roomId = (
+              document.getElementById("room-id") as HTMLInputElement
+            )?.value;
+            joinRoom(roomId);
+          }}
+        >
+          Join Room
+        </button>
       </div>
       <table aria-label="simple table">
         <thead>
@@ -230,18 +161,31 @@ const RoomData = () => {
           {user?.rooms?.map((item, index) => (
             <tr key={index}>
               <td scope="row">{item.name}</td>
-              <td align="right" onClick={copyRoomId}>
+              <td align="right">
                 {item.roomid}
+                <ContentCopyIcon
+                  onClick={copyRoomId}
+                  style={{ cursor: "pointer", marginLeft: "10px" }}
+                  fontSize="small"
+                />
               </td>
-              <td align="right">{item.language}</td>
+              <td align="right">
+                {item.language.slice(0, 1).toUpperCase() +
+                  item.language.slice(1)}
+              </td>
               <td align="right">{item.updatedAt}</td>
               <td align="right">
-                <button className="join-btn" onClick={() => getData(item)}>
+                <button
+                  className="join-btn"
+                  onClick={() => {
+                    joinRoom(item.roomid);
+                  }}
+                >
                   Join Room
                 </button>
               </td>
               <td align="right">
-                <button className="delete-btn" onClick={deleteData(item)}>
+                <button className="delete-btn" onClick={deleteRoom(item)}>
                   Delete Room
                 </button>
               </td>

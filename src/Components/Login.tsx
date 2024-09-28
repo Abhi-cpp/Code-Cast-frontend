@@ -5,6 +5,7 @@ import RoomData from "./RoomData.tsx";
 import { DataContext } from "./DataContext.tsx";
 import Loader from "./Loader.tsx";
 import { ToastContainer, toast } from "react-toastify";
+import { loginWithToken } from "../services/authService.ts";
 
 const clientId = process.env.REACT_APP_CLIENT_ID || "";
 axios.defaults.headers.post["Access-Control-Allow-Origin"] = "*";
@@ -24,24 +25,15 @@ const Login = () => {
     const token = localStorage.getItem("user");
     if (token) {
       loadingStart();
-      axios({
-        method: "get",
-        url: process.env.REACT_APP_BACKEND_URL + "users/fetch",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then((response) => {
-          loadingStop();
-          localStorage.setItem("user", response.data.token);
-          console.log("user", response.data.user);
-          setUser(response.data.user);
-        })
-        .catch((error) => {
-          loadingStop();
+      loginWithToken(token).then((response) => {
+        loadingStop();
+        if (response.status === "success") {
+          setUser(response.data);
+        } else {
           setUser(null);
-          console.log("error in axios jwt call", error);
-        });
+          console.log("error in axios jwt call", response.data);
+        }
+      });
     }
   }, []);
 
@@ -136,7 +128,6 @@ const Login = () => {
 
   const loginUser = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-
     const data = {
       email: (
         document

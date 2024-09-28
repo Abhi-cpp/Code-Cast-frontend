@@ -4,6 +4,7 @@ import { DataContext } from "../Components/DataContext.tsx";
 import Peer from "simple-peer";
 import "../Styles/video-chat.css";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import { RoomT } from "../types/room.ts";
 
 export const reArrangeVideos = () => {
   const videoContainer = document.querySelector(
@@ -12,7 +13,6 @@ export const reArrangeVideos = () => {
   let width = videoContainer?.getBoundingClientRect().width;
   let height = videoContainer?.getBoundingClientRect().height;
   if (width && width <= 200) {
-    console.log("returning");
     return;
   }
   const padding = parseInt(window.getComputedStyle(videoContainer).padding);
@@ -77,6 +77,7 @@ type VideoPropsType = {
 
 type VideoChatT = {
   videoCollapsed: boolean;
+  currRoom: RoomT | null;
 };
 
 type PeerType = {
@@ -100,21 +101,25 @@ const Video = ({ peer }: VideoPropsType) => {
   return <video playsInline autoPlay ref={ref}></video>;
 };
 
-const VideoChat = ({ videoCollapsed }: VideoChatT) => {
-  const { user, currRoom, socket } = useContext(DataContext);
+const VideoChat = ({ videoCollapsed, currRoom }: VideoChatT) => {
+  const { user, socket } = useContext(DataContext);
   const [peers, setPeers] = useState<Array<PeerType>>([]);
   const userVideo = useRef<HTMLVideoElement | null>(null);
-  const roomID = currRoom.roomid;
+  const roomID = currRoom?.roomid;
 
   function muteAudio() {
-    const audio = userVideo.current?.srcObject?.getAudioTracks()[0];
+    const audio = (
+      userVideo.current?.srcObject as MediaStream
+    )?.getAudioTracks()[0];
     audio.enabled = !audio.enabled;
     document.querySelector(".video-card")?.classList.toggle("audio-active");
     socket.emit("toggle-audio", { roomID, userID: socket.id });
   }
 
   function muteVideo() {
-    const video = userVideo.current.srcObject.getVideoTracks()[0];
+    const video = (
+      userVideo.current?.srcObject as MediaStream
+    )?.getVideoTracks()[0];
     video.enabled = !video.enabled;
 
     socket.emit("toggle-video", { roomID, userID: socket.id });
@@ -122,7 +127,6 @@ const VideoChat = ({ videoCollapsed }: VideoChatT) => {
   }
 
   useEffect(() => {
-    console.log(peers);
     window.addEventListener("resize", reArrangeVideos);
     window.addEventListener("load", reArrangeVideos);
     reArrangeVideos();
@@ -214,7 +218,7 @@ const VideoChat = ({ videoCollapsed }: VideoChatT) => {
     });
 
     return () => {
-      userVideo.current?.srcObject
+      (userVideo.current?.srcObject as MediaStream)
         ?.getTracks()
         .forEach((track) => track.stop());
     };
@@ -286,7 +290,7 @@ const VideoChat = ({ videoCollapsed }: VideoChatT) => {
               } ${peerData.audioIsActive ? "audio-active" : ""}`}
               key={index}
             >
-              <Video autoPlay playsInline peer={peerData.peer} />
+              <Video peer={peerData.peer} />
               <div className="video-info ">
                 <img src={peerData.avatar} alt="" />
                 <div className="name">{peerData.name}</div>

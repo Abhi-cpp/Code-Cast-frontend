@@ -10,8 +10,8 @@ type WhiteBoardDataT = {
   x: number;
   y: number;
 };
-const WhiteBoard = () => {
-  const { currRoom, socket } = useContext(DataContext);
+const WhiteBoard = ({ currRoom }: { currRoom: any }) => {
+  const { socket } = useContext(DataContext);
   const roomId = useRef(currRoom ? currRoom.roomid : "");
   const isWhiteBoardOpen = useRef(false);
 

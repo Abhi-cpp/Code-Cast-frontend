@@ -26,16 +26,22 @@ import "ace-builds/src-noconflict/ext-language_tools";
 import "ace-builds/src-noconflict/theme-github_dark.js";
 import { toast } from "react-toastify";
 import { THEME_OPTIONS } from "../utils/settingsOptions.ts";
+import { RoomT } from "../types/room.ts";
 
 type CodeEditorProps = {
   updateRoomUsers: (users: any) => void;
   editorCollapsed: boolean;
+  currRoom: RoomT | null;
 };
 
-const CodeEditor = ({ updateRoomUsers, editorCollapsed }: CodeEditorProps) => {
+const CodeEditor = ({
+  updateRoomUsers,
+  editorCollapsed,
+  currRoom,
+}: CodeEditorProps) => {
   const dmp = new diff_match_patch();
   const [theme, setTheme] = useState("github_dark");
-  const { user, currRoom, socket } = useContext(DataContext);
+  const { user, socket } = useContext(DataContext);
   const roomid = currRoom ? currRoom.roomid : "";
   const name = user ? user.name : "";
   const roomName = currRoom ? currRoom.name : "";
@@ -108,29 +114,29 @@ const CodeEditor = ({ updateRoomUsers, editorCollapsed }: CodeEditorProps) => {
   useEffect(() => {
     if (!sent.current) return;
     sent.current = false;
-    const sendData = setTimeout(() => {
-      axios({
-        method: "patch",
-        url: process.env.REACT_APP_BACKEND_URL + "rooms/update",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("user")}`,
-        },
-        data: {
-          room: {
-            roomid,
-            code,
-            language,
-          },
-        },
-      })
-        .then((res) => {
-          // console.log("patched successfully", res)
-        })
-        .catch((err) => {
-          // console.log("error from axios", err)
-        });
-      sent.current = true;
-    }, 2000);
+    // const sendData = setTimeout(() => {
+    //   axios({
+    //     method: "patch",
+    //     url: process.env.REACT_APP_BACKEND_URL + "rooms/update",
+    //     headers: {
+    //       Authorization: `Bearer ${localStorage.getItem("user")}`,
+    //     },
+    //     data: {
+    //       room: {
+    //         roomid,
+    //         code,
+    //         language,
+    //       },
+    //     },
+    //   })
+    //     .then((res) => {
+    //       // console.log("patched successfully", res)
+    //     })
+    //     .catch((err) => {
+    //       // console.log("error from axios", err)
+    //     });
+    //   sent.current = true;
+    // }, 2000);
   }, [code]);
 
   useEffect(() => {
@@ -149,7 +155,6 @@ const CodeEditor = ({ updateRoomUsers, editorCollapsed }: CodeEditorProps) => {
     }
 
     socket.on("join", ({ msg, room, socketId }) => {
-      console.log(socketId);
       toast(msg, {
         position: toast.POSITION.TOP_RIGHT,
       });
@@ -229,8 +234,7 @@ const CodeEditor = ({ updateRoomUsers, editorCollapsed }: CodeEditorProps) => {
     room?.style.setProperty("--secondary-text-color", gutterTextColor);
   };
 
-  function handleChange(newValue, event) {
-    console.log(event);
+  function handleChange(newValue) {
     const patch = dmp.patch_make(code, newValue);
     sendCode(patch);
     setCode(newValue);

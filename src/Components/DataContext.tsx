@@ -1,20 +1,13 @@
 import React, { createContext, useState, useMemo, useEffect } from "react";
 import { io } from "socket.io-client";
+import { RoomT } from "../types/room";
 
-type userT = {
+type UserT = {
   _id: string;
   name: string;
   email: string;
   avatar: string;
-  rooms?: roomT[];
-};
-
-type roomT = {
-  _id: string;
-  name: string;
-  roomid: string;
-  language: string;
-  updatedAt: string;
+  rooms?: RoomT[];
 };
 
 type DataContextProviderProps = {
@@ -22,9 +15,9 @@ type DataContextProviderProps = {
 };
 
 type DataContextType = {
-  user: userT | null;
+  user: UserT | null;
   currRoom: any;
-  setUser: (user: userT | null) => void;
+  setUser: (user: UserT | null) => void;
   setCurrRoom: (room: any) => void;
   socket: any;
 };
@@ -40,7 +33,7 @@ const defaultContextValue: DataContextType = {
 export const DataContext = createContext<DataContextType>(defaultContextValue);
 
 const DataContextProvider = ({ children }: DataContextProviderProps) => {
-  const [user, setUser] = useState<userT | null>(null);
+  const [user, setUser] = useState<UserT | null>(null);
   const [currRoom, setCurrRoom] = useState(null);
   const socket = useMemo(() => {
     const backendUrl = process.env.REACT_APP_BACKEND_URL;
