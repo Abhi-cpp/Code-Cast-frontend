@@ -4,7 +4,8 @@ import { DataContext } from "../Components/DataContext.tsx";
 import Peer from "simple-peer";
 import "../Styles/video-chat.css";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import { RoomT } from "../types/room.ts";
+import { PeerType, VideoChatT } from "../types/videoChat.ts";
+import { VideoPropsType } from "../types/videoChat.ts";
 
 export const reArrangeVideos = () => {
   const videoContainer = document.querySelector(
@@ -69,24 +70,6 @@ export const reArrangeVideos = () => {
 
     rowCount++;
   }
-};
-
-type VideoPropsType = {
-  peer: Peer.Instance;
-};
-
-type VideoChatT = {
-  videoCollapsed: boolean;
-  currRoom: RoomT | null;
-};
-
-type PeerType = {
-  peer: Peer.Instance;
-  userID: string;
-  name: string;
-  avatar: string;
-  videoIsActive: boolean;
-  audioIsActive: boolean;
 };
 
 const Video = ({ peer }: VideoPropsType) => {

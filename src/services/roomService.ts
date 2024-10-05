@@ -1,4 +1,5 @@
 import axios from "axios";
+axios.defaults.headers.post["Access-Control-Allow-Origin"] = "*";
 
 const fetchRoomDetails = async (roomId: string) => {
   try {

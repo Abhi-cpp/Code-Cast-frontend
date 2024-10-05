@@ -27,12 +27,8 @@ import "ace-builds/src-noconflict/theme-github_dark.js";
 import { toast } from "react-toastify";
 import { THEME_OPTIONS } from "../utils/settingsOptions.ts";
 import { RoomT } from "../types/room.ts";
-
-type CodeEditorProps = {
-  updateRoomUsers: (users: any) => void;
-  editorCollapsed: boolean;
-  currRoom: RoomT | null;
-};
+import { CodeEditorProps } from "../types/codeEditor.ts";
+import { runCode } from "../services/codeEditorService.ts";
 
 const CodeEditor = ({
   updateRoomUsers,
@@ -44,6 +40,7 @@ const CodeEditor = ({
   const { user, socket } = useContext(DataContext);
   const roomid = currRoom ? currRoom.roomid : "";
   const name = user ? user.name : "";
+  const email = user ? user.email : "";
   const roomName = currRoom ? currRoom.name : "";
   const [fontSize, setFontSize] = useState(14);
   const [fontFamily, setFontFamily] = useState("monospace");
@@ -71,39 +68,33 @@ const CodeEditor = ({
   const run = async () => {
     setRunning(true);
     const id = toast.loading("Compiling...");
-    await axios({
-      url: process.env.REACT_APP_BACKEND_URL + "code/execute",
-      method: "post",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("user")}`,
-      },
-      data: {
-        code,
-        input,
-        language,
-      },
-    })
+    runCode(
+      code,
+      input || "",
+      language || "",
+      localStorage.getItem("user") || "",
+    )
       .then((res) => {
-        toast.update(id, {
-          render: "Compiled successfully",
-          type: "success",
-          isLoading: false,
-          autoClose: 1000,
-        });
-        setRunning(false);
-        const result = res.data.output ? res.data.output : res.data.error;
-        setOutput(result);
-        IOEMIT(input, result, language);
+        if (res.status === "success") {
+          toast.update(id, {
+            render: "Compiled successfully",
+            type: "success",
+            isLoading: false,
+            autoClose: 1000,
+          });
+          setOutput(res.result);
+          IOEMIT(input, res.result, language);
+        } else {
+          toast.update(id, {
+            render: "Compilation failed",
+            type: "error",
+            isLoading: false,
+            autoClose: 1500,
+          });
+        }
       })
-      .catch((err) => {
-        toast.update(id, {
-          render: "Compilation failed",
-          type: "error",
-          isLoading: false,
-          autoClose: 1500,
-        });
+      .finally(() => {
         setRunning(false);
-        console.log("error from axios", err);
       });
   };
 
@@ -143,6 +134,7 @@ const CodeEditor = ({
     if (currRoom) {
       socket.emit("join", {
         name,
+        email,
         roomName,
         roomid,
         code,

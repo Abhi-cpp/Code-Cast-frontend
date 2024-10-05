@@ -1,26 +1,10 @@
 import React, { createContext, useState, useMemo, useEffect } from "react";
 import { io } from "socket.io-client";
-import { RoomT } from "../types/room";
-
-type UserT = {
-  _id: string;
-  name: string;
-  email: string;
-  avatar: string;
-  rooms?: RoomT[];
-};
-
-type DataContextProviderProps = {
-  children: React.ReactNode;
-};
-
-type DataContextType = {
-  user: UserT | null;
-  currRoom: any;
-  setUser: (user: UserT | null) => void;
-  setCurrRoom: (room: any) => void;
-  socket: any;
-};
+import { UserT } from "../types/user";
+import {
+  DataContextProviderProps,
+  DataContextType,
+} from "../types/dataContext";
 
 const defaultContextValue: DataContextType = {
   user: null,

@@ -1,15 +1,8 @@
 import { useContext, useEffect, useRef } from "react";
 import "../Styles/whiteBoard.css";
 import { DataContext } from "../Components/DataContext.tsx";
+import { WhiteBoardDataT } from "../types/whiteBoard.ts";
 
-type WhiteBoardDataT = {
-  color: string | CanvasGradient | CanvasPattern;
-  thickness: number;
-  prevX: number;
-  prevY: number;
-  x: number;
-  y: number;
-};
 const WhiteBoard = ({ currRoom }: { currRoom: any }) => {
   const { socket } = useContext(DataContext);
   const roomId = useRef(currRoom ? currRoom.roomid : "");

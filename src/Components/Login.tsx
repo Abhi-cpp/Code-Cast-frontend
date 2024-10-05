@@ -1,14 +1,17 @@
 import React, { useEffect, useState, useContext } from "react";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
-import axios from "axios";
 import RoomData from "./RoomData.tsx";
 import { DataContext } from "./DataContext.tsx";
 import Loader from "./Loader.tsx";
 import { ToastContainer, toast } from "react-toastify";
-import { loginWithToken } from "../services/authService.ts";
+import {
+  googleLogin,
+  loginUser,
+  loginWithToken,
+  registerUser,
+} from "../services/authService.ts";
 
 const clientId = process.env.REACT_APP_CLIENT_ID || "";
-axios.defaults.headers.post["Access-Control-Allow-Origin"] = "*";
 
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -39,19 +42,17 @@ const Login = () => {
 
   const onSuccess = (credentialResponse) => {
     loadingStart();
-    axios({
-      method: "post",
-      url: process.env.REACT_APP_BACKEND_URL + "users/login",
-      data: credentialResponse,
-    })
+    googleLogin(credentialResponse)
       .then((response) => {
-        setUser(response.data.user);
-        loadingStop();
-        localStorage.setItem("user", response.data.token);
+        if (response.status === "success") {
+          setUser(response.data);
+          localStorage.setItem("user", response.token);
+        } else {
+          console.log("error in axios login call", response.data);
+        }
       })
-      .catch((error) => {
+      .finally(() => {
         loadingStop();
-        console.log("error in axios login call", error);
       });
   };
 
@@ -75,7 +76,7 @@ const Login = () => {
     document.getElementById("error-message")?.classList.remove("active");
   };
 
-  const registerUser = (e: React.FormEvent<HTMLFormElement>): void => {
+  const register = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     const passwordSame =
       (
@@ -111,22 +112,20 @@ const Login = () => {
         showError("Please fill all the fields");
         return;
       }
-      const url = process.env.REACT_APP_BACKEND_URL + "users/register";
-      axios
-        .post(url, data)
-        .then((response) => {
-          setUser(response.data.user);
-          localStorage.setItem("user", response.data.token);
-        })
-        .catch((error) => {
-          showError(error.response.data.error);
-        });
+      registerUser(data).then((responses) => {
+        if (responses.status === "success") {
+          setUser(responses.data);
+          localStorage.setItem("user", responses.token);
+        } else {
+          showError("Error Registering");
+        }
+      });
     } else {
       showError("Passwords do not match");
     }
   };
 
-  const loginUser = (e: React.FormEvent<HTMLFormElement>): void => {
+  const login = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     const data = {
       email: (
@@ -146,17 +145,16 @@ const Login = () => {
       return;
     }
 
-    axios
-      .post(process.env.REACT_APP_BACKEND_URL + "users/login", data)
-      .then((response) => {
-        setUser(response.data.user);
-        localStorage.setItem("user", response.data.token);
-      })
-      .catch((error) => {
-        if (error.response.status === 400) {
-          showError("Invalid  Credentials");
-        }
-      });
+    loginUser(data).then((response) => {
+      if (response.status === "success") {
+        setUser(response.data);
+        localStorage.setItem("user", response.token);
+      } else if (response.data.response.status === 400) {
+        showError("Invalid  Credentials");
+      } else {
+        showError("Error Logging in");
+      }
+    });
   };
 
   const showError = (message: string): void => {
@@ -202,7 +200,7 @@ const Login = () => {
 
         <div id="login-form" className="active">
           <h1>Login</h1>
-          <form onSubmit={loginUser}>
+          <form onSubmit={login}>
             <label htmlFor="email">Email</label>
             <input type="email" id="email" name="email" />
             <label htmlFor="password">Password</label>
@@ -215,7 +213,7 @@ const Login = () => {
         </div>
         <div id="register-form">
           <h1>Register</h1>
-          <form onSubmit={registerUser}>
+          <form onSubmit={register}>
             <label htmlFor="name">Name</label>
             <input type="text" id="name" name="name" />
             <label htmlFor="email">Email</label>
