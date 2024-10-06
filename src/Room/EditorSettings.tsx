@@ -29,7 +29,7 @@ const Settings = ({
   sendCode,
   run,
   handleLangChange,
-  roomid,
+  roomId,
   running,
 }: SettingsProps) => {
   const optionStyle = useRef({ height: 40, minWidth: 80 });
@@ -39,11 +39,11 @@ const Settings = ({
       <h3
         className="room-name-id"
         onClick={() => {
-          navigator.clipboard.writeText(roomid);
+          navigator.clipboard.writeText(roomId);
           toast.success("Room ID copied to clipboard");
         }}
       >
-        {roomName} - {roomid}
+        {roomName} - {roomId}
       </h3>
       <div className="settings-options">
         <FormControl>

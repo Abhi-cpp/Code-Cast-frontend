@@ -13,7 +13,7 @@ type SettingsProps = {
   sendCode: (code: string) => void;
   run: () => void;
   handleLangChange: (lang: string) => void;
-  roomid: string;
+  roomId: string;
   running: boolean;
 };
 

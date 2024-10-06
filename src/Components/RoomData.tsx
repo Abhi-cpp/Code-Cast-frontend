@@ -36,7 +36,7 @@ const RoomData = () => {
     loadingStart();
     try {
       const room = await createRoomMutation(roomName);
-      navigate("/room/" + room.roomid);
+      navigate("/room/" + room.roomId);
     } catch (error) {
       loadingStop();
       toast.error("Error Creating Room", {
@@ -53,11 +53,9 @@ const RoomData = () => {
   const deleteRoom = (item) => async () => {
     loadingStart();
     try {
-      const deletedItem = await deleteRoomMutation(item._id);
+      const deletedItem = await deleteRoomMutation(item.id);
       if (user)
-        user.rooms = user?.rooms?.filter(
-          (item) => item._id !== deletedItem._id,
-        );
+        user.rooms = user?.rooms?.filter((item) => item.id !== deletedItem.id);
       loadingStop();
       toast.success("Room Deleted", {
         position: toast.POSITION.TOP_RIGHT,
@@ -162,7 +160,7 @@ const RoomData = () => {
             <tr key={index}>
               <td scope="row">{item.name}</td>
               <td align="right">
-                {item.roomid}
+                {item.roomId}
                 <ContentCopyIcon
                   onClick={copyRoomId}
                   style={{ cursor: "pointer", marginLeft: "10px" }}
@@ -178,7 +176,7 @@ const RoomData = () => {
                 <button
                   className="join-btn"
                   onClick={() => {
-                    joinRoom(item.roomid);
+                    joinRoom(item.roomId);
                   }}
                 >
                   Join Room

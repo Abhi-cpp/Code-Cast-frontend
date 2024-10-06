@@ -17,7 +17,7 @@ const fetchRoomDetails = async (roomId: string) => {
   }
 };
 
-const deleteRoomMutation = async (_id: string) => {
+const deleteRoomMutation = async (id: string) => {
   try {
     const response = await axios({
       method: "delete",
@@ -26,7 +26,7 @@ const deleteRoomMutation = async (_id: string) => {
         Authorization: `Bearer ${localStorage.getItem("user")}`,
       },
       data: {
-        id: _id,
+        id: id,
       },
     });
     return response.data;

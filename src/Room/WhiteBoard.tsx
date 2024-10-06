@@ -5,7 +5,7 @@ import { WhiteBoardDataT } from "../types/whiteBoard.ts";
 
 const WhiteBoard = ({ currRoom }: { currRoom: any }) => {
   const { socket } = useContext(DataContext);
-  const roomId = useRef(currRoom ? currRoom.roomid : "");
+  const roomId = useRef(currRoom ? currRoom.roomId : "");
   const isWhiteBoardOpen = useRef(false);
 
   useEffect(() => {

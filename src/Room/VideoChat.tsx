@@ -88,7 +88,7 @@ const VideoChat = ({ videoCollapsed, currRoom }: VideoChatT) => {
   const { user, socket } = useContext(DataContext);
   const [peers, setPeers] = useState<Array<PeerType>>([]);
   const userVideo = useRef<HTMLVideoElement | null>(null);
-  const roomID = currRoom?.roomid;
+  const roomId = currRoom?.roomId;
 
   function muteAudio() {
     const audio = (
@@ -96,7 +96,7 @@ const VideoChat = ({ videoCollapsed, currRoom }: VideoChatT) => {
     )?.getAudioTracks()[0];
     audio.enabled = !audio.enabled;
     document.querySelector(".video-card")?.classList.toggle("audio-active");
-    socket.emit("toggle-audio", { roomID, userID: socket.id });
+    socket.emit("toggle-audio", { roomId, userId: socket.id });
   }
 
   function muteVideo() {
@@ -105,7 +105,7 @@ const VideoChat = ({ videoCollapsed, currRoom }: VideoChatT) => {
     )?.getVideoTracks()[0];
     video.enabled = !video.enabled;
 
-    socket.emit("toggle-video", { roomID, userID: socket.id });
+    socket.emit("toggle-video", { roomId, userId: socket.id });
     document.querySelector(".video-card")?.classList.toggle("video-active");
   }
 
@@ -116,7 +116,7 @@ const VideoChat = ({ videoCollapsed, currRoom }: VideoChatT) => {
     socket.on("toggle-video", (data) => {
       setPeers((users) => {
         return users.map((user) => {
-          if (user.userID === data.userID) {
+          if (user.userId === data.userId) {
             user.videoIsActive = !user.videoIsActive;
           }
           return user;
@@ -126,7 +126,7 @@ const VideoChat = ({ videoCollapsed, currRoom }: VideoChatT) => {
     socket.on("toggle-audio", (data) => {
       setPeers((users) => {
         return users.map((user) => {
-          if (user.userID === data.userID) {
+          if (user.userId === data.userId) {
             user.audioIsActive = !user.audioIsActive;
           }
           return user;
@@ -135,13 +135,13 @@ const VideoChat = ({ videoCollapsed, currRoom }: VideoChatT) => {
     });
 
     socket.on("sender receiving final signal", (data) => {
-      const item = peers.find((p) => p.userID === data.id);
+      const item = peers.find((p) => p.userId === data.id);
       item?.peer.signal(data.signal);
     });
 
     socket.on("user left video call", (data) => {
       setPeers((users) => {
-        return users.filter((user) => user.userID !== data.userID);
+        return users.filter((user) => user.userId !== data.userId);
       });
     });
 
@@ -160,14 +160,14 @@ const VideoChat = ({ videoCollapsed, currRoom }: VideoChatT) => {
       .getUserMedia({ video: true, audio: true })
       .then((stream) => {
         if (userVideo.current) userVideo.current.srcObject = stream;
-        socket.emit("start-video", { roomID });
+        socket.emit("start-video", { roomId });
         socket.on("allUsers", (users) => {
           const peers: PeerType[] = [];
           users.forEach((user) => {
             const peer = createPeer(user.id, socket.id, stream);
             peers.push({
               peer,
-              userID: user.id,
+              userId: user.id,
               name: user.name,
               avatar: user.avatar,
               videoIsActive: true,
@@ -183,7 +183,7 @@ const VideoChat = ({ videoCollapsed, currRoom }: VideoChatT) => {
             ...users,
             {
               peer,
-              userID: data.callerID,
+              userId: data.callerID,
               name: data.userSending.name,
               avatar: data.userSending.avatar,
               videoIsActive: true,

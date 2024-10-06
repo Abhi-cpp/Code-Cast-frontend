@@ -1,7 +1,7 @@
 export type RoomT = {
-  _id: string;
+  id: string;
   name: string;
-  roomid: string;
+  roomId: string;
   owner: string;
   code: string;
   language: string;

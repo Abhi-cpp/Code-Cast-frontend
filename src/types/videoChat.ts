@@ -8,7 +8,7 @@ type VideoChatT = {
 
 type PeerType = {
   peer: Peer.Instance;
-  userID: string;
+  userId: string;
   name: string;
   avatar: string;
   videoIsActive: boolean;

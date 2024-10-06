@@ -92,7 +92,7 @@ const Room = () => {
 
   useEffect(() => {
     if (currRoom && user && !roomJoined && !requestSent) {
-      if (currRoom.owner === user._id) {
+      if (currRoom.owner === user.id) {
         setRequestSent(true);
         setRoomJoined(true);
       } else {

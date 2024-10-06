@@ -38,7 +38,7 @@ const CodeEditor = ({
   const dmp = new diff_match_patch();
   const [theme, setTheme] = useState("github_dark");
   const { user, socket } = useContext(DataContext);
-  const roomid = currRoom ? currRoom.roomid : "";
+  const roomId = currRoom ? currRoom.roomId : "";
   const name = user ? user.name : "";
   const email = user ? user.email : "";
   const roomName = currRoom ? currRoom.name : "";
@@ -58,7 +58,7 @@ const CodeEditor = ({
 
   const IOEMIT = (a: string, b: string, c: string) => {
     socket.emit("updateIO", {
-      roomid,
+      roomId,
       input: a,
       output: b,
       language: c,
@@ -99,7 +99,7 @@ const CodeEditor = ({
   };
 
   const sendCode = (patch) => {
-    socket.emit("update", { roomid, patch });
+    socket.emit("update", { roomId, patch });
   };
 
   useEffect(() => {
@@ -114,7 +114,7 @@ const CodeEditor = ({
     //     },
     //     data: {
     //       room: {
-    //         roomid,
+    //         roomId,
     //         code,
     //         language,
     //       },
@@ -136,7 +136,7 @@ const CodeEditor = ({
         name,
         email,
         roomName,
-        roomid,
+        roomId,
         code,
         language,
         token: localStorage.getItem("user"),
@@ -173,7 +173,7 @@ const CodeEditor = ({
         }
       } else {
         console.log("error applying patch");
-        socket.emit("getRoom", { roomid });
+        socket.emit("getRoom", { roomId });
       }
     });
 
@@ -257,7 +257,7 @@ const CodeEditor = ({
         sendCode={sendCode}
         run={run}
         handleLangChange={handleLangChange}
-        roomid={roomid}
+        roomId={roomId}
         running={running}
       />
       <div id="workspace">

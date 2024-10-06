@@ -33,7 +33,7 @@ const DataContextProvider = ({ children }: DataContextProviderProps) => {
 
   useEffect(() => {
     if (user) {
-      socket.emit("map socket", { userID: user._id });
+      socket.emit("map socket", { userId: user.id });
     }
   }, [user]);
 

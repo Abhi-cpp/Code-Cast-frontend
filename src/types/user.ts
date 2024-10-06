@@ -1,7 +1,7 @@
 import { RoomT } from "./room";
 
 type UserT = {
-  _id: string;
+  id: string;
   name: string;
   email: string;
   avatar: string;
